@@ -6,7 +6,11 @@ using namespace std;
 #include <stdio.h>
 #include <limits>
 #include <vector>
-#include "buidsum.cpp"
+
+#define BIG_WORDS 67469012
+#define TOT_ITR 500000
+#define THREAD_TOT (int)(BIG_WORDS/TOT_ITR + 256)
+#define BUF_SIZE 512
 
 int main() {
     //Open up the regex files.
@@ -28,8 +32,11 @@ int main() {
     fstream in ("BigData.txt");
     string word;
 
+    fstream dict ("ndict");
+    string dict_word;
 
-    if(!in) {
+
+    if( (!in) || (!dict) ) {
         printf("Can't find file BigData.\n");
         return 0;
     }
@@ -50,7 +57,7 @@ int main() {
     //This number was chosen somewhat arbitrarily but was ultimately picked because it has the approx best
     //performance to memory ratio. We need to fork 136 processes of 500,000 words to read all 68 million
     //in the file.
-    for (int i = 0; i<136; i++) {
+    for (int i = 0; i<THREAD_TOT; i++) {
         //Fork the process!
         if ((pid = fork()) == 0) { //child process
             //Read the file starting offset position and the current word in the file.
@@ -75,14 +82,14 @@ int main() {
             while (in >> word) {
                 numb++;
                 //Every 500,000 iterations this will happen. Numb always starts in a process at numb%500000==1.
-                if (numb%500000==0) {
+                if (numb%TOT_ITR==0) {
                     //find the position we're ending at in the file.
                     new_pos = in.tellg();
                     in.close();
                     printf("Current word in file: %d\n",numb);
                     break;
                 }
-                char pstring[124];
+                char pstring[BUF_SIZE];
                 //Put p as a c string.
                 p=word.c_str();
                 //Set a regexpression that relates to the BU ID's: U followed by 8 digits, followed by a non-dig
@@ -92,7 +99,7 @@ int main() {
                 while(regexec(&re, p, 1, &match, 0) == 0) {
                     //rm_eo is the end of the match, rm_so is the beginning.
                     //This prints the string matching into the file.
-                    strncpy(pstring,p+match.rm_eo,124);
+                    strncpy(pstring,p+match.rm_eo,BUF_SIZE);
                     string dstring=pstring;
                     //For whatever reason [^0-9] wasn't working in the regcomp function,
                     //So I used this workaround.
