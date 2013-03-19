@@ -15,6 +15,7 @@ int main() {
     FILE *ndict;
     ndict = fopen("ndict","w");
     char cur_str[25];
+    char prev_str[25];
     while (readf >> cur_str) {
         regcomp(&re, "n$", REG_EXTENDED);
         if (regexec(&re, cur_str, 1, &match, 0) == 0) {
@@ -24,6 +25,7 @@ int main() {
             //This time print the string
             fprintf(ndict, "%s\n", cur_str);
         }
+        prev_str=cur_str
     }
     fclose(ndict);
     readf.close();
