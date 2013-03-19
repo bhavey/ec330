@@ -22,24 +22,27 @@ int main() {
     int numb=1;
 
     long long pos=8063854;
+    long long new_pos;
 
     pid_t pid;
     for (int i = 0; i<100; i++) {
-
         if ((pid = fork()) == 0) { //child process
             fstream in ("BigData.txt");
             in.ignore(pos, '\0');
             printf("pos: %lld\n",pos);
 
+
             while (in >> word) {
                 numb++;
                 if (numb%10000==0) {
+                    new_pos = in.tellg();
                     printf("\n\n");
                     printf("pos: %lld\n",pos);
+                    printf("new_pos: %lld\n",new_pos);
                     printf("numb: %d\n",numb);
                 }
                 if (numb%100000==0) {
-                    pos = in.tellg();
+                    new_pos = in.tellg();
                     in.close();
                     printf("pos: %lld\n",pos);
                     break;
@@ -56,6 +59,12 @@ int main() {
             int status;
             childPid = wait(&status); //wait for the child to finish.
         }
+            pos = new_pos;
+            printf("new_pos: %lld\n",new_pos);
+            printf("fuck you: %lld\n",pos);
+            in.close();
+            words.clear();
+            word.clear();
     }
 
     return 0;
