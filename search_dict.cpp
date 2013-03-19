@@ -1,4 +1,5 @@
 using namespace std;
+#include <ctype.h>
 #include <iostream>
 #include <fstream>
 #include <math.h>
@@ -6,9 +7,10 @@ using namespace std;
 #include <stdio.h>
 #include <limits>
 #include <vector>
+#include <algorithms>
 
 #define BIG_WORDS 67469012
-#define TOT_ITR 500000
+#define TOT_ITR 5
 #define THREAD_TOT (int)(BIG_WORDS/TOT_ITR)
 #define BUF_SIZE 512
 
@@ -29,17 +31,10 @@ int main() {
     fclose(writeover);
 
     //Open BigData!
-//    fstream in ("BigData.txt"); //Is this even necesarry?
     string word;
-
-//    fstream dict ("ndict"); //Is this even necessary?
     string dict_word;
 
 
-//    if( (!in) || (!dict) ) {
-//        printf("Can't find file BigData or ndict.\n");
-//        return 0;
-//    }
     //Numb is the current word in the file.
     int numb=1;
 
@@ -69,7 +64,7 @@ int main() {
             opost.close();
 
             fstream in ("BigData.txt");
-            fstream dict ("ndict");
+            fstream dict ("odict");
             //Open BigData, ignoring the first "pos" characters unless it finds a null termination character.
             //The variable pos contains the starting offset position for the current processes' iteration.
             in.ignore(pos, '\0');
@@ -81,7 +76,7 @@ int main() {
             while (in >> word) {
                 numb++;
                 //Every 500,000 iterations this will happen. Numb always starts in a process at numb%500000==1.
-                fstream dict ("ndict"); //Is this even necessary?
+                fstream dict ("odict");
                 if (numb%TOT_ITR==0) {
                     //find the position we're ending at in the file.
                     new_pos = in.tellg();
@@ -90,12 +85,19 @@ int main() {
                     printf("Current word in file: %d\n",numb);
                     break;
                 }
+                if (numb%5==0)
+                    printf("------------------------------numb: %d\n------------------------------",numb);
+
                 char pstring[BUF_SIZE];
                 //Put p as a c string.
-                p=word.c_str();
                 while ( dict >> dict_word ) {
+                    p=word.c_str();
                     p2=dict_word.c_str();
-                    //Set a regexpression that relates to the BU ID's: U followed by 8 digits, followed by a non-dig
+
+                    //since odict is ordered by size, we can break here & forget about future values.
+                    if (strlen(p2)>strlen(p)) {
+                        break;
+                    }
                     regcomp(&re, p2, REG_ICASE);
                     //regexec will return 0 if there is a matched expression in the current word, comparing p to re
                     //stores the resulting match in match.
@@ -124,7 +126,6 @@ int main() {
         }
         //these shouldn't be relevant, but keeping them just because.
             pos = new_pos;
-//            in.close(); //relating to the opening of those files on the top: is it necesarry?
             word.clear();
     }
 
