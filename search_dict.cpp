@@ -8,7 +8,7 @@ using namespace std;
 
 #define BIG_WORDS 67469012 //number of words in the BigData.txt files
 #define TOT_ITR 5000000 //Amount of words to search through every process iteration
-#define THREAD_TOT (int)(BIG_WORDS/TOT_ITR + 1) //rounded amount of total threads
+#define THREAD_TOT (int)(BIG_WORDS/TOT_ITR + 256) //rounded amount of total threads
 #define BUF_SIZE
 
 typedef struct {
@@ -64,6 +64,12 @@ int main() {
 }
 
 void *thread_run(void *arg) {
+    regex_t re;
+    regmatch_t match;
+    //*_str is the string to be examined
+    const char *big_str="000000000000000000000000000000000000000000000000000000000000000000";
+    const char *dict_str="000000000000000000000000000000000000000000000000000000000000000000";
+    //parm contains the thread structure
     parm *p = (parm*)arg;
     p->matches=0;
     printf("Thread %d is running.\n", p->id);
@@ -75,15 +81,25 @@ void *thread_run(void *arg) {
         p->flagvar=1;
         return (NULL);
     }
-    string word;
+    string bigword;
+    string dictword;
     //Skip to your current position in BigData
     big.ignore(p->pos, '\0');
-    while ( big >> word ) {
+    while ( big >> bigword ) {
         p->numb++;
+        big_str=bigword.c_str();
+        dict.seekg(0);
+        while ( dict >> dictword ) {
+            dict_str=dictword.c_str();
+            regcomp(&re, dict_str, REG_ICASE);
+            if (regexec(&re, big_str, 1, &match, 0) == 0) {
+                printf("Found the word %s in %s\n",dict_str,big_str);
+            }
+        }
         if (p->numb%TOT_ITR==0) {
             p->pos = big.tellg();
             printf("Finished process %d\n",p->id);
-
+            p->numb++;
             break;
         }
     }
