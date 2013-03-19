@@ -9,7 +9,7 @@ using namespace std;
 
 #define BIG_WORDS 67469012
 #define TOT_ITR 500000
-#define THREAD_TOT (int)(BIG_WORDS/TOT_ITR + 256)
+#define THREAD_TOT (int)(BIG_WORDS/TOT_ITR)
 #define BUF_SIZE 512
 
 int main() {
@@ -29,17 +29,17 @@ int main() {
     fclose(writeover);
 
     //Open BigData!
-    fstream in ("BigData.txt");
+//    fstream in ("BigData.txt"); //Is this even necesarry?
     string word;
 
-    fstream dict ("ndict");
+//    fstream dict ("ndict"); //Is this even necessary?
     string dict_word;
 
 
-    if( (!in) || (!dict) ) {
-        printf("Can't find file BigData.\n");
-        return 0;
-    }
+//    if( (!in) || (!dict) ) {
+//        printf("Can't find file BigData or ndict.\n");
+//        return 0;
+//    }
     //Numb is the current word in the file.
     int numb=1;
 
@@ -69,44 +69,43 @@ int main() {
             opost.close();
 
             fstream in ("BigData.txt");
+            fstream dict ("ndict");
             //Open BigData, ignoring the first "pos" characters unless it finds a null termination character.
             //The variable pos contains the starting offset position for the current processes' iteration.
             in.ignore(pos, '\0');
 
             //open Buid in append mode so we can write new BUIDs to it.
             ofstream post;
-            FILE *buid;
-            buid = fopen("Buid.txt","a");
 
             //Pull in every word individually from BigData
             while (in >> word) {
                 numb++;
                 //Every 500,000 iterations this will happen. Numb always starts in a process at numb%500000==1.
+                fstream dict ("ndict"); //Is this even necessary?
                 if (numb%TOT_ITR==0) {
                     //find the position we're ending at in the file.
                     new_pos = in.tellg();
                     in.close();
+                    dict.close();
                     printf("Current word in file: %d\n",numb);
                     break;
                 }
                 char pstring[BUF_SIZE];
                 //Put p as a c string.
                 p=word.c_str();
-                //Set a regexpression that relates to the BU ID's: U followed by 8 digits, followed by a non-dig
-                regcomp(&re, "U[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", REG_EXTENDED);
-                //regexec will return 0 if there is a matched expression in the current word, comparing p to re
-                //stores the resulting match in match.
-                while(regexec(&re, p, 1, &match, 0) == 0) {
-                    //rm_eo is the end of the match, rm_so is the beginning.
-                    //This prints the string matching into the file.
-                    strncpy(pstring,p+match.rm_eo,BUF_SIZE);
-                    string dstring=pstring;
-                    //For whatever reason [^0-9] wasn't working in the regcomp function,
-                    //So I used this workaround.
-                    if((dstring.find_first_of("0123456789")) != 0) {
-                        fprintf(buid, "%.*s\n", (int)(match.rm_eo - match.rm_so), &p[match.rm_so]);
+                while ( dict >> dict_word ) {
+                    p2=dict_word.c_str();
+                    //Set a regexpression that relates to the BU ID's: U followed by 8 digits, followed by a non-dig
+                    regcomp(&re, p2, REG_ICASE);
+                    //regexec will return 0 if there is a matched expression in the current word, comparing p to re
+                    //stores the resulting match in match.
+                    while(regexec(&re, p, 1, &match, 0) == 0) {
+                        //rm_eo is the end of the match, rm_so is the beginning.
+                        //This prints the string matching into the file.
+                        printf("%s contains %s\n",p,p2);
+                        p += match.rm_eo;
+//                    strncpy(pstring,p+match.rm_eo,BUF_SIZE);
                     }
-                    p += match.rm_eo;
                 }
             }
             //Put the new position and word into Filepos
@@ -125,7 +124,7 @@ int main() {
         }
         //these shouldn't be relevant, but keeping them just because.
             pos = new_pos;
-            in.close();
+//            in.close(); //relating to the opening of those files on the top: is it necesarry?
             word.clear();
     }
 
