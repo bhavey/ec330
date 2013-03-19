@@ -8,10 +8,10 @@ using namespace std;
 #include <vector>
 
 int main() {
-    regex_t re[100];
+    regex_t re;
     char file[] = "hello777world99yew U46525972 I8909do23!";
     const char *p = file;
-    regmatch_t match[100];
+    regmatch_t match;
 
     fstream in ("BigData.txt");
     vector<string> words;
@@ -41,7 +41,9 @@ int main() {
             in.ignore(pos, '\0');
 
             ofstream post;
-            ofstream buid ("Buid.txt");
+            //ofstream buid ("Buid.txt");
+            FILE *buid;
+            buid = fopen("Buid.txt","a");
 
             while (in >> word) {
                 numb++;
@@ -59,11 +61,11 @@ int main() {
                     break;
                 }
                 p=word.c_str();
-                regcomp(&re[i], "U[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", REG_EXTENDED);
-                while(regexec(&re[i], p, 1, &match[i], 0) == 0) {
+                regcomp(&re, "U[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", REG_EXTENDED);
+                while(regexec(&re, p, 1, &match, 0) == 0) {
                     //buid << numb;
-//                    fprintf(buid,"%.*s\n", (int)(match.rm_eo - match.rm_so), &p[match.rm_so]);
-                    p += match[i].rm_eo;
+                    fprintf(buid, "%.*s\n", (int)(match.rm_eo - match.rm_so), &p[match.rm_so]);
+                    p += match.rm_eo;
                 }
             }
             printf("Yo biddie, this the pos: %lld\n",pos);
