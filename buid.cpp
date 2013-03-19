@@ -23,17 +23,27 @@ int main() {
 
     long long pos=8063854;
     long long new_pos;
+    int cur_pos;
 
     pid_t pid;
-    for (int i = 0; i<100; i++) {
+    string tstring;
+    for (int i = 0; i<680; i++) {
         if ((pid = fork()) == 0) { //child process
+            ifstream opost ("FilePos222.txt");
+            getline(opost,tstring);
+            pos=strtoll(tstring.c_str(), NULL, 0);
+            getline(opost,tstring);
+            numb=strtol(tstring.c_str(), NULL, 0);
+            opost.close();
+            printf("Yo man, here's the position: %lld\n",pos);
+
             fstream in ("BigData.txt");
             in.ignore(pos, '\0');
-//            printf("pos: %lld\n",pos);
 
+            ofstream post;
+            ofstream buid ("Buid.txt");
 
             while (in >> word) {
-                ofstream post;
                 numb++;
                 if (numb%10000==0) {
                     new_pos = in.tellg();
@@ -51,12 +61,17 @@ int main() {
                 p=word.c_str();
                 regcomp(&re[i], "U[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", REG_EXTENDED);
                 while(regexec(&re[i], p, 1, &match[i], 0) == 0) {
-//            printf("%.*s\n", (int)(match.rm_eo - match.rm_so), &p[match.rm_so]);
+                    //buid << numb;
+//                    fprintf(buid,"%.*s\n", (int)(match.rm_eo - match.rm_so), &p[match.rm_so]);
                     p += match[i].rm_eo;
                 }
             }
+            printf("Yo biddie, this the pos: %lld\n",pos);
             post.open("Filepos222.txt",ios_base::trunc);
-            pos >> post;
+            post << (int)new_pos;
+            post << "\n";
+            post << numb;
+            post.close();
             return 0;
         } else { //parent process.
             pid_t childPid;
@@ -66,7 +81,6 @@ int main() {
             pos = new_pos;
             childPid = wait(&status); //wait for the child to finish.
         }
-
             pos = new_pos;
             printf("new_pos: %lld\n",new_pos);
             printf("fuck you: %lld\n",pos);
