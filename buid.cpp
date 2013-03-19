@@ -8,10 +8,10 @@ using namespace std;
 #include <vector>
 
 int main() {
-    regex_t re;
+    regex_t re[100];
     char file[] = "hello777world99yew U46525972 I8909do23!";
     const char *p = file;
-    regmatch_t match;
+    regmatch_t match[100];
 
     fstream in ("BigData.txt");
     vector<string> words;
@@ -29,10 +29,11 @@ int main() {
         if ((pid = fork()) == 0) { //child process
             fstream in ("BigData.txt");
             in.ignore(pos, '\0');
-            printf("pos: %lld\n",pos);
+//            printf("pos: %lld\n",pos);
 
 
             while (in >> word) {
+                ofstream post;
                 numb++;
                 if (numb%10000==0) {
                     new_pos = in.tellg();
@@ -48,17 +49,24 @@ int main() {
                     break;
                 }
                 p=word.c_str();
-                regcomp(&re, "U[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", REG_EXTENDED);
-                while(regexec(&re, p, 1, &match, 0) == 0) {
+                regcomp(&re[i], "U[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]", REG_EXTENDED);
+                while(regexec(&re[i], p, 1, &match[i], 0) == 0) {
 //            printf("%.*s\n", (int)(match.rm_eo - match.rm_so), &p[match.rm_so]);
-                    p += match.rm_eo;
+                    p += match[i].rm_eo;
                 }
             }
+            post.open("Filepos222.txt",ios_base::trunc);
+            pos >> post;
+            return 0;
         } else { //parent process.
             pid_t childPid;
             int status;
+            childPid=wait(&status);
+            printf("new_pos: %lld\n",new_pos);
+            pos = new_pos;
             childPid = wait(&status); //wait for the child to finish.
         }
+
             pos = new_pos;
             printf("new_pos: %lld\n",new_pos);
             printf("fuck you: %lld\n",pos);
