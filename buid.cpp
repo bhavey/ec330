@@ -82,6 +82,7 @@ int main() {
                     printf("Current word in file: %d\n",numb);
                     break;
                 }
+                char pstring[124];
                 //Put p as a c string.
                 p=word.c_str();
                 //Set a regexpression that relates to the BU ID's: U followed by 8 digits, followed by a non-dig
@@ -91,10 +92,13 @@ int main() {
                 while(regexec(&re, p, 1, &match, 0) == 0) {
                     //rm_eo is the end of the match, rm_so is the beginning.
                     //This prints the string matching into the file.
-                //    if ( (strncmp(p+match.rm_eo, "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9", 1)) != 0 ) {
+                    strncpy(pstring,p+match.rm_eo,124);
+                    string dstring=pstring;
+                    //For whatever reason [^0-9] wasn't working in the regcomp function,
+                    //So I used this workaround.
+                    if((dstring.find_first_of("0123456789")) != 0) {
                         fprintf(buid, "%.*s\n", (int)(match.rm_eo - match.rm_so), &p[match.rm_so]);
-                  //  }
-                    printf("%s\n",p+match.rm_eo);
+                    }
                     p += match.rm_eo;
                 }
             }
