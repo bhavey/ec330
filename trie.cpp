@@ -153,6 +153,7 @@ int main() { //Test program
     trie->addWord("Balloon");
     trie->addWord("Ball");
 
+
     //struct Rhits contains: int hits,   vector<string> words
     Rhits hits;
 
