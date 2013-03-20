@@ -7,12 +7,12 @@ using namespace std;
 #include <stdio.h>
 #include <limits>
 #include <vector>
-#include <algorithms>
+#include <algorithm>
 
 #define BIG_WORDS 67469012
-#define TOT_ITR 5
+#define TOT_ITR 20
 #define THREAD_TOT (int)(BIG_WORDS/TOT_ITR)
-#define BUF_SIZE 512
+#define BUF_SIZE 128
 
 int main() {
     //Open up the regex files.
