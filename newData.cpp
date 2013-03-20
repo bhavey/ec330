@@ -1,4 +1,5 @@
 using namespace std;
+#include <time.h>
 #include <ctype.h>
 #include <iostream>
 #include <fstream>
@@ -9,6 +10,7 @@ using namespace std;
 #include <algorithm>
 
 int main() {
+    int flagvar=0;
     long int matches=0;
     regex_t re;
     regmatch_t match;
@@ -44,12 +46,23 @@ int main() {
                 }
                 regcomp(&re, p2, 0);
 //                while (regexec(&re, p1, 1, &match, 0) == 0) {
+              //  printf("p1: %s, p2: %s\n",p1,p2);
+               // if (strcmp(p1,"oo")==0) {
+                  //  printf("here!\n");
+               // }
                 while (regexec(&re, p1, 1, &match, 0) == 0) {
+                //    printf("p1: %s, p2: %s\n",p1,p2);
                     matches++;
                     printf("%s contains %s\n",p1,p2);
                     p1 += match.rm_eo;
+                    flagvar=1;
+                    usleep(200000);
                 }
-                sleep(.1);
+                if (flagvar) {
+                    flagvar=0;
+                    break;
+                }
+                usleep(1);
                 regfree(&re);
             }
             pch = strtok(NULL, "0123456789");
