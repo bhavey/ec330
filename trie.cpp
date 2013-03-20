@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <stdio.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -135,7 +136,7 @@ Rhits Trie::searchSubWords(string s) {
                 printf(", char: %c\n",child->data());
                 if (child->eow()) { //See if there's currently an eow flag
                     results.hits++; //Increment hits
-                    sub_str=s.substr(i,j+1);
+                    sub_str=s.substr(i,j-i+1);
                     printf("Found result: %s! for i=%d\n",sub_str.c_str(),i);
                     results.words.push_back(sub_str); //add the substring to the string vec
                 }
@@ -151,7 +152,7 @@ int main() { //Test program
     Trie* trie = new Trie();
 
     fstream in ("SmallData.txt");
-    fstream dict ("dictionary");
+    fstream dict ("odict");
     //struct Rhits contains: int hits,   vector<string> words
     Rhits hits;
 
@@ -161,7 +162,7 @@ int main() { //Test program
     }
     printf("Trie constructed!\n");
 
-    hits = trie->searchSubWords("helloooooball");
+    hits = trie->searchSubWords("HelloooooBall");
     cout << "Found the following results: ";
     for (int i=0; i < hits.words.size(); i++) {
         cout << hits.words.at(i) << " ";
