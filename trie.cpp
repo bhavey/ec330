@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <stdio.h>
 
 using namespace std;
 
@@ -38,7 +39,7 @@ public:      //characters. Functions are named coherently. (They say what they d
     ~Trie();
     void addWord(string s);
     bool searchWord(string s); //See if the string is a word.
-//    Rhits Trie::searchSubWords(string s); //search for all subwords within the string.
+    Rhits searchSubWords(string s); //search for all subwords within the string.
     void deleteWord(string s);
 private:
     Node* root;
@@ -97,7 +98,6 @@ bool Trie::searchWord(string s) {
             Node* child = current->findChild(s[i]); //See if the node has current char in children
             if (child == NULL) //findChild returns NULL if there is no relevant child.
                 return false;  //Therefore this is false in that case.
-            if (child->eow()) //See if there's a
             current = child; //Go down to the next child.
         }
 
@@ -109,6 +109,43 @@ bool Trie::searchWord(string s) {
     return false; //Just in case.
 }
 
+Rhits Trie::searchSubWords(string s) {
+    Node* current = root;
+    //struct Rhits contains: int hits,   vector<string> words
+    Rhits results;
+    int length=-1;
+    bool breakflag;
+    string sub_str;
+    while (current != NULL) { //while not strictly necessary, but here as a precaution
+        //Look for substrings throughout the entirety of the string. First test for substrings
+        //throughout the entire string (substrings starting with the first char), then loop
+        //though the string starting at it's second string (substrings starting with the second
+        //char in the string). Continue until the end of the string.
+        for (int i=0; i<s.length(); i++) { //loop through s by char. Do this s.length() times.
+            breakflag=1;
+            Node* current = root; //Set current node to the root.
+            for (int j=i; (j<s.length())&&(breakflag); j++) {
+                Node* child = current->findChild(s[j]); //See if node has string char in child
+                if (child == NULL) {//Make sure there are substrings that start here!
+                    breakflag=0;  //Test the next substring. All substrings that may happen after
+                    //the null child will be caught in further iterations.
+                } else {
+                    if (child->eow()) { //See if there's currently an eow flag
+                        results.hits++; //Increment hits
+                        sub_str=s.substr(i,j+1);
+                        printf("Found result: %s! for i=%d\n",sub_str.c_str(),i);
+                        results.words.push_back(sub_str); //add the substring to the string vec
+                    }
+                    current = child; //Bring current down to the next child node.
+                }
+            }
+        }
+        return results;
+    }
+    return results; //Just in case.
+}
+
+
 int main() { //Test program
     Trie* trie = new Trie();
     trie->addWord("Hello");
@@ -118,11 +155,23 @@ int main() { //Test program
     //struct Rhits contains: int hits,   vector<string> words
     Rhits hits;
 
-/*    if ( trie->searchWord("Hell") )
+    if ( trie->searchWord("Hell") )
         cout << "Found Hell" << endl;
 
     if ( trie->searchWord("Hello") )
         cout << "Found Hello" << endl;
+
+
+
+    hits = trie->searchSubWords("HelloooooBall");
+    cout << "Found the following results: ";
+    for (int i=0; i < hits.words.size(); i++) {
+        cout << hits.words.at(i) << " ";
+    }
+        cout << "\nDone!\n";
+
+
+
 
     if ( trie->searchWord("Helloo") )
         cout << "Found Helloo" << endl;
@@ -132,6 +181,6 @@ int main() { //Test program
 
     if ( trie->searchWord("Balloon") )
         cout << "Found Balloon" << endl;
-*/
+
     delete trie;
 }
