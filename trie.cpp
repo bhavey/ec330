@@ -5,6 +5,11 @@
 #include <vector>
 #include <string>
 
+struct X {
+    int d;
+    char b;
+};
+
 using namespace std;
 
 class Node { //Node is a class describing individual nodes in the trie structure.
@@ -34,6 +39,7 @@ public:      //characters. Functions are named coherently. (They say what they d
     void addWord(string s);
     bool searchWord(string s);
     void deleteWord(string s);
+    X test;
 private:
     Node* root;
 };
@@ -103,10 +109,15 @@ bool Trie::searchWord(string s) {
 }
 
 int main() { //Test program
+    //int d, char b, struct test
     Trie* trie = new Trie();
     trie->addWord("Hello");
     trie->addWord("Balloon");
     trie->addWord("Ball");
+    trie->test.d = 12; //Modifies an 'x' within 'E'
+//    Trie::X out; //This instantiates an 'X' outside of 'E'
+
+    cout << "Trie test: " << trie->test.d << "\n";
 
     if ( trie->searchWord("Hell") )
         cout << "Found Hell" << endl;
