@@ -9,6 +9,7 @@ using namespace std;
 #include <algorithm>
 
 int main() {
+    long int matches=0;
     regex_t re;
     regmatch_t match;
     FILE *writeover;
@@ -24,12 +25,14 @@ int main() {
     fstream in ("BigData.txt");
     fstream out ("NewData.txt");
     while (in >> word) {
+        //make word lower cased.
+        transform(word.begin(), word.end(), word.begin(), ::tolower);
         //cut out the empty strings!
         pch=strtok((char*)word.c_str(),"0123456789");
         while (pch != NULL) {
             dict.seekg(0); //Bring the dictionary to the beginning!
             numb++;
-            if (numb%10==0)
+            if (numb%1000==0)
                 printf("At word: %ld\n",numb);
 //            out << pch;
 //            out << "\n";
@@ -39,11 +42,14 @@ int main() {
                 if (strlen(p2) > strlen(p1) ) {
                     break;
                 }
-                regcomp(&re, p2, REG_ICASE);
+                regcomp(&re, p2, 0);
+//                while (regexec(&re, p1, 1, &match, 0) == 0) {
                 while (regexec(&re, p1, 1, &match, 0) == 0) {
-        //                    printf("%s contains %s\n",p1,p2);
+                    matches++;
+                    printf("%s contains %s\n",p1,p2);
                     p1 += match.rm_eo;
                 }
+                sleep(.1);
                 regfree(&re);
             }
             pch = strtok(NULL, "0123456789");
