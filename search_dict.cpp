@@ -5,14 +5,13 @@ using namespace std;
 #include <math.h>
 #include <regex.h>
 #include <stdio.h>
-#include <limits>
 #include <vector>
 #include <algorithm>
 
 #define BIG_WORDS 67469012
-#define TOT_ITR 20
+#define TOT_ITR 70
 #define THREAD_TOT (int)(BIG_WORDS/TOT_ITR)
-#define BUF_SIZE 128
+#define BUF_SIZE 90
 
 int main() {
     //Open up the regex files.
@@ -20,6 +19,7 @@ int main() {
     //Initial p to a vary large number.
     const char *p = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
     const char *p2 = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+    const char *p3 = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
     regmatch_t match;
 
@@ -65,6 +65,7 @@ int main() {
 
             fstream in ("BigData.txt");
             fstream dict ("odict");
+
             //Open BigData, ignoring the first "pos" characters unless it finds a null termination character.
             //The variable pos contains the starting offset position for the current processes' iteration.
             in.ignore(pos, '\0');
@@ -75,42 +76,46 @@ int main() {
             //Pull in every word individually from BigData
             while (in >> word) {
                 numb++;
+//                fstream dict ("odict"); //I think this is ignorable.
                 //Every 500,000 iterations this will happen. Numb always starts in a process at numb%500000==1.
-                fstream dict ("odict");
                 if (numb%TOT_ITR==0) {
                     //find the position we're ending at in the file.
                     new_pos = in.tellg();
-                    in.close();
                     dict.close();
+                    in.close();
                     printf("Current word in file: %d\n",numb);
                     break;
                 }
-                if (numb%5==0)
+                if (numb%10==0)
                     printf("------------------------------numb: %d\n------------------------------",numb);
 
                 char pstring[BUF_SIZE];
+                dict.seekg(0); //Go to the beginning!
                 //Put p as a c string.
-                while ( dict >> dict_word ) {
-                    p=word.c_str();
-                    p2=dict_word.c_str();
+                p2=strtok((char*)word.c_str(),"0123456789");
+                while (p2 != NULL) {
+                    while ( dict >> dict_word ) {
+                        p=word.c_str();
+                        p2=dict_word.c_str();
 
-                    //since odict is ordered by size, we can break here & forget about future values.
-                    if (strlen(p2)>strlen(p)) {
-                        break;
-                    }
-                    regcomp(&re, p2, REG_ICASE);
-                    //regexec will return 0 if there is a matched expression in the current word, comparing p to re
-                    //stores the resulting match in match.
-                    while(regexec(&re, p, 1, &match, 0) == 0) {
-                        //rm_eo is the end of the match, rm_so is the beginning.
-                        //This prints the string matching into the file.
-                        printf("%s contains %s\n",p,p2);
-                        p += match.rm_eo;
+                        //since odict is ordered by size, we can break here & forget about future values.
+                        if (strlen(p2)>strlen(p)) {
+                            break;
+                        }
+                        regcomp(&re, p2, REG_ICASE);
+                        //regexec will return 0 if there is a matched expression in the current word, comparing p to re
+                        //stores the resulting match in match.
+                        while(regexec(&re, p, 1, &match, 0) == 0) {
+                            //rm_eo is the end of the match, rm_so is the beginning.
+                            //This prints the string matching into the file.
+                  //          printf("%s contains %s\n",p,p2);
+                            p += match.rm_eo;
 //                    strncpy(pstring,p+match.rm_eo,BUF_SIZE);
+                        }
                     }
+                    p2 = strtok(NULL, "0123456789");
                 }
-            }
-            //Put the new position and word into Filepos
+            }    //Put the new position and word into Filepos
             post.open("Filepos222.txt",ios_base::trunc);
             post << (int)new_pos;
             post << "\n";
