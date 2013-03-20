@@ -22,48 +22,55 @@ int main() {
     char * pch;
     const char *p1;
     const char *p2;
+    char *realword;
     long int numb;
+//    string realword;
     string word;
     string dict_word;
     fstream dict ("odict");
     fstream in ("BigData.txt");
     fstream out ("NewData.txt");
+    //find the length of odict
+    dict.seekg(0,dict.end);
+    int dict_length = dict.tellg();
+    dict.seekg(0,dict.beg);
     while (in >> word) {
         //make word lower cased.
+//        printf("\n\nword: %s\n",word.c_str());
         transform(word.begin(), word.end(), word.begin(), ::tolower);
         //cut out the empty strings!
-        printf("Yo bitch: %s\n",word.c_str());
         pch=strtok((char*)word.c_str(),"0123456789");
         while (pch != NULL) {
+            printf("\nsub_word: %s\n",pch);
             dict.seekg(0); //Bring the dictionary to the beginning!
             numb++;
-            if (numb%1000==0)
-                printf("At word: %ld\n",numb);
-//            out << pch;
-//            out << "\n";
+            if ((numb%500==0))
+                printf("Matches: %ld. At word: %ld,%s\n",matches,numb,word.c_str());
             while (dict >> dict_word) {
+//        strcpy(realword,word.c_str());
+                if (dict.tellg()==dict_length) {
+                    //we're at the end of the dictionary.. something has gone wrong.
+                    dict.seekg(0,dict.beg);
+                }
                 p1=pch;
                 p2=dict_word.c_str();
                 if (strlen(p2) > strlen(p1) ) {
-                    break;
+                    break; //word is longer then the dictionary entries from here on out!
                 }
                 regcomp(&re, p2, REG_EXTENDED);
+//                printf("%s ",p2);
                 while (regexec(&re, p1, 1, &match, 0) == 0) {
-                //    printf("p1: %s, p2: %s\n",p1,p2);
+                    printf("\n\n%ld  %s matches at %s\n",matches, p1,p2);
                     matches++;
-                    printf("numb: %ld\n",numb);
-                    printf("%s contains %s\n",p1,p2);
-                    printf("match.rm_eo: %d\n",match.rm_eo);
                     p1 += match.rm_eo;
-                    printf("p1 now: %s\n",p1);
                     flagvar=1;
-                    usleep(200000);
+                    usleep(200);
                 }
                 if (flagvar) {
                     flagvar=0;
-                    continue;
+//                    if (matches<1600)
+                        continue;
                 }
-                usleep(1);
                 regfree(&re);
             }
             pch = strtok(NULL, "0123456789");
