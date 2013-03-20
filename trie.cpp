@@ -148,6 +148,7 @@ Rhits Trie::searchSubWords(string s) {
 
 int main() { //Test program
     Trie* trie = new Trie();
+    trie->addWord("Hell");
     trie->addWord("Hello");
     trie->addWord("Balloon");
     trie->addWord("Ball");
@@ -155,32 +156,12 @@ int main() { //Test program
     //struct Rhits contains: int hits,   vector<string> words
     Rhits hits;
 
-    if ( trie->searchWord("Hell") )
-        cout << "Found Hell" << endl;
-
-    if ( trie->searchWord("Hello") )
-        cout << "Found Hello" << endl;
-
-
-
     hits = trie->searchSubWords("HelloooooBall");
     cout << "Found the following results: ";
     for (int i=0; i < hits.words.size(); i++) {
         cout << hits.words.at(i) << " ";
     }
         cout << "\nDone!\n";
-
-
-
-
-    if ( trie->searchWord("Helloo") )
-        cout << "Found Helloo" << endl;
-
-    if ( trie->searchWord("Ball") )
-        cout << "Found Ball" << endl;
-
-    if ( trie->searchWord("Balloon") )
-        cout << "Found Balloon" << endl;
 
     delete trie;
 }
