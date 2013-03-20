@@ -37,7 +37,8 @@ public:      //characters. Functions are named coherently. (They say what they d
     Trie();
     ~Trie();
     void addWord(string s);
-    Rhits searchWord(string s);
+    bool searchWord(string s); //See if the string is a word.
+//    Rhits Trie::searchSubWords(string s); //search for all subwords within the string.
     void deleteWord(string s);
 private:
     Node* root;
@@ -89,25 +90,23 @@ void Trie::addWord(string s) { //Adds a word to the Trie tree.
 
 //Searches through the trie for matching strings.
 //Returns true if the word is in the trie, otherwise false.
-Rhits Trie::searchWord(string s) {
-    //struct Rhits contains: int hits,   vector<string> words
+bool Trie::searchWord(string s) {
     Node* current = root;
-    Rhits results;
-    while ( current != NULL ) { //while not strictly necessary, but here as a precaution
-        for ( int i = 0; i < s.length(); i++ ) { //loop through entirety of string by char
+    while (current != NULL) { //while not strictly necessary, but here as a precaution
+        for (int i=0; i<s.length(); i++) { //loop through entirety of string by char
             Node* child = current->findChild(s[i]); //See if the node has current char in children
-            if ( child == NULL ) //findChild returns NULL if there is no relevant child.
-                return results;  //Therefore this is false in that case.
-            if ( child->eow() ) //See if there's a
+            if (child == NULL) //findChild returns NULL if there is no relevant child.
+                return false;  //Therefore this is false in that case.
+            if (child->eow()) //See if there's a
             current = child; //Go down to the next child.
         }
 
         if ( current->eow() ) //Once done check if last node has an eow flag.
-            return results;
+            return true;
         else
-            return results;
+            return false;
     }
-    return results; //Just in case.
+    return false; //Just in case.
 }
 
 int main() { //Test program
