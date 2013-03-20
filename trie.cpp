@@ -5,12 +5,12 @@
 #include <vector>
 #include <string>
 
-struct X {
-    int d;
-    char b;
-};
-
 using namespace std;
+
+struct Rhits { //Rhits contains the amount of hits in a word search and the related strings
+    int hits;
+    vector<string> words;
+};
 
 class Node { //Node is a class describing individual nodes in the trie structure.
 public:
@@ -37,9 +37,8 @@ public:      //characters. Functions are named coherently. (They say what they d
     Trie();
     ~Trie();
     void addWord(string s);
-    bool searchWord(string s);
+    Rhits searchWord(string s);
     void deleteWord(string s);
-    X test;
 private:
     Node* root;
 };
@@ -90,36 +89,37 @@ void Trie::addWord(string s) { //Adds a word to the Trie tree.
 
 //Searches through the trie for matching strings.
 //Returns true if the word is in the trie, otherwise false.
-bool Trie::searchWord(string s) {
+Rhits Trie::searchWord(string s) {
+    //struct Rhits contains: int hits,   vector<string> words
     Node* current = root;
+    Rhits results;
     while ( current != NULL ) { //while not strictly necessary, but here as a precaution
         for ( int i = 0; i < s.length(); i++ ) { //loop through entirety of string by char
             Node* child = current->findChild(s[i]); //See if the node has current char in children
             if ( child == NULL ) //findChild returns NULL if there is no relevant child.
-                return false;  //Therefore this is false in that case.
+                return results;  //Therefore this is false in that case.
+            if ( child->eow() ) //See if there's a
             current = child; //Go down to the next child.
         }
 
         if ( current->eow() ) //Once done check if last node has an eow flag.
-            return true;
+            return results;
         else
-            return false;
+            return results;
     }
-    return false; //Just in case.
+    return results; //Just in case.
 }
 
 int main() { //Test program
-    //int d, char b, struct test
     Trie* trie = new Trie();
     trie->addWord("Hello");
     trie->addWord("Balloon");
     trie->addWord("Ball");
-    trie->test.d = 12; //Modifies an 'x' within 'E'
-//    Trie::X out; //This instantiates an 'X' outside of 'E'
 
-    cout << "Trie test: " << trie->test.d << "\n";
+    //struct Rhits contains: int hits,   vector<string> words
+    Rhits hits;
 
-    if ( trie->searchWord("Hell") )
+/*    if ( trie->searchWord("Hell") )
         cout << "Found Hell" << endl;
 
     if ( trie->searchWord("Hello") )
@@ -133,6 +133,6 @@ int main() { //Test program
 
     if ( trie->searchWord("Balloon") )
         cout << "Found Balloon" << endl;
-
+*/
     delete trie;
 }
