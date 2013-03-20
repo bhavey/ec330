@@ -12,6 +12,8 @@ using namespace std;
 int main() {
     int flagvar=0;
     long int matches=0;
+    int prev_dic_length;
+    int cur_dic_length;
     regex_t re;
     regmatch_t match;
     FILE *writeover;
@@ -30,6 +32,7 @@ int main() {
         //make word lower cased.
         transform(word.begin(), word.end(), word.begin(), ::tolower);
         //cut out the empty strings!
+        printf("Yo bitch: %s\n",word.c_str());
         pch=strtok((char*)word.c_str(),"0123456789");
         while (pch != NULL) {
             dict.seekg(0); //Bring the dictionary to the beginning!
@@ -39,28 +42,26 @@ int main() {
 //            out << pch;
 //            out << "\n";
             while (dict >> dict_word) {
-                p1=word.c_str();
+                p1=pch;
                 p2=dict_word.c_str();
                 if (strlen(p2) > strlen(p1) ) {
                     break;
                 }
-                regcomp(&re, p2, 0);
-//                while (regexec(&re, p1, 1, &match, 0) == 0) {
-              //  printf("p1: %s, p2: %s\n",p1,p2);
-               // if (strcmp(p1,"oo")==0) {
-                  //  printf("here!\n");
-               // }
+                regcomp(&re, p2, REG_EXTENDED);
                 while (regexec(&re, p1, 1, &match, 0) == 0) {
                 //    printf("p1: %s, p2: %s\n",p1,p2);
                     matches++;
+                    printf("numb: %ld\n",numb);
                     printf("%s contains %s\n",p1,p2);
+                    printf("match.rm_eo: %d\n",match.rm_eo);
                     p1 += match.rm_eo;
+                    printf("p1 now: %s\n",p1);
                     flagvar=1;
                     usleep(200000);
                 }
                 if (flagvar) {
                     flagvar=0;
-                    break;
+                    continue;
                 }
                 usleep(1);
                 regfree(&re);
