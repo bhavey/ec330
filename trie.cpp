@@ -1,5 +1,6 @@
 //Trie data structure. File contains Trie/Node classes
 //Concept taken from http://login2win.blogspot.com/2011/06/c-tries.html
+//.
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -10,13 +11,17 @@
 using namespace std;
 
 struct Rhits { //Rhits contains the amount of hits in a word search and the related strings
-    int hits;
+    long long int hits;
     vector<string> words;
     Rhits& operator+=(Rhits& a) { //Overload += operator.
         hits+=a.hits;
-        for (int i=0; i<a.words.size(); i++)
-            words.push_back(a.words.at(i));
+        //-----impossible for this, but would like to allow for a running keep of the words.
+//        if (a.words.size()!=0)
+//            words.push_back(a.words.at(0));
+//        for (int i=0; i<a.words.size(); i++)
+  //          words.push_back(a.words.at(i));
     }
+    void clear() { hits=0; }
 };
 
 class Node { //Node is a class describing individual nodes in the trie structure.
@@ -116,9 +121,9 @@ bool Trie::searchWord(string s) {
 }
 
 Rhits Trie::searchSubWords(string s) {
-//    Node* current = root;
     //struct Rhits contains: int hits,   vector<string> words
     Rhits results;
+    results.clear(); //Clear the results, or else they build on themselves in a not so fun way.
     int length=-1;
     bool breakflag;
     string sub_str;
@@ -132,17 +137,13 @@ Rhits Trie::searchSubWords(string s) {
         Node* child = this->root; //See if node has string char in child
         for (int j=i; (j<s.length())&&(breakflag); j++) {
             Node* child = current->findChild(s[j]); //See if node has string char in child
-      //      printf("i: %d, j: %d",i,j);
             if (child == NULL) {//Make sure there are substrings that start here!
-    //            printf("\nNull child!\n");
                 breakflag=0;  //Test the next substring. All substrings that may happen after
                 //the null child will be caught in further iterations.
             } else {
-//                printf(", char: %c\n",child->data());
                 if (child->eow()) { //See if there's currently an eow flag
                     results.hits++; //Increment hits
                     sub_str=s.substr(i,j-i+1);
-  //                  printf("Found result: %s! for i=%d\n",sub_str.c_str(),i);
                     results.words.push_back(sub_str); //add the substring to the string vec
                 }
                 current = child; //Bring current down to the next child node.
@@ -160,11 +161,12 @@ int main() { //Test program
     fstream dict ("Dictionary");
     //struct Rhits contains: int hits,   vector<string> words
     Rhits hits;
-    Rhits hits2;
+    Rhits hits2; //hits2 keeps the running count.
 
     string entry;
     string word;
-    while (dict >> entry) {
+    while (dict >> entry) { //Put the dictionary entries into a trie
+        //Convert entry to lower case. Upper cases won't count as multiple entries this way.
         transform(entry.begin(), entry.end(), entry.begin(), ::tolower);
         trie->addWord(entry);
     }
@@ -172,20 +174,15 @@ int main() { //Test program
 
     long int pos=0;
 
-    while (in >> word) {
+    while (in >> word) { //Read BigData in word for word.
         transform(word.begin(), word.end(), word.begin(), ::tolower);
         hits=trie->searchSubWords(word);
-//        printf("\nMatches for %s: ",word.c_str());
-  //      for (int i=0; i < hits.words.size(); i++)
-    //        cout << hits.words.at(i) << ", ";
         hits2+=hits;
-        if (pos%50000==0) {
-            printf("At word %ld\n",pos);
-
-//            usleep(200000);
-        }
+        if (pos%50000==0)
+            printf("At word %ld, total matches: %lld\n",pos,hits2.hits);
         pos++;
     }
+    printf("Finished at word %ld, total matches: %lld\n",pos,hits2.hits);
 
     delete trie;
 }
