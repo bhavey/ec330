@@ -1,5 +1,3 @@
-//Trie data structure. File contains Trie/Node classes
-//Concept taken from http://login2win.blogspot.com/2011/06/c-tries.html
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -7,7 +5,6 @@
 #include <stdio.h>
 #include <algorithm>
 #include <map>
-//Total of 234946 words in dictionary
 
 using namespace std;
 
