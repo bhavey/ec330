@@ -81,14 +81,24 @@ int main() { //Test program
             kiss_size=kiss.size();
             printf("before:\n");
             printpal(kiss);
-            int workaround;
-//            if (*(kiss.at(itr).begin)==
+            int workaround; //Check if the first char at kiss.itr is the last possible one in pal
+            string itr_word;
+            string this_shit;
+            printf("itr word: %s\n",kiss.at(itr).c_str());
+            printf("this shit: %s\n",start_map[*(kiss.at(itr).begin())].back().c_str());
+            itr_word=kiss.at(itr).c_str();
+            this_shit=start_map[*(kiss.at(itr).begin())].back().c_str();
+            if (strcmp(itr_word.c_str(),this_shit.c_str())==0) {
+                printf("Yeah, last one in the line!\n");
+            } else {
+                itr==0?itr=0:itr--;
+            }
             kiss.erase(kiss.begin()+itr+1, kiss.end());
+            zero_map(all_maps); //Clear out the mapping deal
+            zero_map(end_map);
             printf("after:\n");
             printpal(kiss);
             printf("i: %d, j: %d, k: %d, itr: %d, last: %c\n",i,j,k,itr,last_char);
-            zero_map(all_maps); //Clear out the mapping deal
-            zero_map(end_map);
             for (int l=0; l<kiss.size(); l++) {
                 add_maps(all_maps,alph_map,kiss.at(l));
                 end_map[*(kiss.at(l).end()-1)]=1; //Add this to the end_map
