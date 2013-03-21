@@ -168,7 +168,8 @@ int main() { //Test program
     while (dict >> entry) { //Put the dictionary entries into a trie
         //Convert entry to lower case. Upper cases won't count as multiple entries this way.
         transform(entry.begin(), entry.end(), entry.begin(), ::tolower);
-        trie->addWord(entry);
+        if ((entry[entry.length()-1])!='n') //skip the n's
+            trie->addWord(entry);
     }
     printf("Trie constructed from dictionary!\n");
 
@@ -178,7 +179,7 @@ int main() { //Test program
         transform(word.begin(), word.end(), word.begin(), ::tolower);
         hits=trie->searchSubWords(word);
         hits2+=hits;
-        if (pos%50000==0)
+        if (pos%100000==0)
             printf("At word %ld, total matches: %lld\n",pos,hits2.hits);
         pos++;
     }
