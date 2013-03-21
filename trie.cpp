@@ -12,6 +12,11 @@ using namespace std;
 struct Rhits { //Rhits contains the amount of hits in a word search and the related strings
     int hits;
     vector<string> words;
+    Rhits& operator+=(Rhits& a) { //Overload += operator.
+        hits+=a.hits;
+        for (int i=0; i<a.words.size(); i++)
+            words.push_back(a.words.at(i));
+    }
 };
 
 class Node { //Node is a class describing individual nodes in the trie structure.
@@ -127,17 +132,17 @@ Rhits Trie::searchSubWords(string s) {
         Node* child = this->root; //See if node has string char in child
         for (int j=i; (j<s.length())&&(breakflag); j++) {
             Node* child = current->findChild(s[j]); //See if node has string char in child
-            printf("i: %d, j: %d",i,j);
+      //      printf("i: %d, j: %d",i,j);
             if (child == NULL) {//Make sure there are substrings that start here!
-                printf("\nNull child!\n");
+    //            printf("\nNull child!\n");
                 breakflag=0;  //Test the next substring. All substrings that may happen after
                 //the null child will be caught in further iterations.
             } else {
-                printf(", char: %c\n",child->data());
+//                printf(", char: %c\n",child->data());
                 if (child->eow()) { //See if there's currently an eow flag
                     results.hits++; //Increment hits
                     sub_str=s.substr(i,j-i+1);
-                    printf("Found result: %s! for i=%d\n",sub_str.c_str(),i);
+  //                  printf("Found result: %s! for i=%d\n",sub_str.c_str(),i);
                     results.words.push_back(sub_str); //add the substring to the string vec
                 }
                 current = child; //Bring current down to the next child node.
@@ -152,25 +157,41 @@ int main() { //Test program
     Trie* trie = new Trie();
 
     fstream in ("SmallData.txt");
-    fstream dict ("odict");
+    fstream dict ("Dictionary");
     //struct Rhits contains: int hits,   vector<string> words
     Rhits hits;
+    Rhits hits2;
+    hits2.hits=2;
 
+    string entry;
     string word;
-    while (dict >> word) {
-        trie->addWord(word);
+    while (dict >> entry) {
+        transform(entry.begin(), entry.end(), entry.begin(), ::tolower);
+        trie->addWord(entry);
     }
-    printf("Trie constructed!\n");
+    printf("Trie constructed from dictionary!\n");
 
-    hits = trie->searchSubWords("HelloooooBall");
-    cout << "Found the following results: ";
+    hits=trie->searchSubWords("hellooob2all");
+    cout << "Found the following results for hellooob2all: ";
     for (int i=0; i < hits.words.size(); i++) {
         cout << hits.words.at(i) << " ";
     }
-        cout << "\nDone!\n";
+    printf("\nWith total: %d\n",hits.hits);
+    hits2 = trie->searchSubWords("poop");
+    cout << "Found the following results for poop: ";
+    for (int i=0; i < hits2.words.size(); i++) {
+        cout << hits2.words.at(i) << " ";
+    }
+    printf("\nWith total: %d\n",hits2.hits);
+    hits2 += hits;
+    cout << "Found the following results for the two summed: ";
+    for (int i=0; i < hits2.words.size(); i++) {
+        cout << hits2.words.at(i) << " ";
+    }
+    printf("With total: %d\n",hits2.hits);
 
-    if (trie->searchWord("e"))
-        printf("There was an e\n");
+    if (trie->searchWord("n"))
+        printf("There was an n\n");
 
     delete trie;
 }
