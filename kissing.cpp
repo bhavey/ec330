@@ -12,6 +12,8 @@ void printpal(vector<string>);
 int test_in(string s, vector<string> pal);
 void zero_map(map<char,int> &out);
 void add_map(map<char,int> &out, map<string,map<char,int> > &temp, string s);
+void printmap(map<char,int> &in,bool nl);
+void printvec(map<char,vector<string> > &in);
 
 int main() { //Test program
     //Screw it. I don't even care. Just throw the whole damned dictionary into here.
@@ -57,6 +59,9 @@ int main() { //Test program
         }
     }
 
+    printvec(smap);
+//    printvec(emap);
+
     char cur_lo;
     char start='a';
     int newflag;
@@ -68,50 +73,49 @@ int main() { //Test program
 //map<char,int> add_map(map<string,map<char,int> > &temp_map, string s)
 
     zero_map(amap);
-    add_map(amap, tmap, "poop");
+//    add_map(amap, tmap, "poop");
     char a='a';
 
-    printf("amap end state:\n");
-    for (int i=0; i<26; i++)
-        printf("%c: %d\n",a+i,amap[a+i]);
+//    printmap(amap,0);
 
     return 0;
 }
 
-void zero_map(map<char,int> &out) {
-    char c='a';
+void zero_map(map<char,int> &out) { //zeros all the letters in out.
     for (int i=0; i<26; i++)
-        out[c+i]=0;
+        out['a'+i]=0;
 }
 
 void add_map(map<char,int> &out, map<string,map<char,int> > &temp, string s) {
-    char c='a';
-    int stupid_code_work;
-    for (int i=0; i<26; i++) {
-        stupid_code_work=temp[s][c+i];
-        out[c+i]+=stupid_code_work;
-    }
+    for (int i=0; i<26; i++) //Adds together out+temp[s], stores in out.
+        out['a'+i]+=static_cast<int>(temp[s]['a'+i]);
 }
 
-//returns:
-//starting out for o: 0
-//temp vs. final out for o: 2 vs 0
-//starting out for p: 0
-//temp vs. final out for p: 2 vs 0
-
-bool fullalph(map<char,int> inmap) {
-    char start='a';
-    for (int i=0; i<26; i++) {
-        if (inmap[start+i]==0)
+bool fullalph(map<char,int> inmap) { //check if every letter is present in the map
+    for (int i=0; i<26; i++)
+        if (inmap['a'+i]==0)
             return false;
-    }
     return true;
 }
 
-void printpal(vector<string> pal) {
+void printpal(vector<string> pal) { //Prints the vector of strings
     for (int i=0; i<pal.size(); i++)
         printf("%s, ",pal.at(i).c_str());
     printf("\n");
+}
+
+void printvec(map<char,vector<string> > &in) { //Prints the map of the vector of strings
+    for (int i=0; i<26; i++) {
+        printf("\n%c: ",'a'+i);
+        for (int j=0; j<in['a'+i].size(); j++)
+            printf("%s%s",in['a'+i].at(j).c_str(),(j==in['a'+i].size()-1)?"\n":", ");
+    }
+    printf("\n");
+}
+
+void printmap(map<char,int> &in,bool nl) { //prints map, if nl=1, print newlines
+    for (int i=0; i<26; i++)
+        printf("%c: %d%s",'a'+i,in['a'+i],nl?"\n":(i==25?"\n":", "));
 }
 
 int test_in(string s, vector<string> pal) {
