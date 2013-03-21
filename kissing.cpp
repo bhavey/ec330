@@ -16,7 +16,7 @@ void printmap(map<char,int> &in,bool nl); //prints a map, nl =newline, otherwise
 void printvec(map<char,vector<string> > &in); //prints the maps of characters to strings
 bool test_vector(vector<string> pal, string s); //tests if a string is inside of a vector
 bool skipqxz(char c); //skips the character if it's q, x, or z
-bool maps_diff(map<char,int> &map1, map<char,int> &map2);//True is map1/2 have overlaping char
+bool maps_diff(map<string,map<char,int> > &map1, map<char,int> &map2, map<char,int> &map3, string s);//True is map1/2 have overlaping char
 
 int main() { //Test program
     //Screw it. I don't even care. Just throw the whole damned dictionary into here.
@@ -26,6 +26,7 @@ int main() { //Test program
     map<char,vector<string> > start_map; //map of the starting chars.
     map<string, map<char,int> > alph_map; //map containing a value for every individual pal.
     map<char,int> all_maps; //map containing the value of the kissing pal.
+    map<char,int> end_map; //map of the ending chars already present in palindrome.
     int i, j, k;
 
     fstream pald ("pal");
@@ -60,9 +61,6 @@ int main() { //Test program
     string tmp2;
     int itr;
     bool jumpflag;
-    string two_ago="z";
-    string one_ago="z";
-    string cur="z";
     int kiss_size;
 
     for (i=0; i<pal.size(); i++) { //Loop through, starting with every possible palindrome first
@@ -70,10 +68,12 @@ int main() { //Test program
         jumpflag=1;
         itr=0;
         zero_map(all_maps); //Clear out the mapping deal
+        zero_map(end_map);
         kiss.clear(); //Clear out the kissing palindrome.
         tmp=pal.at(i);
         kiss.push_back(tmp); //Put the ith palendrome at the root.
         last_char=*(tmp.end()-1); //find the last char in the kissing palindrome
+        end_map[last_char]=1; //Add this to the end_map
         add_maps(all_maps,alph_map,tmp);
         printf("here!\n");
         for (k=0; k<start_map[*(kiss.at(itr).end()-1)].size(); k++) { //put
@@ -81,31 +81,31 @@ int main() { //Test program
             kiss_size=kiss.size();
             printf("before:\n");
             printpal(kiss);
+            int workaround;
+//            if (*(kiss.at(itr).begin)==
             kiss.erase(kiss.begin()+itr+1, kiss.end());
             printf("after:\n");
             printpal(kiss);
             printf("i: %d, j: %d, k: %d, itr: %d, last: %c\n",i,j,k,itr,last_char);
             zero_map(all_maps); //Clear out the mapping deal
-            for (int l=0; l<kiss.size(); l++)
+            zero_map(end_map);
+            for (int l=0; l<kiss.size(); l++) {
                 add_maps(all_maps,alph_map,kiss.at(l));
-            usleep(50000);
+                end_map[*(kiss.at(l).end()-1)]=1; //Add this to the end_map
+            }
+            usleep(1000);
             last_char=*(kiss.at(itr).end()-1);
             //pop the deal back x amount.
             for (j=k; j<start_map[last_char].size(); j++) {
                 jflag=0;
                 tmp2=start_map[last_char].at(j);
-                two_ago=one_ago;
-                one_ago=cur;
-                cur=tmp2;
-                if ((tmp2==two_ago)||(one_ago==two_ago)) //Stuck in a loop!
-                    jumpflag=0;
                 if (test_vector(kiss,tmp2)) {//Word is already in the palindrome.
                     printf("Skipping %s because %s is already in the palindrome:\n",tmp2.c_str(),tmp2.c_str());
                     jflag=1;
                     if (j==(start_map[last_char].size()-1))
                         jumpflag=1; //We got locked out.
                 }
-                if (maps_diff(alph_map[tmp2],all_maps)) { //No new letters in palindrome
+                if (maps_diff(alph_map,all_maps,end_map,tmp2)) { //No new letters in palindrome
                 //Just realized this jumps way too loosely!
                 //It jumps whenever they have the same character map.
                 //Should only skip if they have the same character map *and* the last letter has
@@ -125,6 +125,8 @@ int main() { //Test program
                 kiss.push_back(tmp2); //tmp2 fits the necessary criteria. Put it on the kissing pal
                 last_char=*(tmp2.end()-1); //find the last char in the kissing palindrome
                 add_maps(all_maps,alph_map,tmp2);
+                printpal(kiss);
+                printf("\n\n");
       //          usleep(200000);
                 if(fullalph(all_maps)) {
                     printf("Complete palindrome:\n");
@@ -201,11 +203,13 @@ bool test_vector(vector<string> pal, string s) {
     return false;
 }
 
-bool maps_diff(map<char,int> &map1, map<char,int> &map2) {
+bool maps_diff(map<string,map<char,int> > &map1, map<char,int> &map2, map<char,int> &map3, string s) {
+    if (map3[*(s.end()-1)]==0)
+        return false;
     for (int i=0; i<26; i++) {
         if (skipqxz('a'+i))
             continue;
-        if (map1['a'+i]!=map2['a'+i])
+        if (map1[s]['a'+i]!=map2['a'+i])
             return false;
     }
     return true;
