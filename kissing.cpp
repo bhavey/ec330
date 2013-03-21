@@ -10,6 +10,7 @@ using namespace std;
 bool fullalph(map<char,int>);
 void printpal(vector<string>);
 int test_in(string s, vector<string> pal);
+void add_map(map<char,int> &out, map<string,map<char,int> > &temp, string s);
 
 int main() { //Test program
     //Screw it. I don't even care. Just throw the whole damned dictionary into here.
@@ -42,7 +43,6 @@ int main() { //Test program
     string tmp2;
     string tmp3;
 
-//    map<string, map<char,int> > tmap; //map containing a value for every individual pal.
     int cur_pos=0;
     char first_char, cur_char, last_char;
     for (int i=0; i<pal.size(); i++) {
@@ -56,53 +56,34 @@ int main() { //Test program
         }
     }
 
-//    map<char,vector<string> > smap; //map of the starting chars.
-//    vector<string> kiss; //The kissing palindrome!
-//tmap is the individ ones
     char cur_lo;
     char start='a';
     int newflag;
     int jflag, kflag, lflag, mflag, nflag;
-    for (int i=0; i<pal.size(); i++) { //form the actual kissing palindromes!
-        for (int j=0; j<26; j++)
-            amap[start+j]=0; //clear out the amap!
-        for (int j=0; j<26; j++) {
-            newflag=0;
-            lflag=0;
-            kiss.clear(); //clean it every time we reach here!
-                for (int l=0; l<(!newflag?emap[start+j].size():emap[last_char].size())&&!lflag; l++) {
-                    if (!newflag)
-                        kiss.push_back(emap[start+j].at(l)); //Put this piece on the top.
-                    else {
-                        tmp1=emap[last_char].at(l);
-                        test_in(tmp1, kiss);
-                    }
-                    for (int m=0; m<26; m++) //Add to the main maping
-                        amap[start+m]=amap[start+m]+tmap[emap[start+j].at(l)][start+m];
-                    for (int m=0; m<smap[emap[start+j].size()].size(); m++) {
-                        nflag=0;
-                        tmp1=smap[start+j].at(m);
-                        for (int n=0; n<kiss.size(); n++) { //make sure there are no repeats
-                            if (tmp1==kiss.at(n)) {         //in the palindrome.
-                                nflag=1;
-                                break;
-                            }
-                        }
+//    map<char,vector<string> > smap; //map of the starting chars.
+//    map<char,vector<string> > emap; //map of the ending chars.
+//    map<string, map<char,int> > tmap; //map containing a value for every individual pal.
+//    map<char,int> amap; //map containing the value of the kissing pal.
+//map<char,int> add_map(map<string,map<char,int> > &temp_map, string s)
 
-                        kiss.push_back(tmp1);
-                        last_char=*(tmp1.end()-1);
-                        for (int n=0; n<26; n++)
-                            amap[start+n]=amap[start+n]+tmap[emap[start+j].at(l)][start+n];
-                        if (fullalph(amap)) {
-                            printpal(kiss);
-                            lflag=1;
-                        }
-                    }
-                }
-        printf("j:%d\n",j);
-        printpal(kiss);
-        }
-    }
+    map<char,int> temp_map;
+    add_map(amap, tmap, "reiter");
+    char a='a';
+
+//    for (int i=0; i<26; i++)
+  //      printf("%c: %d\n",a+i,amap[a+i]);
+
+    return 0;
+}
+
+void add_map(map<char,int> &out, map<string,map<char,int> > &temp, string s) {
+    char c='a';
+    printf("string letter matches: \n");
+    for (int i=0; i<26; i++)
+        printf("%c: %d\n",c+i,temp[s][c+i]);
+
+    for (int i=0; i<26; i++)
+        out[c+i]+=temp[s][c+1];
 }
 
 bool fullalph(map<char,int> inmap) {
