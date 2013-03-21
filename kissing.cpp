@@ -12,6 +12,7 @@ int main() { //Test program
     //Screw it. I don't even care. Just throw the whole damned dictionary into here.
     vector<string> pal; //Contains only the relevant palindromes
     vector<string> flip; //Contains flipable words.
+    vector<string> kiss; //The kissing palindrome!
     map<char,vector<string> > smap; //map of the starting chars.
     map<char,vector<string> > emap; //map of the ending chars.
     map<string, map<char,int> > tmap; //map containing a value for every individual pal.
@@ -34,8 +35,6 @@ int main() { //Test program
     string tmp3;
 
 //    map<string, map<char,int> > tmap; //map containing a value for every individual pal.
-//    map<char,int> amap; //map containing the value of the kissing pal.
-
     int cur_pos=0;
     char first_char, cur_char, last_char;
     for (int i=0; i<pal.size(); i++) {
@@ -45,9 +44,22 @@ int main() { //Test program
         emap[last_char].push_back(pal.at(i));
         for (int j=0; j<pal.size(); j++) { //put all the palindromes in tmap
             cur_char=*(pal.at(i).begin()+j);
-            tmap[pal.at(i)][cur_char]=1; //
+            tmap[pal.at(i)][cur_char]=1; //map all the possible chars
         }
     }
 
-//    for (int i=0; i<pal.size(); i++) {
+//    map<char,vector<string> > smap; //map of the starting chars.
+//    vector<string> kiss; //The kissing palindrome!
+    char cur_lo;
+    char start='a';
+    for (int i=0; i<pal.size(); i++) { //form the actual kissing palindromes!
+        start='a';
+        for (int j=0; j<26; j++)
+            amap[start+j]=0; //clear out the amap!
+        for (int j=0; j<26; j++) {
+            for (int k=0; k<smap[start+j].size(); k++) {
+                smap[start+j].at(k)="poop";
+            }
+        }
+    }
 }
