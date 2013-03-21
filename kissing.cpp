@@ -10,7 +10,7 @@ using namespace std;
 bool fullalph(map<char,int>); //Sees if the map contains all the alphabetic characters
 void zero_map(map<char,int> &out); //Sets the alphabetic map to zero
 //Adds the map into itself
-void add_map(map<char,int> &out, map<string,map<char,int> > &temp, string s);
+void add_maps(map<char,int> &out, map<string,map<char,int> > &temp, string s);
 void printpal(vector<string>); //prints the kissing palindrome string
 void printmap(map<char,int> &in,bool nl); //prints a map, nl =newline, otherwise just uses spaces
 void printvec(map<char,vector<string> > &in); //prints the maps of characters to strings
@@ -22,9 +22,11 @@ int main() { //Test program
     //Screw it. I don't even care. Just throw the whole damned dictionary into here.
     vector<string> pal; //Contains only the relevant palindromes
     vector<string> kiss; //The kissing palindrome!
+    vector<string> final_kiss; //The kissing palindrome!
     map<char,vector<string> > start_map; //map of the starting chars.
     map<string, map<char,int> > alph_map; //map containing a value for every individual pal.
     map<char,int> all_maps; //map containing the value of the kissing pal.
+    int i, j;
 
     fstream pald ("pal");
 
@@ -33,31 +35,59 @@ int main() { //Test program
         if (entry.length()!=1)
             pal.push_back(entry);
 
-    for (int i=0; i<pal.size(); i++)
-        printf("%s\n",pal.at(i).c_str());
-
-    char first_char, cur_char, last_char;
+    char first_char, cur_char;
     for (int i=0; i<pal.size(); i++) {
         first_char=*pal.at(i).begin();
         start_map[first_char].push_back(pal.at(i));
         for (int j=0; j<pal.at(i).length(); j++) { //put all the palindromes in the alpha map
-            cur_char=*(pal.at(i).begin()+j); //find the char at location 
+            cur_char=*(pal.at(i).begin()+j); //find the char at location
             alph_map[pal.at(i)][cur_char]+=1; //map all the possible chars
         }
     }
-
-    printvec(start_map);
-    char cur_lo;
-//    map<char,vector<string> > smap; //map of the starting chars.
-//    map<string, map<char,int> > tmap; //map containing a value for every individual pal.
-//    map<char,int> amap; //map containing the value of the kissing pal.
-//map<char,int> add_map(map<string,map<char,int> > &temp_map, string s)
-
     zero_map(all_maps);
-//    add_map(amap, tmap, "poop");
-    char a='a';
 
-//    printmap(amap,0);
+//bool test_vector(vector<string> pal, string s); //tests if a string is inside of a vector
+//bool skipqxz(char c); //skips the character if it's q, x, or z
+//bool maps_diff(map<char,int> &map1, map<char,int> &map2);//True is map1/2 have overlaping char
+//map<char,vector<string> > start_map; //map of the starting chars.
+//map<string, map<char,int> > alph_map; //map containing a value for every individual pal.
+//map<char,int> all_maps; //map containing the value of the kissing pal.
+    bool jflag;
+    int length, final_length=99999;
+    char last_char;
+    string tmp;
+    string tmp2;
+    string test="poop";
+    bool testb;
+    testb=test_vector(pal,static_cast<string>(test));
+
+    for (i=0; i<pal.size(); i++) { //Loop through, starting with every possible palindrome first
+        zero_map(all_maps); //Clear out the mapping deal
+        kiss.clear(); //Clear out the kissing palindrome.
+        tmp=pal.at(i);
+        kiss.push_back(tmp); //Put the ith palendrome at the root.
+        last_char=*(tmp.end()-1); //find the last char in the kissing palindrome
+        add_maps(all_maps,alph_map,tmp);
+//        printpal(kiss);
+//        printmap(all_maps,0);
+        for (j=0; j<start_map[last_char].size(); j++) {
+            jflag=0;
+            tmp2=start_map[last_char].at(j);
+            if (test_vector(kiss,tmp2)) {//Word is already in the palindrome.
+                printf("Skipping %s because %s is already in the palindrome:\n",tmp2.c_str(),tmp2.c_str());
+                printpal(kiss);
+                jflag=1;
+            }
+            if (maps_diff(alph_map[tmp2],all_maps)) { //No new letters in palindrome
+                printf("Skipping %s because map has nothing to add:\n",tmp2.c_str());
+                printpal(kiss);
+                printmap(all_maps,0);
+                jflag=1;
+            }
+            if (jflag==1)
+                continue;
+        }
+    }
 
     return 0;
 }
@@ -67,7 +97,7 @@ void zero_map(map<char,int> &out) { //zeros all the letters in out.
         out['a'+i]=0;
 }
 
-void add_map(map<char,int> &out, map<string,map<char,int> > &temp, string s) {
+void add_maps(map<char,int> &out, map<string,map<char,int> > &temp, string s) {
     for (int i=0; i<26; i++) //Adds together out+temp[s], stores in out.
         out['a'+i]+=static_cast<int>(temp[s]['a'+i]);
 }
@@ -104,13 +134,6 @@ void printmap(map<char,int> &in,bool nl) { //prints map, if nl=1, print newlines
     }
 }
 
-bool test_vector(string s, vector<string> pal) {
-    for (int i=0; i<pal.size(); i++) //make sure there are no repeats
-        if (s==pal.at(i))           //in the palindrome.
-            return 1;
-    return 0;
-}
-
 bool skipqxz(char c) { //skips the character if it's q, x, or z
     if ( (c=='q')||(c=='x')||(c=='z') )
         return true;
@@ -118,11 +141,18 @@ bool skipqxz(char c) { //skips the character if it's q, x, or z
         return false;
 }
 
+bool test_vector(vector<string> pal, string s) {
+    for (int i=0; i<pal.size(); i++) //make sure there are no repeats
+        if (s==pal.at(i))           //in the palindrome.
+            return true;
+    return false;
+}
+
 bool maps_diff(map<char,int> &map1, map<char,int> &map2) {
     for (int i=0; i<26; i++) {
         if (skipqxz('a'+i))
             continue;
-        if (map1['a'+i]!=map2['a'+i])
+        if (!map1['a'+i] != !map2['a'+i]) //logical XOR operation
             return true;
     }
     return false;
