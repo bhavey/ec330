@@ -156,12 +156,11 @@ Rhits Trie::searchSubWords(string s) {
 int main() { //Test program
     Trie* trie = new Trie();
 
-    fstream in ("SmallData.txt");
+    fstream in ("BigData.txt");
     fstream dict ("Dictionary");
     //struct Rhits contains: int hits,   vector<string> words
     Rhits hits;
     Rhits hits2;
-    hits2.hits=2;
 
     string entry;
     string word;
@@ -171,27 +170,22 @@ int main() { //Test program
     }
     printf("Trie constructed from dictionary!\n");
 
-    hits=trie->searchSubWords("hellooob2all");
-    cout << "Found the following results for hellooob2all: ";
-    for (int i=0; i < hits.words.size(); i++) {
-        cout << hits.words.at(i) << " ";
-    }
-    printf("\nWith total: %d\n",hits.hits);
-    hits2 = trie->searchSubWords("poop");
-    cout << "Found the following results for poop: ";
-    for (int i=0; i < hits2.words.size(); i++) {
-        cout << hits2.words.at(i) << " ";
-    }
-    printf("\nWith total: %d\n",hits2.hits);
-    hits2 += hits;
-    cout << "Found the following results for the two summed: ";
-    for (int i=0; i < hits2.words.size(); i++) {
-        cout << hits2.words.at(i) << " ";
-    }
-    printf("With total: %d\n",hits2.hits);
+    long int pos=0;
 
-    if (trie->searchWord("n"))
-        printf("There was an n\n");
+    while (in >> word) {
+        transform(word.begin(), word.end(), word.begin(), ::tolower);
+        hits=trie->searchSubWords(word);
+//        printf("\nMatches for %s: ",word.c_str());
+  //      for (int i=0; i < hits.words.size(); i++)
+    //        cout << hits.words.at(i) << ", ";
+        hits2+=hits;
+        if (pos%50000==0) {
+            printf("At word %ld\n",pos);
+
+//            usleep(200000);
+        }
+        pos++;
+    }
 
     delete trie;
 }
