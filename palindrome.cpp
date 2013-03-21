@@ -66,17 +66,14 @@ int main() { //Test program
         cur_pos++;
     }
 
-//    for (int i=0; i<Dictionary.size(); i++)
-  //      printf("%s\n",Dictionary.at(i).c_str());
-
     char last_char;
     bool breakvar=0;
     //Now that we have repeats culled out, find the flipable and palindrotic words.
     for (int i=0; i<Dictionary.size(); i++) {
         breakvar=0;
-        if (i%5000==0) {
-  //          printf("At iteration %d\n",i);
-//            printf("%s, %s, %c\n",tmp1.c_str(),tmp2.c_str(),*tmp2.begin());
+        if (i%10000==0) {
+            printf("At iteration %d\n",i);
+            printf("%s, %s, %c\n",tmp1.c_str(),tmp2.c_str(),*tmp2.begin());
         }
         tmp1=Dictionary.at(i);
         tmp2=flipstring(tmp1);
