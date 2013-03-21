@@ -41,7 +41,7 @@ int main() { //Test program
         start_map[first_char].push_back(pal.at(i));
         for (int j=0; j<pal.at(i).length(); j++) { //put all the palindromes in the alpha map
             cur_char=*(pal.at(i).begin()+j); //find the char at location
-            alph_map[pal.at(i)][cur_char]+=1; //map all the possible chars
+            alph_map[pal.at(i)][cur_char]=1; //map all the possible chars
         }
     }
     zero_map(all_maps);
@@ -72,23 +72,32 @@ int main() { //Test program
 //        printmap(all_maps,0);
         for (j=0; j<start_map[last_char].size(); j++) {
             jflag=0;
+            printf("\n\n------------------------------------------------------------------\n\nCurrent Palindrome: ");
+            printpal(kiss);
             tmp2=start_map[last_char].at(j);
+                printf("all maps:\n");
+                printmap(all_maps,0);
+                printf("\n%s map:\n",tmp2.c_str());
+                printmap(alph_map[tmp2],0);
+                printf("\n\n\n");
             if (test_vector(kiss,tmp2)) {//Word is already in the palindrome.
                 printf("Skipping %s because %s is already in the palindrome:\n",tmp2.c_str(),tmp2.c_str());
-                printpal(kiss);
                 jflag=1;
             }
+//            if (maps_diff(all_maps,all_maps)) { //No new letters in palindrome
             if (maps_diff(alph_map[tmp2],all_maps)) { //No new letters in palindrome
-                printf("Skipping %s because map has nothing to add:\n",tmp2.c_str());
-                printpal(kiss);
-                printmap(all_maps,0);
+                printf("Skipping %s because map has nothing to add.",tmp2.c_str());
                 jflag=1;
+                usleep(2000000);
             }
-            if (jflag==1)
+            if (jflag==1) //Something went wrong, so continue on.
                 continue;
+            kiss.push_back(tmp2); //tmp2 fits the necessary criteria. Put it on the kissing pal
+            last_char=*(tmp2.end()-1); //find the last char in the kissing palindrome
+            printpal(kiss);
+            usleep(200000);
         }
     }
-
     return 0;
 }
 
@@ -149,11 +158,16 @@ bool test_vector(vector<string> pal, string s) {
 }
 
 bool maps_diff(map<char,int> &map1, map<char,int> &map2) {
+    printf("Maps_Dif: \n");
+    printmap(map1,0);
+    printf("\n");
+    printmap(map2,0);
+    printf("\n");
     for (int i=0; i<26; i++) {
         if (skipqxz('a'+i))
             continue;
-        if (!map1['a'+i] != !map2['a'+i]) //logical XOR operation
-            return true;
+        if (map1['a'+i]!=map2['a'+i])
+            return false;
     }
-    return false;
+    return true;
 }
