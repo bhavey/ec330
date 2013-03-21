@@ -84,7 +84,7 @@ int main() { //Test program
             kiss.erase(kiss.begin()+itr+1, kiss.end());
             printf("after:\n");
             printpal(kiss);
-            printf("i: %d, j: %d, k: %d, last: %c\n",i,j,k,last_char);
+            printf("i: %d, j: %d, k: %d, itr: %d, last: %c\n",i,j,k,itr,last_char);
             zero_map(all_maps); //Clear out the mapping deal
             for (int l=0; l<kiss.size(); l++)
                 add_maps(all_maps,alph_map,kiss.at(l));
@@ -102,14 +102,18 @@ int main() { //Test program
                 if (test_vector(kiss,tmp2)) {//Word is already in the palindrome.
                     printf("Skipping %s because %s is already in the palindrome:\n",tmp2.c_str(),tmp2.c_str());
                     jflag=1;
-//                    if (j==(start_map[last_char].size()-1))
-  //                      jumpflag=1; //We got locked out.
+                    if (j==(start_map[last_char].size()-1))
+                        jumpflag=1; //We got locked out.
                 }
                 if (maps_diff(alph_map[tmp2],all_maps)) { //No new letters in palindrome
+                //Just realized this jumps way too loosely!
+                //It jumps whenever they have the same character map.
+                //Should only skip if they have the same character map *and* the last letter has
+                //yes to be touched.
                     printf("Skipping %s because map has nothing to add.",tmp2.c_str());
                     jflag=1;
-    //                if (j==(start_map[last_char].size()-1))
-      //                  jumpflag=1; //We got locked out.
+                    if (j==(start_map[last_char].size()-1))
+                        jumpflag=1; //We got locked out.
                 }
                 if (jflag==1) {//Something went wrong, so continue on.
                     if (jumpflag) {
