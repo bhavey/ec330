@@ -10,6 +10,7 @@ using namespace std;
 bool fullalph(map<char,int>);
 void printpal(vector<string>);
 int test_in(string s, vector<string> pal);
+void zero_map(map<char,int> &out);
 void add_map(map<char,int> &out, map<string,map<char,int> > &temp, string s);
 
 int main() { //Test program
@@ -50,9 +51,9 @@ int main() { //Test program
         last_char=*(pal.at(i).end()-1);
         smap[first_char].push_back(pal.at(i));
         emap[last_char].push_back(pal.at(i));
-        for (int j=0; j<pal.size(); j++) { //put all the palindromes in tmap
+        for (int j=0; j<pal.at(i).length(); j++) { //put all the palindromes in tmap
             cur_char=*(pal.at(i).begin()+j);
-            tmap[pal.at(i)][cur_char]=1; //map all the possible chars
+            tmap[pal.at(i)][cur_char]+=1; //map all the possible chars
         }
     }
 
@@ -66,25 +67,37 @@ int main() { //Test program
 //    map<char,int> amap; //map containing the value of the kissing pal.
 //map<char,int> add_map(map<string,map<char,int> > &temp_map, string s)
 
-    map<char,int> temp_map;
-    add_map(amap, tmap, "reiter");
+    zero_map(amap);
+    add_map(amap, tmap, "poop");
     char a='a';
 
-//    for (int i=0; i<26; i++)
-  //      printf("%c: %d\n",a+i,amap[a+i]);
+    printf("amap end state:\n");
+    for (int i=0; i<26; i++)
+        printf("%c: %d\n",a+i,amap[a+i]);
 
     return 0;
 }
 
+void zero_map(map<char,int> &out) {
+    char c='a';
+    for (int i=0; i<26; i++)
+        out[c+i]=0;
+}
+
 void add_map(map<char,int> &out, map<string,map<char,int> > &temp, string s) {
     char c='a';
-    printf("string letter matches: \n");
-    for (int i=0; i<26; i++)
-        printf("%c: %d\n",c+i,temp[s][c+i]);
-
-    for (int i=0; i<26; i++)
-        out[c+i]+=temp[s][c+1];
+    int stupid_code_work;
+    for (int i=0; i<26; i++) {
+        stupid_code_work=temp[s][c+i];
+        out[c+i]+=stupid_code_work;
+    }
 }
+
+//returns:
+//starting out for o: 0
+//temp vs. final out for o: 2 vs 0
+//starting out for p: 0
+//temp vs. final out for p: 2 vs 0
 
 bool fullalph(map<char,int> inmap) {
     char start='a';
