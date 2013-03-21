@@ -68,34 +68,36 @@ int main() { //Test program
         kiss.push_back(tmp); //Put the ith palendrome at the root.
         last_char=*(tmp.end()-1); //find the last char in the kissing palindrome
         add_maps(all_maps,alph_map,tmp);
-//        printpal(kiss);
-//        printmap(all_maps,0);
         for (j=0; j<start_map[last_char].size(); j++) {
             jflag=0;
             printf("\n\n------------------------------------------------------------------\n\nCurrent Palindrome: ");
             printpal(kiss);
             tmp2=start_map[last_char].at(j);
-                printf("all maps:\n");
-                printmap(all_maps,0);
-                printf("\n%s map:\n",tmp2.c_str());
-                printmap(alph_map[tmp2],0);
-                printf("\n\n\n");
             if (test_vector(kiss,tmp2)) {//Word is already in the palindrome.
                 printf("Skipping %s because %s is already in the palindrome:\n",tmp2.c_str(),tmp2.c_str());
                 jflag=1;
             }
-//            if (maps_diff(all_maps,all_maps)) { //No new letters in palindrome
             if (maps_diff(alph_map[tmp2],all_maps)) { //No new letters in palindrome
                 printf("Skipping %s because map has nothing to add.",tmp2.c_str());
                 jflag=1;
-                usleep(2000000);
             }
             if (jflag==1) //Something went wrong, so continue on.
                 continue;
             kiss.push_back(tmp2); //tmp2 fits the necessary criteria. Put it on the kissing pal
             last_char=*(tmp2.end()-1); //find the last char in the kissing palindrome
             printpal(kiss);
+            add_maps(all_maps,alph_map,tmp2);
             usleep(200000);
+            if(fullalph(all_maps)) {
+                printf("Complete palindrome:\n");
+                printpal(kiss);
+                printf("Alphabet Map:\n");
+                printmap(all_maps,0);
+                sleep(5);
+            } else {
+                j=-1;
+                continue;
+            }
         }
     }
     return 0;
@@ -108,7 +110,8 @@ void zero_map(map<char,int> &out) { //zeros all the letters in out.
 
 void add_maps(map<char,int> &out, map<string,map<char,int> > &temp, string s) {
     for (int i=0; i<26; i++) //Adds together out+temp[s], stores in out.
-        out['a'+i]+=static_cast<int>(temp[s]['a'+i]);
+        if (static_cast<int>(temp[s]['a'+i]))
+            out['a'+i]=1;
 }
 
 bool fullalph(map<char,int> inmap) { //check if every letter is present in the map
