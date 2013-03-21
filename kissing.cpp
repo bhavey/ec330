@@ -64,19 +64,17 @@ int main() { //Test program
     int newflag;
     int jflag, kflag, lflag, mflag, nflag;
     for (int i=0; i<pal.size(); i++) { //form the actual kissing palindromes!
-        start='a';
         for (int j=0; j<26; j++)
             amap[start+j]=0; //clear out the amap!
         for (int j=0; j<26; j++) {
             newflag=0;
             lflag=0;
             kiss.clear(); //clean it every time we reach here!
-//            for (int k=0; k<26; k++) {
-                for (int l=0; l<(emap[start+j].size())&&!lflag; l++) {
+                for (int l=0; l<(!newflag?emap[start+j].size():emap[last_char].size())&&!lflag; l++) {
                     if (!newflag)
                         kiss.push_back(emap[start+j].at(l)); //Put this piece on the top.
                     else {
-                        tmp1=emap[start+j].at(l);
+                        tmp1=emap[last_char].at(l);
                         test_in(tmp1, kiss);
                     }
                     for (int m=0; m<26; m++) //Add to the main maping
@@ -92,18 +90,18 @@ int main() { //Test program
                         }
 
                         kiss.push_back(tmp1);
+                        last_char=*(tmp1.end()-1);
                         for (int n=0; n<26; n++)
                             amap[start+n]=amap[start+n]+tmap[emap[start+j].at(l)][start+n];
                         if (fullalph(amap)) {
                             printpal(kiss);
                             lflag=1;
                         }
-//                            printf("Found a palindrome!\n");
                     }
                 }
-  //          }
+        printf("j:%d\n",j);
+        printpal(kiss);
         }
-        printf("i:%d\n",i);
     }
 }
 
