@@ -8,6 +8,10 @@
 #include <map>
 #include <time.h>
 
+//Code selects a random first entry and then does random searches on mapped equivalents.
+//Whatever word gives the most new letters gets picked.
+//Takes in palindrome data from file "pal". This was generated with palindrome.cpp
+
 using namespace std;
 bool fullalph(map<char,int>); //Sees if the map contains all the alphabetic characters
 void zero_map(map<char,int> &out); //Sets the alphabetic map to zero
@@ -49,10 +53,10 @@ int main() { //Test program
             alph_map[pal.at(i)][cur_char]=1; //map all the possible chars
         }
     }
+    //fill 'all_maps' with zeros
     zero_map(all_maps);
 
     map<char,int> tmp_map; //map containing the value of the kissing pal.
-    bool jflag;
     int length, final_length=99999;
     char last_char;
     string prev="a";
@@ -61,35 +65,28 @@ int main() { //Test program
     int randval;
     int randpos;
     int itrs=1;
-
-string newstr="duggolferreknittwasspeccammhoovaajarrobeeyeeborrajaavoohmmaccepssawttinkerrefloggud";
-    map<char,int> poopmap;
-    printf("string length: %d\n",(int)newstr.size());
-    for (int j=0; j<newstr.size(); j++)
-        for (int i=0; i<26; i++) //Adds together out+temp[s], stores in out.
-            if (*(newstr.begin()+j)=='a'+i)
-                poopmap['a'+i]=1;
-    printmap(poopmap,0);
-
     int cur_sum;
     int fin_sum=0;
 
-    for(int k=0; k<10; k++) {
+    for(int k=0; k<3; k++) {
         randval=rand()%26;
         randpos=rand()%(start_map['a'+randval].size());
+        //finds the first random value
         cur_final=start_map['a'+randval].at(randpos);
         printf("first: %s\n",cur_final.c_str());
         last_char=*(cur_final.end()-1);
         int size_range;
+        //20 is an arbitrary number. it'll eventually reach a max word when all letters are filled
         for (i=0; i<20; i++) {
             zero_map(tmp_map);
+            //if the two strings are the same repeatedly, grab a new one!
             if (strcmp(cur_final.c_str(),prev.c_str())==0) {
                     randval=rand()%26;
                     randpos=rand()%(start_map['a'+randval].size());
                     prev=start_map['a'+randval].at(randpos);
                 kiss.pop_back();
                 prev=kiss.at(kiss.size()-1);
-            } else {
+            } else { //create the new base in the vector from what we get in the following loop
                 add_maps(all_maps,alph_map,cur_final);
                 prev=cur_final; //put the last one on this one!
                 kiss.push_back(prev); //throw that on kiss!
@@ -109,21 +106,32 @@ string newstr="duggolferreknittwasspeccammhoovaajarrobeeyeeborrajaavoohmmaccepss
                 ||*(cur.end()-1)=='q'||*(cur.end()-1)=='x'||*(cur.end()-1)=='z') {
                     continue;
                 }
-                if (cur_sum>fin_sum) {
+                if (cur_sum>fin_sum) { //load the highest sum in the current position.
                     fin_sum=cur_sum;
                     cur_final=cur;
                 }
             }
         }
+        //clean it up, try again.
         printpal(kiss);
         fin_sum=0;
         cur_sum=0;
         kiss.clear();
     }
+    //this is just for testing strings that are created. This was the best string.
+    string newstr="duggolferreknittwasspeccammhoovaajarrobeeyeeborrajaavoohmmaccepssawttinkerrefloggud";
+    map<char,int> poopmap;
+    printf("\nstring: %s\n",newstr.c_str());
+    printf("string length: %d\n",(int)newstr.size());
+    for (int j=0; j<newstr.size(); j++)
+        for (int i=0; i<26; i++) //Adds together out+temp[s], stores in out.
+            if (*(newstr.begin()+j)=='a'+i)
+                poopmap['a'+i]=1;
+    printmap(poopmap,0);
     return 0;
 }
 
-int sum_map(map<char,int> &in) {
+int sum_map(map<char,int> &in) { //Sum the values 
     int out=0;
     for (int i=0; i<26; i++)
         if (skipqxz('a'+i))
