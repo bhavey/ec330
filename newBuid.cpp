@@ -6,7 +6,7 @@
 #include <ctype.h>
 
 using namespace std;
-#define BUID 27
+#define BUID 24
 
 int findID(string,int); //returns the amount of BU ID's present in the current file.
 
