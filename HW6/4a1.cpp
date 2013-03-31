@@ -25,7 +25,7 @@ ____
     fstream in ("dictionary");
     string entry;
 
-    while (in >> entry) { //Find the number of available entries of each size
+    while (in >> entry) { //Find relevant entries and put them in the vetors
         if (entry.length() == 1)
             ar1.push_back(*entry.c_str());
         if (entry.length() == 2) {
