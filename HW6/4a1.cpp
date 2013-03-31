@@ -14,65 +14,47 @@ ____
 _###
 ____
 */
-    int size[6]; //contains the # of letters for every n letter word
-    int a1,a2,a3,a4,a5;
 
-    char *ar1; //one letter length.
-    char *ar2[2]; //two letter length.
-    char *ar3[3]; //three letter length.
-    char *ar4[4]; //four letter length.
-    char *ar5[5]; //five letter length.
+    //These 5 vectors contain the contents of 1-5 letter words in the dictionary
+    vector<char> ar1;
+    vector<char*> ar2;
+    vector<char*> ar3;
+    vector<char*> ar4;
+    vector<char*> ar5;
 
     fstream in ("dictionary");
     string entry;
 
     while (in >> entry) { //Find the number of available entries of each size
         if (entry.length() == 1)
-            size[1]++;
-        if (entry.length() == 2)
-            size[2]++;
+            ar1.push_back(*entry.c_str());
+        if (entry.length() == 2) {
+            ar2.push_back((char *)entry.c_str());
+            printf("Found one at %s\n", (char *)entry.c_str());
+        }
         if (entry.length() == 3)
-            size[3]++;
+            ar3.push_back((char *)entry.c_str());
         if (entry.length() == 4)
-            size[4]++;
+            ar4.push_back((char *)entry.c_str());
         if (entry.length() == 5)
-            size[5]++;
-    }
-    printf("1: %d, 2: %d, 3: %d, 4: %d, 5: %d\n",size[1],size[2],size[3],size[4],size[5]);
-
-    ar1 = new char [size[1]];
-    for (int i=0; i<2; i++)
-        ar2[i] = new char [size[2]];
-    for (int i=0; i<3; i++)
-        ar3[i] = new char [size[3]];
-    for (int i=0; i<4; i++)
-        ar4[i] = new char [size[4]];
-    for (int i=0; i<5; i++)
-        ar5[i] = new char [size[5]];
-
-    in.seekg (0,in.beg); //Go back to the beginning!
-    while (in >> entry) { //Fill the crossword puzzle in!
-        if (entry.length() == 1)
-            
-        if (entry.length() == 2)
-            size[2]++;
-        if (entry.length() == 3)
-            size[3]++;
-        if (entry.length() == 4)
-            size[4]++;
-        if (entry.length() == 5)
-            size[5]++;
+            ar5.push_back((char *)entry.c_str());
     }
 
-
-    delete[] ar1;
-    for (int i=0; i<2; i++)
-        delete[] ar2[i];
-    for (int i=0; i<3; i++)
-        delete[] ar3[i];
-    for (int i=0; i<4; i++)
-        delete[] ar4[i];
-    for (int i=0; i<5; i++)
-        delete[] ar5[i];
+    printf("ar1: ");
+    for (int i=0; i<ar1.size(); i++)
+        printf("%c ",ar1.at(i));
+    printf("\n\nar2: ");
+    for (int i=0; i<ar2.size(); i++)
+        printf("%s ",ar2.at(i));
+    printf("\n\nar3: ");
+/*    for (int i=0; i<ar3.size(); i++)
+        printf("%s ",ar3.at(i));
+    printf("\n\nar4: ");
+    for (int i=0; i<ar4.size(); i++)
+        printf("%s ",ar4.at(i));
+    printf("\n\nar5: ");
+    for (int i=0; i<ar5.size(); i++)
+        printf("%s ",ar5.at(i));
+*/
     return 0;
 }
