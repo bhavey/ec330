@@ -1,0 +1,151 @@
+Obtaining all kissing palindromes:
+
+start_map<char,vector<string> >  contains the palindrome strings mapped to their first characters
+
+vector<string> kiss contains the final palindromic string
+
+all_map<char,int> contains letter counts for every individual word
+
+letter_map<string,map<char,int> > contains the number of letters mapped to each palindrome string
+
+function add_map adds two maps together
+function fullalph checks if a map contains the full alphabet
+function maps_diff sees if the letter maps of two strings are different.
+
+First create a list of all palindromic words, put into pal
+Then fill every letter_map with the palindromic strings
+Also fill start_map with the palindromic strings
+
+then from i=0 to size(pal)
+	empty t_map
+	clear out kiss.
+	push back kiss=pal.(i) //create root of kiss
+	last_char=*(kiss.at(i).end()-1)
+	add_maps(all_map,letter_map[pal.(i)]
+	for j=0 to start_map[last_char].size()
+		jflag=0
+		for k=0 to kiss.size() { //Checks for repeats/words with no new characters
+			if start_map[last_char].at(j)==kiss.at(k) {
+				jflag=1;
+				break;
+			}
+			if maps_diff(start_map[last_char.at(j), all_maps) {
+				jflag=1;
+				break;
+			}
+		}
+		if (jflag==1)
+			continue; //continue on to next possible word.
+		else { //found new word at start_map[last_char].at(j)
+			push back kiss=start_map[last_char].at(j)
+			last_char=*(kiss.at(kiss.end()-1).end()-1)
+			add_maps(all_maps,letter_map[kiss.at(kiss.end()-1)] )
+			if (fullalph(all_maps))
+				DONE
+			else {
+				j=-1;
+				continue;
+			}
+		}
+	}
+}
+
+get to bottom of aa, this happens when (j==start_map[last_char].size()-1)&&(either type of failure.)
+
+
+OK, new concept: provide a link of every possible combination of words against each other… that is to say a-z end against a-z begin. 
+
+
+murdrum
+adinida
+acrid
+agama
+amunam
+anacara
+atokal
+bobac
+civic
+degged
+dinar
+drawer
+enamor
+gangan
+gelder
+gater
+golfer
+hakam
+hoop
+kakkak
+kassak
+kayak
+kazak
+kelek
+lasso
+leet
+malayalam
+manes
+mesem
+meter
+mooder
+niter
+nedder
+nonet
+radar
+rebus
+redrawer
+repaper
+reviver
+robur
+rewet
+senones
+sooloos
+tebbet
+terret
+trow
+toy
+tow
+zaman
+yaray
+
+
+q x z
+     4           7        9        12       13               15
+imer, rebus, spart, tonen, nagor, redrawer
+      4          9       14       19        24              32
+						     13
+darts, senones, sinnet, tut, tebet,
+         5       8      9         13     
+spat, teda, atokel lager, rebus, sawt 
+        5        9     13         19  23  26
+
+4         6          9
+knit teel lekota
+
+atokel
+leet
+swat
+
+cod, devil, larus, swat, tenet, tyt, tebbet,
+isis, spart, tebet, tort, tenet, tut, tyt, 
+camus, sinnet, tort, tebet, tyt, 
+imer, rebus, sooloos, sawt, 
+gog, gelder, rebus, swat, tit, 
+lwo, otus, spart, tebbet, tenet, tit 
+egol, larus, sinnet, tebet, 
+pip, paler, rebus, swat, 
+ave, eciton, neper
+
+reve eh ha adman nay yaws sumac cap peen nef flog gaj jag golf fen neep pac camus sway yan namda ah he ever 
+3        4    5    7   8      9   10 11 12   13  14            17    19
+reve eh ha adman nay yaws sumac cap pen nef flog gaj jag golf fen nep pac camus sway yan namda ah he ever 
+3     4
+avo ohm my yaws stoof fled decap pik knub brog gaj jag gorb bunk kip paced delf foots sway ym mho ova
+
+xema, agust, tinker, reflog, gu, paced, drub, bohor, reviver, raja, 
+
+her, rebus, sgad, decima, aryl, leep, pik,
+
+fi, iron, neat, tsuga, amiced, devil, leek, klop, poh, haya, ajar, 
+
+45, missing b,y
+dug golfer reknit twas spec cam mho ova ajaja
