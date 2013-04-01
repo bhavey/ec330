@@ -41,37 +41,26 @@ ____
             ar5.push_back(entry);
     }
 
-
+    char first, last;
     string row1;
     string col1, col2, col3;
-    col3=ar1.at(1); //This is seperate from everything else
-    row2=ar1.at(5); //can set them to anything
+    col3=ar5.at(1); //This is seperate from everything else
     for (int i=0; i<ar3.size(); i++) { //row1 is the smallest, set to the outermost.
-        row1=ar2.at(i);
+        row1=ar3.at(i);
+        first=row1[0];
+        last=row1[2];
         for (int j=0; j<ar5.size(); j++) {
             col1=ar5.at(j);
-            if (col1[2]==row3[1]) { //col1 and row3 match!
-                for (int k=0; k<ar4.size(); k++) {
-                    row4=ar4.at(k);
-                    if (row4[1]==col1[4]) { //col1 and row4 match!
-                        for (int l=0; l<ar5.size(); l++) {
-                            col2=ar5.at(l);
-                            if (col2[4]==row4[3]) {
-                                i=ar2.size();
-                                j=ar5.size();
-                                k=ar4.size();
-                                l=ar5.size();
-                                printf("Here!\n");
-                            }
-                        }
-                    }
-                }
-            }
+            if (col1[4]==first) //col1 and row1 match!
+                break;
+        }
+        for (int j=0; j<ar5.size(); j++) {
+            col2=ar5.at(j);
+            if (col2[4]==last) //col2 and row1 match!
+                break;
         }
     }
 
-    printf("r1: %s, r2: %s, r3: %s, r4: %s, c1: %s, c2: %s\n",row1.c_str(),row2.c_str(),row3.c_str(),
-        row4.c_str(),col1.c_str(),col2.c_str());
-
+    printf("c1: %s, r1: %s, c2: %s, c3: %s\n",col1.c_str(),row1.c_str(),col2.c_str(),col3.c_str());
     return 0;
 }
