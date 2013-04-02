@@ -14,44 +14,50 @@ public:
     Base () {};
     Base (int *a, int b, int s);
     Base operator ++(int);
+    ~Base();
     void setBase(int);
     void setContents(int*, int);
     void print();
     void clear();
+    int at(int);
     bool checkEmpty();
 
 private:
     int *contents;
     int base;
     int size;
+    int *cont;
 };
 
 Base::Base (int *a, int b, int s) {
     base=b;
     size=s;
     int j;
-    int cont[size];
+    int *cont;
+    cont = new int[size];
     for (int i=0; i<size; i++)
         cont[i]=a[i];
     contents=cont;
     for (int i=0; i<size; i++)
             if (contents[i]>=base) {
                 j=i;
-//THIS HERE****
-//                printf("Too big at %d\n",i);
-//THE CODE DOESNT WORK WITHOUT THIS PRINT STATEMENT.
                 contents[i]=0;
             }
 }
 
-Base Base::operator++(int a) {
-    for (int i=0; i<size; i++) {
-        contents[i]++;
-        if (contents[i]==base)
-            contents[i]=0;
+Base::~Base() {
+    delete cont;
+}
+Base Base::operator++(int) {
+    Base b = *this;
+    for (int i=size-1; i>=0; i--) {
+        b.contents[i]++;
+        if (b.contents[i]==base)
+            b.contents[i]=0;
         else
             break;
     }
+    return b;
 }
 
 void Base::setBase(int b) {
@@ -88,18 +94,46 @@ bool Base::checkEmpty() {
     return true;
 }
 
-int main() {
-    int colormap[10]={9,2,0,1,2,1,5,3,1,3};
-    Base b2 (colormap,3,10);
-    b2.print();
+int Base::at(int c) {
+    if (c>size)
+        return -1;
+    else
+        return contents[c];
+}
 
+int main() {
+    int colormap[10]={0,1,0,1};
+    Base b2 (colormap,2,4);
+    printf("initialized: ");
+    b2.print();
     b2.clear();
+    printf("cleared: ");
     b2.print();
-    printf("Colormap: ");
-    for (int i=0; i<10; i++)
-        printf("%d, ",colormap[i]);
-    printf("\n");
-    b2.setContents(colormap,10);
+    printf("Contents set: ");
     b2.print();
+    b2.clear();
+    printf("Cleared/incremented: \n");
+    b2.print();
+    for (int i=0; i<16; i++) {
+        b2++;
+        b2.print();
+    }
+    printf("Set to base three, incremented: \n");
+    b2.clear();
+    b2.setBase(3);
+    b2.print();
+    for (int i=0; i<81; i++) {
+        b2++;
+        b2.print();
+    }
+    printf("Set to base 12, incremented: \n");
+    b2.clear();
+    b2.setBase(12);
+    b2.print();
+    for (int i=0; i<20720; i++) {
+        b2++;
+        b2.print();
+    }
+    printf("Contents at 2: %d\n",b2.at(2));
     return 0;
 }
