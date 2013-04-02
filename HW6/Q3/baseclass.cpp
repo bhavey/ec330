@@ -46,7 +46,7 @@ Base::Base (int *a, int b, int s) {
 }
 
 Base::~Base() {
-    delete cont;
+//    delete cont;
 }
 void Base::operator++(int a) {
     //Base b = *this;
