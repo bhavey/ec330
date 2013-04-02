@@ -3,12 +3,25 @@
 
 using namespace std;
 
+
+Graph::Graph() {
+    set<int> vertices;
+    set< directedEdge > edges;
+    map<int,int> colors;
+};
+
 int Graph::addVertex(int color) { //Create a vertex of color. Return ID of the vertex
     vertexIterator it = vertices.end(); //Go to the last item in the set;
-    vertices.insert(*(--it)+1); //Add the new vertex!
-    int vertID=*(++it); //Get the ID of the new vertex.
-    colors[vertID] = color; //Apply the color to the new ID.
-    return vertID; //return the new vertex ID
+    if (vertices.size()==0) { //brand new! Initialize!
+        vertices.insert(0);
+        colors[0] = color;
+        return 0;
+    } else {
+        vertices.insert(*(--it)+1); //Add the new vertex!
+        int vertID=*(++it); //Get the ID of the new vertex.
+        colors[vertID] = color; //Apply the color to the new ID.
+        return vertID; //return the new vertex ID
+    }
 }
 
 void Graph::addEdge(directedEdge newEdge) {
@@ -54,6 +67,21 @@ string Graph::print() {
 }
 
 int main() {
-    printf("Poop!\n");
+    Graph graph;
+    string gstring;
+    graph.addVertex(1); //Makes vertex 0 of color 1.
+    graph.addVertex(2); //Makes vertex 1 of color 2.
+    directedEdge Edge1(0,1); //0->1
+    directedEdge Edge2(1,0); //1->0
+    printf("Color of vertex 0: %d\n", graph.getColor(0));
+    printf("Color of vertex 1: %d\n", graph.getColor(1));
+    graph.addEdge(Edge1);
+    graph.addEdge(Edge2);
+    if (graph.isEdge(Edge1))
+        printf("0->1 is an edge.\n");
+    else
+        printf("0->1 is not an edge.\n");
+    gstring=graph.print();
+    printf("%s\n",gstring.c_str());
     return 0;
 }
