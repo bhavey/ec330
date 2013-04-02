@@ -13,26 +13,32 @@ int Graph::addVertex(int color) { //Create a vertex of color. Return ID of the v
 
 void Graph::addEdge(directedEdge newEdge) {
     directedEdge tmpEdge = newEdge;
-    vertexIterator vend = vertices.end();
+    vertexIterator vEnd = vertices.end();
     vertexIterator it1 = vertices.find(newEdge.first);
     vertexIterator it2 = vertices.find(newEdge.second);
-    if ((it1==vend)||(it2==vend)) {
+    if ((it1==vEnd)||(it2==vEnd)) { //Missing vertex. Break.
         printf("One or both vertices isn't initialized.\n");
-        return;
-    } else {
-    
+    } else { //Add the set to the end of the edges list.
+        edges.insert(newEdge); //insert the directed edge.
     }
     return;
 }
 
 int Graph::getColor(int vertex) {
-
-    return vertex;
+    return colors[vertex];
 }
 
 bool Graph::isEdge(directedEdge newEdge) {
-
-    return true;
+    set< directedEdge >::iterator it;
+    int nE1, nE2, it1, it2;
+    nE1=newEdge.first;
+    nE2=newEdge.second;
+    for (it = edges.begin(); it != edges.end(); ++it) {
+        if ( ((*it).first==nE1) && ((*it).second==nE2) ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 string Graph::print() {
