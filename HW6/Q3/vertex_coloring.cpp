@@ -14,7 +14,6 @@ ofstream outfile ("coloring.txt");
 
 int main() {
     //Read Graph
-    cout<<"Vertex Coloring Algorithm."<<endl;
     int C, N, n, i, j, k, K, p, q, r, s, min, edge, counter=0;
     infile>>N;
     vector< vector<int> > Graph;
@@ -27,26 +26,33 @@ int main() {
         Graph.push_back(row);
     }
     //COLORING to INDEPENDENT SET conversion
-    cout<<"Graph has N = "<<N<<" vertices."<<endl;
-    cout<<"Find a vertex coloring using at most C colors. Enter C = ";
-    cin>>C;
+    cout << "Graph has N = " << N << " vertices." << endl;
+    cout << "Find a vertex coloring using at most C colors. Enter C = ";
+    cin >> C;
     //Complete garph on C verteices
     vector<vector<int> > KC;
     vector<int> row1;
-    for(int i=0; i<C; i++) row1.push_back(1);
-    for(int i=0; i<C; i++) KC.push_back(row1);
-    for(int i=0; i<C; i++) KC[i][i]=0;
+    for(int i=0; i<C; i++)
+        row1.push_back(1);
+    for(int i=0; i<C; i++)
+        KC.push_back(row1);
+    for(int i=0; i<C; i++)
+        KC[i][i]=0;
     //Cartesian product of Graph and KC
     vector<vector<int> > graph;
     vector<int> rowind;
-    for(int i=0; i<C*N; i++) rowind.push_back(0);
-    for(int i=0; i<C*N; i++) graph.push_back(rowind);
     for(int i=0; i<C*N; i++)
-    for(int j=0; j<C*N; j++) {
-        int i_G=i/C, i_KC=i%C, j_G=j/C, j_KC=j%C;
-        if((i_G==j_G) && (KC[i_KC][j_KC]==1)) graph[i][j]=1;
-        if((Graph[i_G][j_G]==1) && (i_KC==j_KC)) graph[i][j]=1;
-    }
+        rowind.push_back(0);
+    for(int i=0; i<C*N; i++)
+        graph.push_back(rowind);
+    for(int i=0; i<C*N; i++)
+        for(int j=0; j<C*N; j++) {
+            int i_G=i/C, i_KC=i%C, j_G=j/C, j_KC=j%C;
+            if((i_G==j_G) && (KC[i_KC][j_KC]==1))
+                graph[i][j]=1;
+            if((Graph[i_G][j_G]==1) && (i_KC==j_KC))
+                graph[i][j]=1;
+        }
     //Assign parameters for finding independent sets in the graph
     n=N*C; K=n/C; k=n-K;
     //Find Neighbors
@@ -60,27 +66,31 @@ int main() {
 
     //Find Independent Sets
     bool found=false;
-    cout<<"Finding Vertex Colorings..."<<endl;
+    cout << "Finding Vertex Colorings..." << endl;
     min=n+1;
     vector<vector<int> > covers;
     vector<int> allcover;
     for(i=0; i<graph.size(); i++)
         allcover.push_back(1);
     for(i=0; i<allcover.size(); i++) {
-        if(found) break;
-        counter++; cout<<counter<<". ";  outfile<<counter<<". ";
+        if(found)
+            break;
+        counter++;
+        cout << counter << ". ";
+        outfile << counter << ". ";
         vector<int> cover=allcover;
         cover[i]=0;
         cover=procedure_1(neighbors,cover);
         s=cover_size(cover);
-        if(s<min) min=s;
+        if(s<min)
+            min=s;
         if(s<=k) {
-            outfile<<"Vertex Coloring ("<<n-s<<"): ";
+            outfile << "Vertex Coloring (" << n-s << "): ";
             for(j=0; j<cover.size(); j++)
                 if(cover[j]==0)
-                    outfile<<"("<<j/C+1<<","<<j%C+1<<") ";
-            outfile<<endl;
-            cout<<"Vertex Coloring Size: "<<n-s<<endl;
+                    outfile << "(" << j/C+1 << "," << j%C+1 << ") ";
+            outfile << endl;
+            cout << "Vertex Coloring Size: " << n-s << endl;
             covers.push_back(cover);
             found=true;
             break;
@@ -88,13 +98,14 @@ int main() {
         for(j=0; j<n-k; j++)
             cover=procedure_2(neighbors,cover,j);
         s=cover_size(cover);
-        if(s<min) min=s;
-        outfile<<"Vertex Coloring ("<<n-s<<"): ";
+        if(s<min)
+            min=s;
+        outfile << "Vertex Coloring (" << n-s << "): ";
         for(j=0; j<cover.size(); j++)
             if (cover[j]==0)
-                outfile<<"("<<j/C+1<<","<<j%C+1<<") ";
-        outfile<<endl;
-        cout<<"Vertex Coloring Size: "<<n-s<<endl;
+                outfile << "(" << j/C+1 << "," << j%C+1 << ") ";
+        outfile << endl;
+        cout << "Vertex Coloring Size: " << n-s << endl;
         covers.push_back(cover);
         if(s<=k) {
             found=true;
@@ -103,62 +114,65 @@ int main() {
     }
     //Pairwise Intersections
     for(p=0; p<covers.size(); p++) {
-        if(found) break;
+        if(found)
+            break;
         for(q=p+1; q<covers.size(); q++) {
-            if(found) break;
+            if(found)
+                break;
             counter++;
-            cout<<counter<<". ";
-            outfile<<counter<<". ";
+            cout << counter << ". ";
+            outfile << counter << ". ";
             vector<int> cover=allcover;
             for(r=0; r<cover.size(); r++)
-            if(covers[p][r]==0 && covers[q][r]==0)
-                cover[r]=0;
+                if(covers[p][r]==0 && covers[q][r]==0)
+                    cover[r]=0;
             cover=procedure_1(neighbors,cover);
             s=cover_size(cover);
-            if(s<min) min=s;
+            if(s<min)
+                min=s;
             if(s<=k) {
-                outfile<<"Vertex Coloring ("<<n-s<<"): ";
+                outfile << "Vertex Coloring (" << n-s << "): ";
+                for(j=0; j<cover.size(); j++)
+                    if(cover[j]==0)
+                        outfile << "(" << j/C+1 << "," << j%C+1 << ") ";
+                outfile << endl;
+                cout << "Vertex Coloring Size: " << n-s << endl;
+                found=true;
+                break;
+            }
+            for(j=0; j<k; j++)
+                cover=procedure_2(neighbors,cover,j);
+            s=cover_size(cover);
+            if(s<min)
+                min=s;
+            outfile << "Vertex Coloring (" << n-s << "): ";
             for(j=0; j<cover.size(); j++)
                 if(cover[j]==0)
-                    outfile<<"("<<j/C+1<<","<<j%C+1<<") ";
-            outfile<<endl;
-            cout<<"Vertex Coloring Size: "<<n-s<<endl;
-            found=true;
-            break;
-        }
-        for(j=0; j<k; j++)
-            cover=procedure_2(neighbors,cover,j);
-        s=cover_size(cover);
-        if(s<min) min=s;
-        outfile<<"Vertex Coloring ("<<n-s<<"): ";
-        for(j=0; j<cover.size(); j++)
-            if(cover[j]==0)
-                outfile<<"("<<j/C+1<<","<<j%C+1<<") ";
-        outfile<<endl;
-        cout<<"Vertex Coloring Size: "<<n-s<<endl;
-        if(s<=k) {
-            found=true;
-            break;
+                    outfile << "(" << j/C+1 << "," << j%C+1 << ") ";
+            outfile << endl;
+            cout << "Vertex Coloring Size: " << n-s << endl;
+            if(s<=k) {
+                found=true;
+                break;
+            }
         }
     }
-}
     if(found)
-        cout<<"Found  complete Vertex Coloring using at most "<<C<<" colors."<<endl;
+        cout << "Found  complete Vertex Coloring using at most " << C << " colors." << endl;
     else
-        cout<<"Could not find complete Vertex Coloring using at most "<<C<<" colors."<<endl
-        <<"Maximum partial Vertex Coloring found for "<<n-min<<" vertices."<<endl;
-    cout<<"See coloring.txt for results."<<endl;
-    system("PAUSE");
+        cout <<"Could not find complete Vertex Coloring using at most " << C << " colors." <<
+        endl <<"Maximum partial Vertex Coloring found for " << n-min << " vertices." << endl;
+    cout << "See coloring.txt for results." << endl;
     return 0;
 }
 
 bool removable(vector<int> neighbor, vector<int> cover) {
     bool check=true;
     for(int i=0; i<neighbor.size(); i++)
-    if(cover[neighbor[i]]==0) {
-        check=false;
-        break;
-    }
+        if(cover[neighbor[i]]==0) {
+            check=false;
+            break;
+        }
     return check;
 }
 
@@ -185,9 +199,9 @@ vector<int> procedure_1(vector<vector<int> > neighbors, vector<int> cover) {
     vector<int> temp_cover=cover;
     int r=0;
     while(r!=-1) {
-    r=max_removable(neighbors,temp_cover);
-    if(r!=-1)
-        temp_cover[r]=0;
+        r=max_removable(neighbors,temp_cover);
+        if(r!=-1)
+            temp_cover[r]=0;
     }
     return temp_cover;
 }
@@ -210,7 +224,8 @@ vector<int> procedure_2(vector<vector<int> > neighbors, vector<int> cover, int k
                 temp_cover=procedure_1(neighbors,temp_cover);
                 count++;
             }
-            if(count>k) break;
+            if(count>k)
+                break;
         }
     }
     return temp_cover;
