@@ -68,7 +68,7 @@ string Graph::print() {
 }
 
 Graph Graph::generateRandom(int num) {
-    srand (time(NULL));
+//    srand (time(NULL));
     Graph graph;
     for (int i=0; i<num; i++) {
         graph.addVertex(rand()%num);
@@ -86,17 +86,14 @@ Graph Graph::generateRandom(int num) {
     return graph;
 }
 
-int Graph::color() {
-
-    return 0;
-}
-
+/*
 int main() {
 //Creates a random graph.
     Graph graph;
     string gstring;
-    graph=graph.generateRandom(5);
+    graph=graph.generateRandom(6);
     gstring=graph.print();
     printf("%s\n",gstring.c_str());
     return 0;
 }
+*/

@@ -13,7 +13,7 @@ class Base {
 public:
     Base () {};
     Base (int *a, int b, int s);
-    Base operator ++(int);
+    void operator ++(int);
     ~Base();
     void setBase(int);
     void setContents(int*, int);
@@ -48,16 +48,22 @@ Base::Base (int *a, int b, int s) {
 Base::~Base() {
     delete cont;
 }
-Base Base::operator++(int) {
-    Base b = *this;
+void Base::operator++(int a) {
+    //Base b = *this;
     for (int i=size-1; i>=0; i--) {
-        b.contents[i]++;
-        if (b.contents[i]==base)
-            b.contents[i]=0;
-        else
-            break;
+        contents[i]++;
+        //printf("Base[%d]: %d, base: %d.\n",i,contents[i],base);
+        if (contents[i]>=base) {
+    //        printf("A.\n");
+            contents[i]=0;
+        } else {
+  //         printf("B.\n");
+           return;
+        }
     }
-    return b;
+//    printf("made it here...\n");
+//    return (Base)*this;
+    return;
 }
 
 void Base::setBase(int b) {
@@ -99,41 +105,4 @@ int Base::at(int c) {
         return -1;
     else
         return contents[c];
-}
-
-int main() {
-    int colormap[10]={0,1,0,1};
-    Base b2 (colormap,2,4);
-    printf("initialized: ");
-    b2.print();
-    b2.clear();
-    printf("cleared: ");
-    b2.print();
-    printf("Contents set: ");
-    b2.print();
-    b2.clear();
-    printf("Cleared/incremented: \n");
-    b2.print();
-    for (int i=0; i<16; i++) {
-        b2++;
-        b2.print();
-    }
-    printf("Set to base three, incremented: \n");
-    b2.clear();
-    b2.setBase(3);
-    b2.print();
-    for (int i=0; i<81; i++) {
-        b2++;
-        b2.print();
-    }
-    printf("Set to base 12, incremented: \n");
-    b2.clear();
-    b2.setBase(12);
-    b2.print();
-    for (int i=0; i<20720; i++) {
-        b2++;
-        b2.print();
-    }
-    printf("Contents at 2: %d\n",b2.at(2));
-    return 0;
 }

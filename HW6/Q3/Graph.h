@@ -40,6 +40,10 @@ public:
     //Format is:  vertex [color]: adjacent_vertex_1 adjacent_vertex_2 ...
 	string print();
 
+    static Graph generateRandom(int num);
+
+    int color();
+
 private:
 	set<int> vertices;         //The set of vertices of the graph.
 	set< directedEdge > edges; //A set of edges of the graph.
@@ -47,3 +51,4 @@ private:
 };
 
 #endif
+
