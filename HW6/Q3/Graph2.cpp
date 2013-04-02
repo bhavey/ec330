@@ -1,8 +1,9 @@
 #include "Graph.h"
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 
 using namespace std;
-
 
 Graph::Graph() {
     set<int> vertices;
@@ -67,42 +68,29 @@ string Graph::print() {
 }
 
 Graph Graph::generateRandom(int num) {
+    srand (time(NULL));
     Graph graph;
+    for (int i=0; i<num; i++) {
+        graph.addVertex(rand()%num);
+    }
+    directedEdge Ed1(0,0);
+    for (int i=0; i<num; i++) {
+        for (int j=0; j<num; j++) {
+            if (rand()%2<1) { //%50 odds!
+                Ed1.first=i;
+                Ed1.second=j;
+                graph.addEdge(Ed1);
+            }
+        }
+    }
     return graph;
 }
 
 int main() {
-
-/*Creates the following graph:
-0<->1->2
-|
-\->3
-with the coloring:
-1<->2->1
-|
-\->5
-*/
-
+//Creates a random graph.
     Graph graph;
     string gstring;
-    graph.addVertex(1); //Makes vertex 0 of color 1.
-    graph.addVertex(2); //Makes vertex 1 of color 2.
-    graph.addVertex(1);
-    graph.addVertex(5);
-    directedEdge Edge1(0,1); //0->1
-    directedEdge Edge2(1,0); //1->0
-    directedEdge Edge3(1,2); //1->2
-    directedEdge Edge4(0,3); //0->3
-    printf("Color of vertex 0: %d\n", graph.getColor(0));
-    printf("Color of vertex 1: %d\n", graph.getColor(1));
-    graph.addEdge(Edge1);
-    graph.addEdge(Edge2);
-    graph.addEdge(Edge3);
-    graph.addEdge(Edge4);
-    if (graph.isEdge(Edge1))
-        printf("0->1 is an edge.\n");
-    else
-        printf("0->1 is not an edge.\n");
+    graph=graph.generateRandom(5);
     gstring=graph.print();
     printf("%s\n",gstring.c_str());
     return 0;
