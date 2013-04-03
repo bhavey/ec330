@@ -2,6 +2,7 @@
 #include "Graph3.cpp"
 #include "baseclass.cpp"
 #include <stdlib.h>
+#include <math.h>
 
 int Graph::color() {
 
@@ -12,7 +13,7 @@ int main() {
     srand(5);
     Graph graph;
     string liststring;
-    int n=4;
+    int n=5;
     printf("size: %d\n",n);
     graph=graph.generateRandom(n);
     liststring=graph.modprint();
@@ -63,17 +64,41 @@ int main() {
     }
 
     printf("\n");
+
     //Now we have our unordered adjacency matrix! Test all possible color schemes!
-    int c=2;
+//    int c=3;
     int inbase[n];
+    int loop_index;
     Base b (inbase,2,n);
-    b.clear();
-    b.setBase(c);
-    b.print();
-    for (int i=0; i<3991; i++) {
-        b++;
+    for (int c=2; c<n; c++) {
+        loop_index=pow(c,n); //go up this high!
+        b.clear();
+        b.setBase(c);
+        int cur_col;
+        int flagvar=1;
+        int j=0,k=0;
+        for (int i=0; i<loop_index; i++) {
+            flagvar=1;
+            b++;
+            for (j=0; (j<n)&&flagvar; j++) {
+                cur_col=b.at(j);
+                for (k=0; (k<n)&&flagvar; k++) {
+                    if ((adjmat[j][k])&&(j!=k)) { //Edge detected!
+                        if (cur_col==b.at(k)) {//Matching colors... :/ don't work!
+                            //printf("Breaking...\n");
+                            flagvar=0;
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (flagvar) {
+                b.print();
+                printf("Here without continuing!\n");
+                return 0;
+            }
+        }
     }
-    b.print();
     return 0;
 
 }
