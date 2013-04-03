@@ -17,37 +17,30 @@ int main() {
     for (int i = 0; i < 16; i++)
         graph.addVertex(0);
     for (int i = 0; i < 2; i++) {
-                graph.addEdge(make_pair(0+8*i,1+8*i));
-                graph.addEdge(make_pair(0+8*i,3+8*i));
-                graph.addEdge(make_pair(0+8*i,4+8*i));
-                graph.addEdge(make_pair(1+8*i,2+8*i));    
-                graph.addEdge(make_pair(1+8*i,5+8*i));
-                graph.addEdge(make_pair(2+8*i,3+8*i));    
-                graph.addEdge(make_pair(2+8*i,6+8*i));
-                graph.addEdge(make_pair(3+8*i,7+8*i));
-                graph.addEdge(make_pair(4+8*i,5+8*i));
-                graph.addEdge(make_pair(4+8*i,7+8*i));
-                graph.addEdge(make_pair(5+8*i,6+8*i));
-                graph.addEdge(make_pair(6+8*i,7+8*i));
-        }
-// Dimensions
-                graph.addEdge(make_pair(0,8));
-                graph.addEdge(make_pair(1,9));
-                graph.addEdge(make_pair(2,10));
-                graph.addEdge(make_pair(3,11));
-                graph.addEdge(make_pair(4,12));
-                graph.addEdge(make_pair(5,13));
-                graph.addEdge(make_pair(6,14));
-                graph.addEdge(make_pair(7,15));
+        graph.addEdge(make_pair(0+8*i,1+8*i));
+        graph.addEdge(make_pair(0+8*i,3+8*i));
+        graph.addEdge(make_pair(0+8*i,4+8*i));
+        graph.addEdge(make_pair(1+8*i,2+8*i));
+        graph.addEdge(make_pair(1+8*i,5+8*i));
+        graph.addEdge(make_pair(2+8*i,3+8*i));
+        graph.addEdge(make_pair(2+8*i,6+8*i));
+        graph.addEdge(make_pair(3+8*i,7+8*i));
+        graph.addEdge(make_pair(4+8*i,5+8*i));
+        graph.addEdge(make_pair(4+8*i,7+8*i));
+        graph.addEdge(make_pair(5+8*i,6+8*i));
+        graph.addEdge(make_pair(6+8*i,7+8*i));
+    }
+    for (int i=0; i<8; i++)
+        graph.addEdge(make_pair(i,i+8));
 
     string teststr;
     printf("Give random vertices #: ");
     cin >> teststr;
     int n = atoi(teststr.c_str());
-    Graph graph;
+//    Graph graph;
     string liststring;
     printf("size: %d\n",n);
-    graph=graph.generateRandom(n);
+//    graph=graph.generateRandom(n);
     liststring=graph.modprint();
     string liststring2=graph.print();
 
