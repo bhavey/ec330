@@ -3,6 +3,7 @@
 #include "baseclass.cpp"
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 int Graph::color() {
 
@@ -13,7 +14,7 @@ int main() {
     srand(5);
     Graph graph;
     string liststring;
-    int n=10;
+    int n=16;
     printf("size: %d\n",n);
     graph=graph.generateRandom(n);
     liststring=graph.modprint();
@@ -58,18 +59,27 @@ int main() {
     int inbase[n];
     long unsigned int loop_index;
     Base b (inbase,2,n);
+    int cur_b3;
+    cur_b3=0;
+    float cur_perc;
+    float this_perc;
+    double time1,time2,time3,avgtime;
     int flagvar=1;
     int flagvar2=1;
-    int c=5;
-  //  for (int c=2; c<n; c++) {
+    int c=0;
+    for (int c=2; c<n; c++) {
+                                clock_t begin=clock();
+        cur_perc=0;
+//        clock_t begin=clock();
+        this_perc=pow((long)3,c*-1)*100;
         flagvar2=1;
         b.setBase(c);
         b.clear();
         b++;
         int cur_col;
-        int j=0,k=0;
-        printf("checkEmpty: %d\n",b.checkEmpty());
-        for (int i=0; (!b.checkEmpty()); i++) {
+        unsigned long int j=0,k=0;
+            time3=0;
+        for (unsigned long int i=0; (!b.checkEmpty()); i++) { //This loop increments through b++.
             flagvar=1;
             for (j=0; (j<n)&&flagvar; j++) {
                 cur_col=b.at(j);
@@ -78,11 +88,29 @@ int main() {
                         if (cur_col==b.at(k)) {//Matching colors... :/ don't work!
                             flagvar=0;
                             flagvar2=0;
+                            if (cur_b3!=b.at(2)) {
+                                printf("Percentage: %f\n", cur_perc);
+                                time1=(clock()-begin)/CLOCKS_PER_SEC;
+                                printf("time: %.0f\n",time1);
+                                clock_t begin=clock();
+                                cur_perc+=this_perc;
+                                cur_b3=b.at(2);
+
+                            }
                             b++;
                             continue;
                         }
                     }
                 }
+                if (cur_b3!=b.at(2)) {
+                            time1=(clock()-begin)/CLOCKS_PER_SEC;
+                            printf("time: %.0f\n",time1);
+                            clock_t begin=clock();
+
+                            cur_perc+=this_perc;
+                            printf("Percentage: %.2f\n", cur_perc);
+                            cur_b3=b.at(2);
+                        }
             }
             if (flagvar) {
                 b.print();
@@ -92,8 +120,7 @@ int main() {
 
         }
         printf("Chromatic number failed for %d\n",b.getBase());
-        printf("here?\n");
-//    }
+    }
     return 0;
 
 }
