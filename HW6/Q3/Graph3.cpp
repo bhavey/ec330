@@ -66,6 +66,16 @@ string Graph::print() {
 	}
 		return result.str();
 }
+string Graph::modprint() {
+	stringstream result;
+	for (vertexIterator vert1=vertices.begin(); vert1 != vertices.end(); vert1++) {
+		for (vertexIterator vert2 = vertices.begin(); vert2 != vertices.end(); vert2++)
+			if (isEdge (directedEdge(*vert1, *vert2)))
+				result << *vert2 << " ";
+		result << endl << "! ";
+	}
+		return result.str();
+}
 
 Graph Graph::generateRandom(int num) {
 //    srand (time(NULL));

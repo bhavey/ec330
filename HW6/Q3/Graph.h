@@ -40,6 +40,8 @@ public:
     //Format is:  vertex [color]: adjacent_vertex_1 adjacent_vertex_2 ...
 	string print();
 
+    string modprint();
+
     static Graph generateRandom(int num);
 
     int color();

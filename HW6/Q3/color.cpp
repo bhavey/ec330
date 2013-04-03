@@ -9,42 +9,52 @@ int Graph::color() {
 }
 
 int main() {
-    srand(4);
+    srand(5);
     Graph graph;
-    string gstring;
-    graph=graph.generateRandom(3);
-    gstring=graph.print();
-    printf("%s\n",gstring.c_str());
-    printf("now testing!\n");
+    string liststring;
+    int n=5;
+    printf("size: %d\n",n);
+    graph=graph.generateRandom(5);
+    liststring=graph.modprint();
 
-    int inbase[4]={0,0,0,0};
-    Base b2 (inbase,2,4);
-    printf("initialized: ");
-    printf("cleared: ");
-    b2.print();
-    printf("Incremented: \n");
-    b2.print();
-    for (int i=0; i<15; i++) {
-        b2++;
-        b2.print();
+    char *gstring=(char*)liststring.c_str();
+    int gsize=liststring.length();
+
+    vector<vector<int> > tempvec;
+    vector<int> rowvec;
+    printf("in:\n%s\n",gstring);
+    char *pch;
+    pch=strtok(gstring," ");
+    int i=0;
+    //Put adjacency list in adjacency matrix
+    //strtok spaces, new lines
+    while (pch != NULL) {
+        if (pch[1]=='!') { //moded graph gives a "! " at every new vertex
+            tempvec.push_back(rowvec);
+            rowvec.clear();
+        }
+        else {
+            rowvec.push_back(atoi(pch));
+        }
+        pch=strtok(NULL," ");
     }
-    printf("Set to base three, incremented: \n");
+    printf("now testing!\n");
+    for (int i=0; i<tempvec.size(); i++) {
+        printf("%d: ",i);
+        for (int j=0; j<tempvec.at(i).size(); j++) {
+            printf("%d ",tempvec.at(i).at(j));
+        }
+        printf("\n");
+    }
+    int inbase[n];
+    Base b2 (inbase,2,n);
     b2.clear();
     b2.setBase(5);
     b2.print();
-    for (int i=0; i<80; i++) {
-        b2++;
-        b2.print();
-    }
-    b2.setBase(93);
-    b2.clear();
     for (int i=0; i<3991; i++) {
-    b2++;
+        b2++;
     }
     b2.print();
-    printf("at 2: %d\n",b2.at(2));
-    printf("Here maybe?\n");
-    printf("really...\n");
     return 0;
 
 }
