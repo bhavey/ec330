@@ -12,14 +12,46 @@ int Graph::color() {
 }
 
 int main() {
-    srand(5);
+    srand(time(NULL));
+    Graph graph;
+    for (int i = 0; i < 16; i++)
+        graph.addVertex(0);
+    for (int i = 0; i < 2; i++) {
+                graph.addEdge(make_pair(0+8*i,1+8*i));
+                graph.addEdge(make_pair(0+8*i,3+8*i));
+                graph.addEdge(make_pair(0+8*i,4+8*i));
+                graph.addEdge(make_pair(1+8*i,2+8*i));    
+                graph.addEdge(make_pair(1+8*i,5+8*i));
+                graph.addEdge(make_pair(2+8*i,3+8*i));    
+                graph.addEdge(make_pair(2+8*i,6+8*i));
+                graph.addEdge(make_pair(3+8*i,7+8*i));
+                graph.addEdge(make_pair(4+8*i,5+8*i));
+                graph.addEdge(make_pair(4+8*i,7+8*i));
+                graph.addEdge(make_pair(5+8*i,6+8*i));
+                graph.addEdge(make_pair(6+8*i,7+8*i));
+        }
+// Dimensions
+                graph.addEdge(make_pair(0,8));
+                graph.addEdge(make_pair(1,9));
+                graph.addEdge(make_pair(2,10));
+                graph.addEdge(make_pair(3,11));
+                graph.addEdge(make_pair(4,12));
+                graph.addEdge(make_pair(5,13));
+                graph.addEdge(make_pair(6,14));
+                graph.addEdge(make_pair(7,15));
+
+    string teststr;
+    printf("Give random vertices #: ");
+    cin >> teststr;
+    int n = atoi(teststr.c_str());
     Graph graph;
     string liststring;
-    int n=16;
     printf("size: %d\n",n);
     graph=graph.generateRandom(n);
     liststring=graph.modprint();
+    string liststring2=graph.print();
 
+    printf("THISSSS:\n%s",liststring2.c_str());
     char *gstring=(char*)liststring.c_str();
     int gsize=liststring.length();
 
@@ -54,9 +86,16 @@ int main() {
         }
     }
 
+    printf("Unordered Incidence Matrix: \n");
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<n; j++)
+            printf("%d ",adjmat[i][j]);
+        printf("\n");
+    }
+
+
     printf("\n");
     //Now we have our unordered adjacency matrix! Test all possible color schemes!
-//    int c=3;
     int inbase[n];
     long unsigned int loop_index;
     Base b (inbase,2,n);
@@ -70,6 +109,8 @@ int main() {
     int c=0;
     timeval start;
     timeval end;
+    timeval first;
+    gettimeofday(&first, NULL);
     for (int c=2; c<n; c++) {
         cur_perc=0;
         this_perc=pow((long)3,c*-1)*100;
@@ -107,17 +148,7 @@ int main() {
                 }
                 if (cur_b3!=b.at(2)) {
                             gettimeofday(&end, NULL);
-                            if (time3==0) {
-          //                      time1=(float)(end.tv_sec-start.tv_sec);
-        //                        time2=time1;
-      //                          time3=time1;
-                            } else {
-    //                            time2=time1;
-  //                              time3=time2;
-//                                time1=(float)(end.tv_sec-start.tv_sec);
-                            }
-                                time1=(float)(end.tv_sec-start.tv_sec);
-//                            avgtime=(time1+time2+time3)/3;
+                            time1=(float)(end.tv_sec-start.tv_sec);
 
                             cur_perc+=this_perc;
                             float perc_remaining=100/cur_perc;
@@ -131,6 +162,9 @@ int main() {
             if (flagvar) {
                 b.print();
                 printf("Chromatic number: %d\n",b.getBase());
+                gettimeofday(&end, NULL);
+                time1=(float)(end.tv_sec-first.tv_sec);
+                printf("Took %.0f seconds to calculate.\n",time1);
                 return 0;
             }
 
