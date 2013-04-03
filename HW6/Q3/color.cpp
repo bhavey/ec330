@@ -108,21 +108,22 @@ int main() {
                 if (cur_b3!=b.at(2)) {
                             gettimeofday(&end, NULL);
                             if (time3==0) {
-                                time1=(float)(end.tv_sec-start.tv_sec);
-                                time2=time1;
-                                time3=time1;
+          //                      time1=(float)(end.tv_sec-start.tv_sec);
+        //                        time2=time1;
+      //                          time3=time1;
                             } else {
-                                time2=time1;
-                                time3=time2;
-                                time1=(float)(end.tv_sec-start.tv_sec);
+    //                            time2=time1;
+  //                              time3=time2;
+//                                time1=(float)(end.tv_sec-start.tv_sec);
                             }
-                            avgtime=(time1+time2+time3)/3;
+                                time1=(float)(end.tv_sec-start.tv_sec);
+//                            avgtime=(time1+time2+time3)/3;
 
                             cur_perc+=this_perc;
-                            float perc_remaining=(100-cur_perc)/this_perc;
+                            float perc_remaining=100/cur_perc;
                             printf("%%%.2f complete. Estimated remaining time: %.1f\n",//avgtime,
-                            cur_perc,perc_remaining*avgtime);
-                            gettimeofday(&start, NULL);
+                            cur_perc,
+                            100/cur_perc*time1 - time1);
                             printf("Percentage: %.2f\n", cur_perc);
                             cur_b3=b.at(2);
                         }
