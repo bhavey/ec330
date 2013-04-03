@@ -36,15 +36,16 @@ int main() {
     string teststr;
     printf("Give random vertices #: ");
     cin >> teststr;
-    int n = atoi(teststr.c_str());
-//    Graph graph;
+    int size = atoi(teststr.c_str());
     string liststring;
-    printf("size: %d\n",n);
-//    graph=graph.generateRandom(n);
-    liststring=graph.modprint();
-    string liststring2=graph.print();
 
-    printf("THISSSS:\n%s",liststring2.c_str());
+//COMMENT ME OUT TO MAKE A HYPER CUBE!!!
+    graph=graph.generateRandom(size);
+    liststring=graph.modprint();
+
+    printf("Mod: %s\n",liststring.c_str());
+    int n = 0;
+
     char *gstring=(char*)liststring.c_str();
     int gsize=liststring.length();
 
@@ -59,12 +60,15 @@ int main() {
         if (pch[1]=='!') { //moded graph gives a "! " at every new vertex
             tempvec.push_back(rowvec);
             rowvec.clear();
+            n++;
         }
         else {
             rowvec.push_back(atoi(pch));
         }
         pch=strtok(NULL," ");
     }
+    printf("size: %d\n",n);
+
     //initialize the adjacency matrix
     bool adjmat[n][n];
     for (int i=0; i<n; i++)
@@ -84,6 +88,20 @@ int main() {
         for (int j=0; j<n; j++)
             printf("%d ",adjmat[i][j]);
         printf("\n");
+    }
+
+    if (n<=0) {
+        printf("Chromatic number is 0.\n");
+        return 0;
+    } else if (n==1) {
+        printf("Chromatic number is 1.\n");
+        return 0;
+    } else if (n==2) {
+        if ((adjmat[0][0]==1)||(adjmat[0][1]==1))
+            printf("Chromatic number is 2.\n");
+        else
+            printf("Chromatic number is 1.\n");
+        return 0;
     }
 
 
@@ -164,6 +182,7 @@ int main() {
         }
         printf("Chromatic number failed for %d\n",b.getBase());
     }
+    printf("Chromatic number is %d\n",n);
     return 0;
 
 }
