@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <sys/time.h>
 
 int Graph::color() {
 
@@ -67,15 +68,16 @@ int main() {
     int flagvar=1;
     int flagvar2=1;
     int c=0;
+    timeval start;
+    timeval end;
     for (int c=2; c<n; c++) {
-                                clock_t begin=clock();
         cur_perc=0;
-//        clock_t begin=clock();
         this_perc=pow((long)3,c*-1)*100;
         flagvar2=1;
         b.setBase(c);
         b.clear();
         b++;
+        gettimeofday(&start, NULL);
         int cur_col;
         unsigned long int j=0,k=0;
             time3=0;
@@ -89,10 +91,11 @@ int main() {
                             flagvar=0;
                             flagvar2=0;
                             if (cur_b3!=b.at(2)) {
+                                gettimeofday(&end, NULL);
                                 printf("Percentage: %f\n", cur_perc);
-                                time1=(clock()-begin)/CLOCKS_PER_SEC;
-                                printf("time: %.0f\n",time1);
-                                clock_t begin=clock();
+                                time1=(float)(end.tv_sec-start.tv_sec);
+                                printf("time: %.1f\n",time1);
+                                gettimeofday(&start, NULL);
                                 cur_perc+=this_perc;
                                 cur_b3=b.at(2);
 
@@ -103,11 +106,23 @@ int main() {
                     }
                 }
                 if (cur_b3!=b.at(2)) {
-                            time1=(clock()-begin)/CLOCKS_PER_SEC;
-                            printf("time: %.0f\n",time1);
-                            clock_t begin=clock();
+                            gettimeofday(&end, NULL);
+                            if (time3==0) {
+                                time1=(float)(end.tv_sec-start.tv_sec);
+                                time2=time1;
+                                time3=time1;
+                            } else {
+                                time2=time1;
+                                time3=time2;
+                                time1=(float)(end.tv_sec-start.tv_sec);
+                            }
+                            avgtime=(time1+time2+time3)/3;
 
                             cur_perc+=this_perc;
+                            float perc_remaining=(100-cur_perc)/this_perc;
+                            printf("%%%.2f complete. Estimated remaining time: %.1f\n",//avgtime,
+                            cur_perc,perc_remaining*avgtime);
+                            gettimeofday(&start, NULL);
                             printf("Percentage: %.2f\n", cur_perc);
                             cur_b3=b.at(2);
                         }
