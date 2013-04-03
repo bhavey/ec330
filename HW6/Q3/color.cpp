@@ -12,9 +12,9 @@ int main() {
     srand(5);
     Graph graph;
     string liststring;
-    int n=5;
+    int n=4;
     printf("size: %d\n",n);
-    graph=graph.generateRandom(5);
+    graph=graph.generateRandom(n);
     liststring=graph.modprint();
 
     char *gstring=(char*)liststring.c_str();
@@ -22,7 +22,6 @@ int main() {
 
     vector<vector<int> > tempvec;
     vector<int> rowvec;
-    printf("in:\n%s\n",gstring);
     char *pch;
     pch=strtok(gstring," ");
     int i=0;
@@ -38,23 +37,43 @@ int main() {
         }
         pch=strtok(NULL," ");
     }
-    printf("now testing!\n");
+    //initialize the adjacency matrix
+    bool adjmat[n][n];
+    for (int i=0; i<n; i++)
+        for (int j=0; j<n; j++)
+            adjmat[i][j]=0;
+
+    //Fill the unordered adjacency matrix.
+    printf("Adjacency vectors:\n");
     for (int i=0; i<tempvec.size(); i++) {
         printf("%d: ",i);
         for (int j=0; j<tempvec.at(i).size(); j++) {
+            adjmat[i][tempvec.at(i).at(j)]=1;
+            adjmat[tempvec.at(i).at(j)][i]=1;
             printf("%d ",tempvec.at(i).at(j));
         }
         printf("\n");
     }
-    int inbase[n];
-    Base b2 (inbase,2,n);
-    b2.clear();
-    b2.setBase(5);
-    b2.print();
-    for (int i=0; i<3991; i++) {
-        b2++;
+
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<n; j++) {
+            printf("%d ",adjmat[i][j]);
+        }
+        printf("\n");
     }
-    b2.print();
+
+    printf("\n");
+    //Now we have our unordered adjacency matrix! Test all possible color schemes!
+    int c=2;
+    int inbase[n];
+    Base b (inbase,2,n);
+    b.clear();
+    b.setBase(c);
+    b.print();
+    for (int i=0; i<3991; i++) {
+        b++;
+    }
+    b.print();
     return 0;
 
 }
