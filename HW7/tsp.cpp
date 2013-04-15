@@ -61,12 +61,15 @@ $ awk '{print $1}' map.txt | grep ETCW | wc -l
 Not every path is bidirectional. If so, total lines of ETCW would be 2*893=1786
 $ cat map.txt | grep ETCW | wc -l
    1749
-4 Cities have paths to themselves (MDGZ, NVPR, NXEO, KGZX):
+Four cities have paths to themselves (MDGZ, NVPR, NXEO, KGZX):
 $ awk 'substr($1,1,4)==substr($3,1,4){print $1}' map.txt
    MDGZ
    NVPR
    NXEO
    KGZX
+No path gets repeated, as there are no repeated lines below:
+$ awk '{print $1 $2 $3}' map.txt | uniq -c | grep 2
+
 
 Restrictions put on us to complete the assignment
 ************************************************************************
@@ -128,27 +131,43 @@ int main() {
     fstream in;
     int i=0,j=0;
     in.open("map.txt", fstream::in);
-    string entry;
+    int badnumber;
     string cur_dest;
-    long dick;
+    string entry;
+    //Fill up the data from the file.
     while (in >> entry) {
         if ((i+4)%4==0) { //Source
             if ((city_names[j]!=entry)&&(j<=CITY_NUM)) {
                     j++;
                     city_names[j]=entry;
             }
-            printf("source: %s\n",entry.c_str());
+//            printf("source: %s\n",entry.c_str());
         } else if ((i+6)%4==0) { //Destination
-            Paths[city_names[j]].poss.push_back(entry);
+            Paths[city_names[j]].poss.push_back(entry.substr(0,4));
+            if (entry.substr(0,4)=="ETCW")
+                Paths[city_names[j]].GoesToETCW=1;
+            if (Paths[entry.substr(0,4)].num>=50000000) //I wouldn't pay 50 mil for a trip. would you?
+                Paths[entry.substr(0,4)].num=1;
+            else
+                Paths[entry.substr(0,4)].num++;
             cur_dest=entry;
-            printf("dest: %s\n",entry.c_str());
+//            printf("dest: %s\n",entry.substr(0,4).c_str());
+//            printf("num for %s: %d\n",entry.substr(0,4).c_str(),Paths[entry.substr(0,4)].num);
         } else if ((i+5)%4==0) { //Price.
             Paths[city_names[j]].prices[cur_dest]=atoi(entry.c_str());
-//            printf("orig: %s, atoi: %d\n",entry.c_str(),atoi(entry.c_str()));
-            printf("price: %d\n",Paths[city_names[j]].prices[cur_dest]);
+//            printf("price: %d\n",Paths[city_names[j]].prices[cur_dest]);
         }
         i++;
     }
+
+    std::vector<string>::iterator it;
+    string teststr="ETCW";
+    printf("Cities ETCW can go to:\n");
+    for (it=Paths[teststr].poss.begin(); it<Paths[teststr].poss.end(); it++) {
+        cout << " " << *it;
+    }
+    printf("\n");
+
 //    printf("City names:\n");
 //    for (i=1; i<CITY_NUM; i++)
 //    	printf("%s\n",city_names[i].c_str());
