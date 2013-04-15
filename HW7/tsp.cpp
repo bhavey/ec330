@@ -125,6 +125,19 @@ struct moves {
     bool GoesToETCW;
 };
 
+int compvar(void const *a, void const *b) {
+    char const *aa = (char const *)a;
+    char const *bb = (char const *)b;
+
+    return strcmp(aa,bb);
+}
+
+void printvec(vector<string> vec) {
+    for (int i=0; i<vec.size(); i++)
+        cout << vec[i] << " ";
+    cout << "\n";
+}
+
 int main() {
     map<string,moves> Paths;
 	string city_names[CITY_NUM];	
@@ -167,6 +180,9 @@ int main() {
         cout << " " << *it;
     }
     printf("\n");
+
+    sort(Paths[teststr].poss.begin(), Paths[teststr].poss.end());
+    printvec(Paths[teststr].poss);
 
 //    printf("City names:\n");
 //    for (i=1; i<CITY_NUM; i++)
