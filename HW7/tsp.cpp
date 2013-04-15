@@ -61,7 +61,47 @@ $ awk '{print $1}' map.txt | grep ETCW | wc -l
 Not every path is bidirectional. If so, total lines of ETCW would be 2*893=1786
 $ cat map.txt | grep ETCW | wc -l
    1749
+4 Cities have paths to themselves (MDGZ, NVPR, NXEO, KGZX):
+$ awk 'substr($1,1,4)==substr($3,1,4){print $1}' map.txt
+   MDGZ
+   NVPR
+   NXEO
+   KGZX
+
+Restrictions put on us to complete the assignment
+************************************************************************
+ * Find the graph the goes through each vertex at least once and has the min weight
+ * Must start/end at ETCW.
+
+Implementation plans:
+************************************************************************
+1) First load the data:
+ * Load an array of 4chars the possible cities into a name array of 4 char arrays.
+ * Create a map<char*,bool> Visited denoting if a city has been visited.
+ * Create a map<char*,struct city_Data > Paths listing off the travel path.
+ * city_Data struct has the # of cities that lead to the current city. It also has a vector
+ * of Cities the given city points to. After all the cities have their vectors populated,
+ * this vector will be sorted with sort(). They will be sorted by how many cities point to them.
+ * Also, it has a map<char*,int> that lists the price to go to a given place. = 0 if not
+ * a possible destination. Finally, it has a bool GoesToETCW variable. =1 if the city
+ * goes to ETCW in specific
+
+2) Then create a valid random path:
+ * Add ETCW to Paths. Go through the vector, checking if a city has been picked yet. If not,
+ * go there 67% of the time. If not keep going. If you run out of possible cities, pick a
+ * random one. Once you go to your next city add it to the path and repeat. Do this until
+ * you've been to every city. At that point see if you can go to ETCW, if not, pick the last
+ * one in the vector.
+
+3) Try to find a better path. Do this n times. The larger n, the better the final path:
+ * See if you can swap the 2nd/3rd. If not the 2nd/4th. etc until 2nd/last. If you come
+ * up with a possible switch, check to see if it's cheaper. If so, do it! Repeat for 3rd,
+ * 4th, etc until your at the last city. At this point you can repeat for an even better
+ * graph.
+
 */
+
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -69,12 +109,34 @@ $ cat map.txt | grep ETCW | wc -l
 #include <stdio.h>
 #include <algorithm>
 #include <time.h>
+#include <map>
 
 using namespace std;
+#define CITY_NUM 1502
 
 int main() {
+	string city_names[CITY_NUM];	
+    fstream in;
+    int i=0,j=0;
+    in.open("map.txt", fstream::in);
+    string entry;
+    while (in >> entry) {
+    	if (city_names[j].c_str()!=entry.c_str()) {
+    		if (j==0)
+    			j--;
+    		j++;
+    		city_names[j]=entry.c_str();
+    	}
+    	i++;
+    	if (i%2==0)
+    		printf("i: %d, entry: %s\n",i,entry.c_str());
+    }
+    //printf("City names:\n");
+    //for (i=0; i<CITY_NUM; i++)
+    //	printf("%s\n",city_names[i].c_str());
 	srand (time(NULL));
 	int ran=rand()%12;
 	printf("Random number: %d\n",ran);
+	in.close();	
 	return 0;
 }
