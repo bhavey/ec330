@@ -137,17 +137,21 @@ int main() {
                     j++;
                     city_names[j]=entry;
             }
+            printf("source: %s\n",entry.c_str());
         } else if ((i+6)%4==0) { //Destination
             Paths[city_names[j]].poss.push_back(entry);
             cur_dest=entry;
-        } else if ((i+7)%4==0) { //Price.
+            printf("dest: %s\n",entry.c_str());
+        } else if ((i+5)%4==0) { //Price.
             Paths[city_names[j]].prices[cur_dest]=atoi(entry.c_str());
+//            printf("orig: %s, atoi: %d\n",entry.c_str(),atoi(entry.c_str()));
+            printf("price: %d\n",Paths[city_names[j]].prices[cur_dest]);
         }
         i++;
     }
-    printf("City names:\n");
-    for (i=1; i<CITY_NUM; i++)
-    	printf("%s\n",city_names[i].c_str());
+//    printf("City names:\n");
+//    for (i=1; i<CITY_NUM; i++)
+//    	printf("%s\n",city_names[i].c_str());
 	srand (time(NULL));
 	int ran=rand()%12;
 	printf("Random number: %d\n",ran);
