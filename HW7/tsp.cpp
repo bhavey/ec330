@@ -113,20 +113,7 @@ Implementation plans:
 #include <utility>
 
 using namespace std;
-#define CITY_NUM 1502
-
-/*
-1) First load the data:
- * Load an array of 4chars the possible cities into a name array of 4 char arrays.
- * Create a map<char*,bool> Visited denoting if a city has been visited.
- * Create a map<char*,struct city_Data > Paths listing off the travel path.
- * city_Data struct has the # of cities that lead to the current city. It also has a vector
- * of Cities the given city points to. After all the cities have their vectors populated,
- * this vector will be sorted with sort(). They will be sorted by how many cities point to them.
- * Also, it has a map<char*,int> that lists the price to go to a given place. = 0 if not
- * a possible destination. Finally, it has a bool GoesToETCW variable. =1 if the city
- * goes to ETCW in specific
- */
+#define CITY_NUM 1503
 
 struct moves {
     int num; //# of cities that point to this city.
@@ -146,26 +133,21 @@ int main() {
     long dick;
     while (in >> entry) {
         if ((i+4)%4==0) { //Source
-            if ((city_names[j]!=entry)&&(j<CITY_NUM)) {
-                if (j==0) {
-                    city_names[j]=entry;
-                } else {
+            if ((city_names[j]!=entry)&&(j<=CITY_NUM)) {
                     j++;
                     city_names[j]=entry;
-                }
             }
         } else if ((i+6)%4==0) { //Destination
             Paths[city_names[j]].poss.push_back(entry);
             cur_dest=entry;
         } else if ((i+7)%4==0) { //Price.
             Paths[city_names[j]].prices[cur_dest]=atoi(entry.c_str());
-//            dick = atoi(entry.c_str());
         }
         i++;
     }
-    //printf("City names:\n");
-    //for (i=0; i<CITY_NUM; i++)
-    //	printf("%s\n",city_names[i].c_str());
+    printf("City names:\n");
+    for (i=1; i<CITY_NUM; i++)
+    	printf("%s\n",city_names[i].c_str());
 	srand (time(NULL));
 	int ran=rand()%12;
 	printf("Random number: %d\n",ran);
