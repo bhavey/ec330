@@ -120,14 +120,14 @@ using namespace std;
 
 struct moves {
     int num; //# of cities that point to this city.
-    vector<pair<string,int> > poss; //All the possible cities. Will get sorted at the end.
+    map<string,int> poss; //All the possible cities. Will get sorted at the end.
     //map<string,int> prices; //The prices of going to the cities.
     bool GoesToETCW;
 };
 map<string,moves> Paths;
 
-int compvar(pair<string,int> a, pair<string,int> b) {
-    if (Paths[a.first].num < Paths[b.first].num)
+int compvar(string a, string b) {
+    if (Paths[a].num < Paths[b].num)
         return 1;
     return 0;
 }
@@ -171,7 +171,7 @@ int main() {
                 Paths[entry.substr(0,4)].num++;
             cur_dest=entry.substr(0,4);
         } else if ((i+5)%4==0) { //Price.
-            Paths[city_names[j]].poss.push_back(make_pair(cur_dest,atoi(entry.c_str())));
+            Paths[city_names[j]].poss[cur_dest]=atoi(entry.c_str());
             //Paths[city_names[j]].prices[cur_dest]=atoi(entry.c_str());
         }
         i++;
@@ -183,10 +183,10 @@ int main() {
     //Now sort all of the vectors so they list off the lowest accessed points first.
     for (int i=1; i<CITY_NUM; i++) {
         sortstr=city_names[i];
-        sort(Paths[sortstr].poss.begin(),Paths[sortstr].poss.end(), compvar);
+     //   sort(Paths[sortstr].poss.begin(),Paths[sortstr].poss.end(), compvar);
     }
     printf("This is the new sorted data for %s:\n",sortstr.c_str());
-    printvec(Paths[sortstr].poss);
+    //printvec(Paths[sortstr].poss);
  
     srand (time(NULL));
     trail.push_back("ETCW");
@@ -202,21 +202,22 @@ int main() {
     int newprice;
     int randacc;
     string tmpstr;
+    map<string,int>::iterator m;
     //Now create a random path!
     for (int i=0; i<1000000; i++) {
-        if ()
         untouched="NO";
-        for (int j=0; j<Paths[cur_loc].poss.size(); j++) { //Find the next place to be!
-            if (seen[Paths[cur_loc].poss[j].first]==0) {
+        for (map<string,int>::iterator j=Paths[cur_loc].poss.begin(); j!=Paths[cur_loc].poss.end(); j++) { //Find the next place to be!
+            int poop=Paths[cur_loc].num;
+            if (seen[j->first]==0) {
                 if (untouched=="NO") {
-                    untouched=Paths[cur_loc].poss[j].first; //Just through in the first one
-                    untprice=Paths[cur_loc].poss[j].second;
+                    untouched=j->first; //Just through in the first one
+                    untprice=j->second;
                     printf("wat");
                 }
                 if (rand()%3<2) {//2/3 probability of taking it!
-                    newprice=Paths[cur_loc].poss[j].second;
+                    newprice=j->second;
                     prev_loc=cur_loc;
-                    cur_loc=Paths[cur_loc].poss[j].first;
+                    cur_loc=j->first;
                     places_visited++;
                     break;
                 }
@@ -226,16 +227,19 @@ int main() {
         if (prev_loc==two_ago) {//Couldn't make up our mind! Either no new ones or rand skipped
             printf("\n\n\n\nDO I LOOK LIKE IM PLAYING\n\n\n\n");
             if (untouched=="NO") { //No new paths to be taken! Go somewhere random.
+                m=Paths[cur_loc].poss.begin();
                 tmpstr="NXEO";
                 printf("POOP ON YOU ALL");
                 //Stops annoying self loops.
                 while(tmpstr=="GMIM"||tmpstr=="NXEO"||tmpstr=="MDGZ"||tmpstr=="NVPR"||tmpstr=="KGZX") {
                     randacc=rand()%Paths[cur_loc].poss.size();
-                    tmpstr=Paths[cur_loc].poss[randacc].first;
+                    for (int poo=0; poo<randacc; poo++)
+                        m++;
+                    tmpstr=m->first;
                 }
                 prev_loc=cur_loc;
-                newprice=Paths[cur_loc].poss[randacc].second;
-                cur_loc=Paths[cur_loc].poss[randacc].first;
+                newprice=m->second;
+                cur_loc=m->first;
             } else { //Just randomly skipped out of it (this will happen) Select first one we saw.
                 printf("No really... shit on you all!\n");
                 newprice=untprice;
