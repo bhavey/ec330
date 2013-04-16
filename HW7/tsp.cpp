@@ -118,19 +118,34 @@ Implementation plans:
 using namespace std;
 #define CITY_NUM 1503
 
+struct newcomp;
+
+
 struct moves {
     int num; //# of cities that point to this city.
     map<string,int> poss; //All the possible cities. Will get sorted at the end.
     //map<string,int> prices; //The prices of going to the cities.
     bool GoesToETCW;
 };
+
 map<string,moves> Paths;
 
-int compvar(map<string,int>::iterator a, map<string,int>::iterator b) {
+struct mymap {
+    string key;
+    int val;
+};
+
+bool compvar(mymap a, mymap b) {
+        if (Paths[a.key].num < Paths[b.key].num)
+            return 1;
+        return 0;
+}
+
+/*int compvar(map<string,int>::iterator a, map<string,int>::iterator b) {
     if (Paths[a->first].num < Paths[b->first].num)
         return 1;
     return 0;
-}
+}*/
 
 void printsvec(vector<string> vec) {
     for (int i=0; i<vec.size(); i++)
@@ -171,14 +186,20 @@ int main() {
         i++;
     }
 
+
     string sortstr;
     printf("This is when we stopped filling data.\n");
 
+    vector<pair<string,int> > stupidworkaround;
+    map<string,int>::iterator m;
     //Now sort all of the vectors so they list off the lowest accessed points first.
-    for (int i=1; i<CITY_NUM; i++) {
-        sortstr=city_names[i];
-        sort(Paths[sortstr].poss.begin(),Paths[sortstr].poss.end(), compvar);
-    }
+//    for (int i=1; i<CITY_NUM; i++) {
+ //       sortstr=city_names[i];
+//        stupidworkaround.push_back();
+ //       stupidworkaround.clear();
+//    }
+//        vector<map<string,int> > stupidworkaround;
+
     printf("This is the new sorted data for %s:\n",sortstr.c_str());
     //printvec(Paths[sortstr].poss);
  
@@ -196,7 +217,6 @@ int main() {
     int newprice;
     int randacc;
     string tmpstr;
-    map<string,int>::iterator m;
     //Now create a random path!
     for (int i=0; i<1000000; i++) {
         untouched="NO";
