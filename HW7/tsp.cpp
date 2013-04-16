@@ -126,16 +126,10 @@ struct moves {
 };
 map<string,moves> Paths;
 
-int compvar(string a, string b) {
-    if (Paths[a].num < Paths[b].num)
+int compvar(map<string,int>::iterator a, map<string,int>::iterator b) {
+    if (Paths[a->first].num < Paths[b->first].num)
         return 1;
     return 0;
-}
-
-void printvec(vector<pair<string,int> > vec) {
-    for (int i=0; i<vec.size(); i++)
-        cout << vec[i].first << " " << vec[i].second << "\n";
-    cout << "\n";
 }
 
 void printsvec(vector<string> vec) {
@@ -183,7 +177,7 @@ int main() {
     //Now sort all of the vectors so they list off the lowest accessed points first.
     for (int i=1; i<CITY_NUM; i++) {
         sortstr=city_names[i];
-     //   sort(Paths[sortstr].poss.begin(),Paths[sortstr].poss.end(), compvar);
+        sort(Paths[sortstr].poss.begin(),Paths[sortstr].poss.end(), compvar);
     }
     printf("This is the new sorted data for %s:\n",sortstr.c_str());
     //printvec(Paths[sortstr].poss);
@@ -223,7 +217,6 @@ int main() {
                 }
             }
         }
-//        if (prev_loc==cur_loc) {//Couldn't make up our mind! Either no new ones or rand skipped
         if (prev_loc==two_ago) {//Couldn't make up our mind! Either no new ones or rand skipped
             printf("\n\n\n\nDO I LOOK LIKE IM PLAYING\n\n\n\n");
             if (untouched=="NO") { //No new paths to be taken! Go somewhere random.
@@ -248,9 +241,6 @@ int main() {
                 places_visited++;
             }
         }
-   //     if (prev_loc==two_ago) {
-
-     //   }
         two_ago=prev_loc;
         printf("Does anything make sense ever?\n\n\n\n");
         printf("prev: %s, cur:%s\n",prev_loc.c_str(),cur_loc.c_str());
