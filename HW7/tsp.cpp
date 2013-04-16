@@ -120,26 +120,25 @@ using namespace std;
 
 struct moves {
     int num; //# of cities that point to this city.
-    vector<string> poss; //All the possible cities. Will get sorted at the end.
-    map<string,int> prices; //The prices of going to the cities.
+    vector<pair<string,int> > poss; //All the possible cities. Will get sorted at the end.
+    //map<string,int> prices; //The prices of going to the cities.
     bool GoesToETCW;
 };
+map<string,moves> Paths;
 
-int compvar(void const *a, void const *b) {
-    char const *aa = (char const *)a;
-    char const *bb = (char const *)b;
-
-    return strcmp(aa,bb);
+int compvar(pair<string,int> a, pair<string,int> b) {
+    if (Paths[a.first].num > Paths[b.first].num)
+        return 1;
+    return 0;
 }
 
-void printvec(vector<string> vec) {
+void printvec(vector<pair<string,int> > vec) {
     for (int i=0; i<vec.size(); i++)
-        cout << vec[i] << " ";
+        cout << vec[i].first << " " << vec[i].second << "\n";
     cout << "\n";
 }
 
 int main() {
-    map<string,moves> Paths;
 	string city_names[CITY_NUM];	
     fstream in;
     int i=0,j=0;
@@ -154,21 +153,18 @@ int main() {
                     j++;
                     city_names[j]=entry;
             }
-//            printf("source: %s\n",entry.c_str());
         } else if ((i+6)%4==0) { //Destination
-            Paths[city_names[j]].poss.push_back(entry.substr(0,4));
+            //Paths[city_names[j]].poss.push_back(entry.substr(0,4));
             if (entry.substr(0,4)=="ETCW")
                 Paths[city_names[j]].GoesToETCW=1;
             if (Paths[entry.substr(0,4)].num>=50000000) //I wouldn't pay 50 mil for a trip. would you?
                 Paths[entry.substr(0,4)].num=1;
             else
                 Paths[entry.substr(0,4)].num++;
-            cur_dest=entry;
-//            printf("dest: %s\n",entry.substr(0,4).c_str());
-//            printf("num for %s: %d\n",entry.substr(0,4).c_str(),Paths[entry.substr(0,4)].num);
+            cur_dest=entry.substr(0,4);
         } else if ((i+5)%4==0) { //Price.
-            Paths[city_names[j]].prices[cur_dest]=atoi(entry.c_str());
-//            printf("price: %d\n",Paths[city_names[j]].prices[cur_dest]);
+            Paths[city_names[j]].poss.push_back(make_pair(cur_dest,atoi(entry.c_str())));
+            //Paths[city_names[j]].prices[cur_dest]=atoi(entry.c_str());
         }
         i++;
     }
@@ -176,17 +172,13 @@ int main() {
     std::vector<string>::iterator it;
     string teststr="ETCW";
     printf("Cities ETCW can go to:\n");
-    for (it=Paths[teststr].poss.begin(); it<Paths[teststr].poss.end(); it++) {
-        cout << " " << *it;
-    }
+    printvec(Paths[teststr].poss);
     printf("\n");
 
-    sort(Paths[teststr].poss.begin(), Paths[teststr].poss.end());
+    vector<string> newstr;
+    sort(Paths[teststr].poss.begin(), Paths[teststr].poss.end(), compvar);
     printvec(Paths[teststr].poss);
 
-//    printf("City names:\n");
-//    for (i=1; i<CITY_NUM; i++)
-//    	printf("%s\n",city_names[i].c_str());
 	srand (time(NULL));
 	int ran=rand()%12;
 	printf("Random number: %d\n",ran);
