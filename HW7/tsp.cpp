@@ -138,8 +138,16 @@ void printvec(vector<pair<string,int> > vec) {
     cout << "\n";
 }
 
+void printsvec(vector<string> vec) {
+    for (int i=0; i<vec.size(); i++)
+        cout << vec[i] << " ";
+    cout << "\n";
+}
+
 int main() {
-	string city_names[CITY_NUM];	
+	string city_names[CITY_NUM];
+    vector<string> trail;
+    map<string,int> seen;
     fstream in;
     int i=0,j=0;
     in.open("map.txt", fstream::in);
@@ -177,14 +185,78 @@ int main() {
         sortstr=city_names[i];
         sort(Paths[sortstr].poss.begin(),Paths[sortstr].poss.end(), compvar);
     }
-//    sort(Paths[teststr].poss.begin(), Paths[teststr].poss.end(), compvar);
     printf("This is the new sorted data for %s:\n",sortstr.c_str());
-
     printvec(Paths[sortstr].poss);
+ 
+    srand (time(NULL));
+    trail.push_back("ETCW");
+    int ran=rand()%12;
 
+    int price=0;
+    int places_visited=1;
+    string cur_loc="ETCW";
+    string prev_loc="ETCW";
+    string untouched;
+    string two_ago="ETCW";
+    int untprice;
+    int newprice;
+    int randacc;
+    string tmpstr;
+    //Now create a random path!
+    for (int i=0; i<1000000; i++) {
+        if ()
+        untouched="NO";
+        for (int j=0; j<Paths[cur_loc].poss.size(); j++) { //Find the next place to be!
+            if (seen[Paths[cur_loc].poss[j].first]==0) {
+                if (untouched=="NO") {
+                    untouched=Paths[cur_loc].poss[j].first; //Just through in the first one
+                    untprice=Paths[cur_loc].poss[j].second;
+                    printf("wat");
+                }
+                if (rand()%3<2) {//2/3 probability of taking it!
+                    newprice=Paths[cur_loc].poss[j].second;
+                    prev_loc=cur_loc;
+                    cur_loc=Paths[cur_loc].poss[j].first;
+                    places_visited++;
+                    break;
+                }
+            }
+        }
+//        if (prev_loc==cur_loc) {//Couldn't make up our mind! Either no new ones or rand skipped
+        if (prev_loc==two_ago) {//Couldn't make up our mind! Either no new ones or rand skipped
+            printf("\n\n\n\nDO I LOOK LIKE IM PLAYING\n\n\n\n");
+            if (untouched=="NO") { //No new paths to be taken! Go somewhere random.
+                tmpstr="NXEO";
+                printf("POOP ON YOU ALL");
+                //Stops annoying self loops.
+                while(tmpstr=="GMIM"||tmpstr=="NXEO"||tmpstr=="MDGZ"||tmpstr=="NVPR"||tmpstr=="KGZX") {
+                    randacc=rand()%Paths[cur_loc].poss.size();
+                    tmpstr=Paths[cur_loc].poss[randacc].first;
+                }
+                prev_loc=cur_loc;
+                newprice=Paths[cur_loc].poss[randacc].second;
+                cur_loc=Paths[cur_loc].poss[randacc].first;
+            } else { //Just randomly skipped out of it (this will happen) Select first one we saw.
+                printf("No really... shit on you all!\n");
+                newprice=untprice;
+                prev_loc=cur_loc;
+                cur_loc=untouched;
+                places_visited++;
+            }
+        }
+   //     if (prev_loc==two_ago) {
 
-	srand (time(NULL));
-	int ran=rand()%12;
+     //   }
+        two_ago=prev_loc;
+        printf("Does anything make sense ever?\n\n\n\n");
+        printf("prev: %s, cur:%s\n",prev_loc.c_str(),cur_loc.c_str());
+        trail.push_back(cur_loc);
+        seen[cur_loc]=1;
+        price=price+newprice;
+        printf("places visited: %d, price: %d trail: ",places_visited, price);
+        printsvec(trail);
+    }
+
 	printf("Random number: %d\n",ran);
 	in.close();	
 	return 0;
