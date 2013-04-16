@@ -127,7 +127,7 @@ struct moves {
 map<string,moves> Paths;
 
 int compvar(pair<string,int> a, pair<string,int> b) {
-    if (Paths[a.first].num > Paths[b.first].num)
+    if (Paths[a.first].num < Paths[b.first].num)
         return 1;
     return 0;
 }
@@ -169,15 +169,19 @@ int main() {
         i++;
     }
 
-    std::vector<string>::iterator it;
-    string teststr="ETCW";
-    printf("Cities ETCW can go to:\n");
-    printvec(Paths[teststr].poss);
-    printf("\n");
+    string sortstr;
+    printf("This is when we stopped filling data.\n");
 
-    vector<string> newstr;
-    sort(Paths[teststr].poss.begin(), Paths[teststr].poss.end(), compvar);
-    printvec(Paths[teststr].poss);
+    //Now sort all of the vectors so they list off the lowest accessed points first.
+    for (int i=1; i<CITY_NUM; i++) {
+        sortstr=city_names[i];
+        sort(Paths[sortstr].poss.begin(),Paths[sortstr].poss.end(), compvar);
+    }
+//    sort(Paths[teststr].poss.begin(), Paths[teststr].poss.end(), compvar);
+    printf("This is the new sorted data for %s:\n",sortstr.c_str());
+
+    printvec(Paths[sortstr].poss);
+
 
 	srand (time(NULL));
 	int ran=rand()%12;
