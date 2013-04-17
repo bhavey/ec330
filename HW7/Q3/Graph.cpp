@@ -55,8 +55,7 @@ bool Graph::isEdge(directedEdge newEdge) {
     return false;
 }
 
-int Graph::getPrice(directedEdge newEdge) {
-    //if (isEdge (directedEdge(newEdge.first,newEdge.second,NULL))) { //Is it an edge?
+int Graph::getPrice(directedEdge newEdge) { //Same as isEdge function, but return the weight
     set< directedEdge >::iterator it;
     int nE1, nE2, it1, it2;
     nE1=newEdge.first;
@@ -67,16 +66,18 @@ int Graph::getPrice(directedEdge newEdge) {
         }
     }
     return -1;
-    //}
 }
 
 string Graph::print() {
+    int price;
 	stringstream result;
 	for (vertexIterator vert1=vertices.begin(); vert1 != vertices.end(); vert1++) {
-		result << *vert1 << "[" << getColor(*vert1) << "]: ";
+		result << *vert1 << "[" << getColor(*vert1) << "]:  ";
 		for (vertexIterator vert2 = vertices.begin(); vert2 != vertices.end(); vert2++)
-			if (isEdge (directedEdge(*vert1, *vert2, NULL)))
-				result << *vert2 << " ";
+			if (isEdge (directedEdge(*vert1, *vert2, NULL))) {
+                price=getPrice(directedEdge(*vert1, *vert2, NULL));
+                result << *vert2 << "(" << price << "), " ;
+            }
 		result << std::endl;
 	}
 		return result.str();
