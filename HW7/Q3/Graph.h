@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <iterator>
+#include <utility>
 
 using namespace std;
 
@@ -19,7 +20,13 @@ struct directedEdge {
 		third=c;
 	}
 	friend bool operator<(const directedEdge &a, const directedEdge &b) {
-		return a.first < a.second;
+		pair <int,int> c;
+		pair <int,int> d;
+		c = make_pair(a.first,a.second);
+		d = make_pair(b.first,b.second);
+		return c < d;
+//		make_pair(a.first,a.second)
+//		return a.first < a.second;
 	}
 	int first;
 	int second;

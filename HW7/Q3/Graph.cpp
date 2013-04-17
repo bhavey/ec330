@@ -114,6 +114,10 @@ int main() {
     graph.addEdge(directedEdge(0,1,3));
     graph.addEdge(directedEdge(0,2,40));
     graph.addEdge(directedEdge(2,1,5));
+    graph.addEdge(directedEdge(1,2,6));
+    graph.addEdge(directedEdge(1,3,20));
+    graph.addEdge(directedEdge(3,0,10));
+
     gstring=graph.print();
     printf("%s",gstring.c_str());
     printf("0 to 1: %d,   2 to 1: %d,   1 to 0: %d\n",graph.getPrice(directedEdge(0,1,NULL)),
