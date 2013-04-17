@@ -11,6 +11,64 @@ Graph::Graph() {
     map<int,int> colors;
 };
 
+
+Graph Graph::Boruvka() {
+//Personal implementation of the Boruvka minimum span tree
+/* Boruvka-MST()
+1. Graph OutGraph
+2. array[size(V)] Touched={0,0,...0,0}
+3. int Check_Done = V-1
+4. array[0]=1 //Touch the first vertice!
+5. while (true)
+6.     Tmp_Done=Check_Done
+7.     for i vertices in V
+8.         if possible, Select lowest adjacent vertex j that is untouched
+9.             array[j]=1
+10.            Check_Done--
+11.            addEdge to OutGraph
+12.    if Tmp_Done==Check_Done
+13.        break
+14. Return Outgraph
+*/
+/* Print Code Below: *****************
+    int price;
+    stringstream result;
+    for (vertexIterator vert1=vertices.begin(); vert1 != vertices.end(); vert1++) {
+        result << *vert1 << "[" << getColor(*vert1) << "]:  ";
+        for (vertexIterator vert2 = vertices.begin(); vert2 != vertices.end(); vert2++)
+            if (isEdge (directedEdge(*vert1, *vert2, NULL))) {
+                price=getPrice(directedEdge(*vert1, *vert2, NULL));
+                result << *vert2 << "(" << price << "), " ;
+            }
+        result << std::endl;
+    }
+        return result.str();
+}
+*/
+    Graph Out;
+    int vert_size=vertices.size();
+    bool *Touched = new bool[vert_size];
+    printf("Vert size: %d\n",vert_size);
+    for (int i=1; i<=vert_size; i++) {
+        Out.addVertex(i);
+    }
+
+//    while 
+    int price;
+    stringstream result;
+    for (vertexIterator vert1=vertices.begin(); vert1 != vertices.end(); vert1++) {
+        result << *vert1 << "[" << getColor(*vert1) << "]:  ";
+        for (vertexIterator vert2 = vertices.begin(); vert2 != vertices.end(); vert2++)
+            if (isEdge (directedEdge(*vert1, *vert2, NULL))) {
+                price=getPrice(directedEdge(*vert1, *vert2, NULL));
+                result << *vert2 << "(" << price << "), " ;
+            }
+        result << std::endl;
+    }
+    delete[] Touched;
+    return Out;
+}
+
 int Graph::addVertex(int color) { //Create a vertex of color. Return ID of the vertex
     vertexIterator it = vertices.end(); //Go to the last item in the set;
     if (vertices.size()==0) { //brand new! Initialize!
@@ -112,6 +170,7 @@ int main() {
     graph.addVertex(2);
     graph.addVertex(3);
     graph.addVertex(4);
+    graph.addVertex(5);
     graph.addEdge(directedEdge(0,1,3));
     graph.addEdge(directedEdge(0,2,40));
     graph.addEdge(directedEdge(2,1,5));
@@ -123,5 +182,7 @@ int main() {
     printf("%s",gstring.c_str());
     printf("0 to 1: %d,   2 to 1: %d,   1 to 0: %d\n",graph.getPrice(directedEdge(0,1,NULL)),
         graph.getPrice(directedEdge(2,1,NULL)),graph.getPrice(directedEdge(1,0,NULL)));
+    printf("The output of MST:\n");
+    graph.Boruvka();
     return 0;
 }

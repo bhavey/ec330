@@ -66,6 +66,8 @@ public:
 
 	int getPrice(directedEdge newEdge); //Get the price of a weighted edge.
 
+	Graph Boruvka(); //Boruvka's algorithm for min span tree.
+
     static Graph generateRandom(int num);
 
     int color();
