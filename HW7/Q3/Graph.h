@@ -57,6 +57,8 @@ public:
 
     string modprint();
 
+	int getPrice(directedEdge newEdge); //Get the price of a weighted edge.
+
     static Graph generateRandom(int num);
 
     int color();

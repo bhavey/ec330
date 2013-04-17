@@ -55,6 +55,21 @@ bool Graph::isEdge(directedEdge newEdge) {
     return false;
 }
 
+int Graph::getPrice(directedEdge newEdge) {
+    //if (isEdge (directedEdge(newEdge.first,newEdge.second,NULL))) { //Is it an edge?
+    set< directedEdge >::iterator it;
+    int nE1, nE2, it1, it2;
+    nE1=newEdge.first;
+    nE2=newEdge.second;
+    for (it = edges.begin(); it != edges.end(); ++it) {
+        if ( ((*it).first==nE1) && ((*it).second==nE2) ) {
+            return (*it).third;
+        }
+    }
+    return -1;
+    //}
+}
+
 string Graph::print() {
 	stringstream result;
 	for (vertexIterator vert1=vertices.begin(); vert1 != vertices.end(); vert1++) {
@@ -96,8 +111,12 @@ int main() {
     graph.addVertex(2);
     graph.addVertex(3);
     graph.addVertex(4);
-    graph.addEdge(Edge);
+    graph.addEdge(directedEdge(0,1,3));
+    graph.addEdge(directedEdge(0,2,40));
+    graph.addEdge(directedEdge(2,1,5));
     gstring=graph.print();
-    printf("%s\n",gstring.c_str());
+    printf("%s",gstring.c_str());
+    printf("0 to 1: %d,   2 to 1: %d,   1 to 0: %d\n",graph.getPrice(directedEdge(0,1,NULL)),
+        graph.getPrice(directedEdge(2,1,NULL)),graph.getPrice(directedEdge(1,0,NULL)));
     return 0;
 }
