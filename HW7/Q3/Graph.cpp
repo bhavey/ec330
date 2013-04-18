@@ -33,26 +33,16 @@ Graph Graph::Boruvka() {
     Graph Out;
     int vert_size=vertices.size();
     int *Touched = new int[vert_size];
-    printf("Vert size: %d\n",vert_size);
     for (int i=1; i<=vert_size; i++) {
         Out.addVertex(i);
         Touched[i-1]=0;
     }
     int vert2=Out.vertices.size();
-    string outstring;
-    outstring=Out.print();
-    printf("%s",outstring.c_str());
     int doneCheck=vertices.size();
-    //int *LowestBidder = new
     int tmpCheck=0;
     int edge1, edge2;
     int lastminprice;
     int newminprice;
-    pair<int,int> *LowestBidder = new pair<int,int> [vert_size];
-    for (int i=0; i<vert_size; i++) {
-        LowestBidder[i].first=999999999; //first=price
-        LowestBidder[i].second=-1; //second=vertex pointing to this.
-    }
     Touched[0]=true;
     while (doneCheck!=tmpCheck) {
         tmpCheck=doneCheck;
@@ -62,12 +52,7 @@ Graph Graph::Boruvka() {
                 if (isEdge (directedEdge(*vert1, *vert2, NULL))) {
                     //Check the edge!
                     if (!Touched[*vert2]) { //It's untouched!
-                        printf("%d is considering touching %d\n",*vert2,*vert1);
                         newminprice=getPrice(directedEdge(*vert1,*vert2,NULL));
-                        if (newminprice<LowestBidder[*vert2].first) {
-                            LowestBidder[*vert2].first=newminprice;
-                            LowestBidder[*vert2].second=*vert1;
-                        }
                         if (newminprice<lastminprice) {
                             lastminprice=newminprice;
                             edge1=*vert1;
@@ -78,27 +63,13 @@ Graph Graph::Boruvka() {
                 }
             }
             if (lastminprice!=999999999) {
-                printf("Stop touching me!\n");
                 //Would you pay 1 billion dollars to go to a city?
                 //Didn't think so.
                 Touched[edge2]=lastminprice;
                 Out.addEdge(directedEdge(edge1,edge2,lastminprice));
             }
         }
-        printf("Jesus dick. tmpCheck: %d, doneCheck %d\n",tmpCheck,doneCheck);
-        string poop;
-        poop=Out.print();
-        printf("Min span tree of graph:\n");
-        printf("%s",poop.c_str());
-        printf("And here's the touch array:\n");
-        for (int i=0; i<vertices.size(); i++) {
-            printf("%d ",Touched[i]);
-        }
-        printf("\n");
-
-//        cin >> poop;
     }
-    //Now we run through the Lowest bidder array and see if there are any discrepancies.
     //If there is a lower bidder 
     delete[] Touched;
     return Out;
