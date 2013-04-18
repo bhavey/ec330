@@ -241,16 +241,19 @@ int Graph::getPrice(directedEdge newEdge) { //Same as isEdge function, but retur
 }
 
 string Graph::print() {
+    printf("here!\n");
     int price;
 	stringstream result;
 	for (vertexIterator vert1=vertices.begin(); vert1 != vertices.end(); vert1++) {
-		result << *vert1 << "[" << getColor(*vert1) << "]:  ";
+        printf("Anything?\n");
+		cout << *vert1 << "[" << getColor(*vert1) << "]:  ";
 		for (vertexIterator vert2 = vertices.begin(); vert2 != vertices.end(); vert2++)
 			if (isEdge (directedEdge(*vert1, *vert2, NULL))) {
                 price=getPrice(directedEdge(*vert1, *vert2, NULL));
-                result << *vert2 << "(" << price << "), " ;
+                cout << *vert2 << "(" << price << "), " ;
             }
-		result << std::endl;
+        cout << endl;
+//		result << std::endl;
 	}
 		return result.str();
 }
@@ -301,16 +304,25 @@ int main() {
         } else if ((i+6)%4==0) { //Destination
             cur_dest=entry;
         } else if ((i+5)%4==0) { //Price.
-            tempEdges.push_back(stringEdge(cur_source,cur_dest,atoi(entry.c_str())));
+            tempEdges.push_back(stringEdge(cur_source,cur_dest.substr(0,4),atoi(entry.c_str())));
 //            graph.addEdge(directedEdge(cur_source,cur_dest,2));
         }
         i++;
     }
-    for (int i=0; i<tempEdges.size(); i++) {
+    printf("j is this: %d\n",j);
+    for (i=0; i<tempEdges.size(); i++) {
         graph.addEdge(directedEdge(city_names[tempEdges[i].first],
             city_names[tempEdges[i].second],
             tempEdges[i].third));
+        printf("first: %s, second: %s, third: %d\n",tempEdges[i].first.c_str(),
+            tempEdges[i].second.c_str(), tempEdges[i].third);
+        int b=city_names[tempEdges[i].first.c_str()];
+        printf("b: %d\n",b);
+        printf("n1: %d, n2: %d, price: %d\n",city_names[tempEdges[i].first],
+            city_names[tempEdges[i].second],
+            tempEdges[i].third);
     }
+    printf("i: %d\n",i);
     printf("Finished filling in the data!\n");
     string gstring;
 /*    graph.addVertex(1);
@@ -360,9 +372,10 @@ int main() {
   //  printf("The output of MST:\n");
     //Graph graph2;
  //   graph2=graph.Boruvka();
-   // gstring=graph2.print();
+//    string gstring;
+    gstring=graph.print();
     //printf("Min span tree of graph:\n");
-    //printf("%s",gstring.c_str());
+    printf("%s",gstring.c_str());
     graph.Dijkstra(0);
     return 0;
 }
