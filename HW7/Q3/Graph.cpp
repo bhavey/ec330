@@ -3,13 +3,15 @@
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
+#include <fstream>
 
 using namespace std;
+#define CITY_NUM 1502
 
 Graph::Graph() {
     set<int> vertices;
     set< directedEdge > edges;
-    map<int,int> colors;
+    map<int,string> colors;
 };
 
 Graph Graph::Boruvka() {
@@ -34,7 +36,7 @@ Graph Graph::Boruvka() {
     int vert_size=vertices.size();
     int *Touched = new int[vert_size];
     for (int i=1; i<=vert_size; i++) {
-        Out.addVertex(i);
+//        Out.addVertex((string)i);
         Touched[i-1]=0;
     }
     int vert2=Out.vertices.size();
@@ -117,10 +119,6 @@ Graph Graph::Dijkstra(int root) {
     dist[root].front() = 0;
     set<int> Q = this->vertices;
     Out.vertices=Q;
-    string poop;
-    poop=Out.print();
-    printf("Out:\n");
-    printf("%s\n",poop.c_str());
     int u;
     int cur_u;
     int smallest_dist;
@@ -142,23 +140,23 @@ Graph Graph::Dijkstra(int root) {
             if (isEdge(directedEdge(u,*v,NULL))) { //For each neighbor v of u.
                 alt = dist[u].front() + getPrice(directedEdge(u,*v,NULL));
                 if (alt < dist[*v].front()) {
-                    printf("here for %d: %d\n",*v,alt);
+                    //printf("here for %d: %d\n",*v,alt);
                     dist[*v].front() = alt;
-                    printf("u: %d\n",u);
+                    //printf("u: %d\n",u);
                     if (u!=root) { //p is the previous iteration, *v is the current vertex.
                         printf("\nsize: %d\n", (int)dist[u].size());
                         for (int i=1; i<dist[u].size(); i++) {
-                            printf("u: %d\n",u);
-                            printf("pushing back %d\n",dist[u].at(i));
+                            //printf("u: %d\n",u);
+                            //printf("pushing back %d\n",dist[u].at(i));
                             if (dist[u].at(i)==root)
                                 break;
                             printf("%d ",dist[u].at(i));
                             dist[*v].push_back(dist[u].at(i));
                         }
                         dist[*v].push_back(u);
-                        printf("\n");
+                        //printf("\n");
                     } else {
-                        printf("u: %d\n",u);
+                        //printf("u: %d\n",u);
                     }
                     previous[*v] = u;
                 }
@@ -168,7 +166,7 @@ Graph Graph::Dijkstra(int root) {
     printf("Dist: ");
     for (int i=0; i<vert_size; i++) 
         printf("%d ",dist[i].front());
-    printf("\n");
+    //printf("\n");
     for (int i=0; i<vert_size; i++) {
         printf("\nPath for %d: ",i);
         for (int j=0; j<dist[i].size(); j++){
@@ -184,7 +182,7 @@ Graph Graph::Dijkstra(int root) {
 }
 
 
-int Graph::addVertex(int color) { //Create a vertex of color. Return ID of the vertex
+int Graph::addVertex(string color) { //Create a vertex of color. Return ID of the vertex
     vertexIterator it = vertices.end(); //Go to the last item in the set;
     if (vertices.size()==0) { //brand new! Initialize!
         vertices.insert(0);
@@ -211,7 +209,7 @@ void Graph::addEdge(directedEdge newEdge) {
     return;
 }
 
-int Graph::getColor(int vertex) {
+string Graph::getColor(int vertex) {
     return colors[vertex];
 }
 
@@ -260,7 +258,8 @@ Graph Graph::generateRandom(int num) {
     srand (time(NULL));
     Graph graph;
     for (int i=0; i<num; i++) {
-        graph.addVertex(rand()%num);
+        graph.addVertex("poop.");
+   //     graph.addVertex(rand()%num);
     }
     directedEdge Ed1(0,0,NULL);
     for (int i=0; i<num; i++) {
@@ -276,11 +275,32 @@ Graph Graph::generateRandom(int num) {
 }
 
 int main() {
-//Creates a random graph.
     Graph graph;
+    string city_names[CITY_NUM];
+    fstream in;
+    int i=0,j=0;
+    in.open("map.txt", fstream::in);
+    string cur_dest;
+    string entry;
+    cur_dest="ETCW"; //First city in map.
+    graph.addVertex("ETCW"); //Each vertex 'j' represents a particular city.
+    //Fill up the data from the file.
+    while (in >> entry) {
+        if ((i+4)%4==0) { //Source
+            if (entry != cur_dest) {
+                j++;
+                graph.addVertex(entry);
+                cur_dest=entry;
+            }
+        } else if ((i+6)%4==0) { //Destination
+
+        } else if ((i+5)%4==0) { //Price.
+
+        }
+        i++;
+    }
+    printf("Finished filling in the data!\n");
     string gstring;
-//    graph=graph.generateRandom(5);
-    directedEdge Edge(0,1,3);
 /*    graph.addVertex(1);
     graph.addVertex(2);
     graph.addVertex(3);
@@ -301,6 +321,8 @@ int main() {
     graph.addEdge(directedEdge(5,6,1)); 
     graph.addEdge(directedEdge(6,2,3)); 
 */
+
+/*
     graph.addVertex(0);
     graph.addVertex(1);
     graph.addVertex(2);
@@ -322,12 +344,13 @@ int main() {
     printf("%s",gstring.c_str());
     printf("0 to 1: %d,   2 to 1: %d,   1 to 0: %d\n",graph.getPrice(directedEdge(0,1,NULL)),
         graph.getPrice(directedEdge(2,1,NULL)),graph.getPrice(directedEdge(1,0,NULL)));
+*/
   //  printf("The output of MST:\n");
     //Graph graph2;
  //   graph2=graph.Boruvka();
    // gstring=graph2.print();
     //printf("Min span tree of graph:\n");
     //printf("%s",gstring.c_str());
-    graph.Dijkstra(0);
+    graph.Dijkstra("ETCW");
     return 0;
 }

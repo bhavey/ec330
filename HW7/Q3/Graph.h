@@ -43,7 +43,7 @@ public:
 	//Adds a vertex to the graph with color <color>.
 	//@param color The color of the added vertex.
 	//@return The ID of the vertex that was added.
-	int addVertex(int color);
+	int addVertex(string color);
 
 	//Adds the given edge to the graph.
     //@param newEdge An edge to add to the graph.
@@ -53,7 +53,7 @@ public:
 	//@param vertex the vertex whose color is of interest.
 	//@require the vertex <vertex> must currently exist in the graph.
 	//@return the color of vertex <vertex>.
-	int getColor(int vertex);
+	string getColor(int vertex);
 
 	//@return true iff there is an edge in the graph with the same vertices as newEdge
 	bool isEdge(directedEdge newEdge);
@@ -68,14 +68,17 @@ public:
 
 	Graph Boruvka(); //Boruvka's algorithm for min span tree.
 
+	Graph Dijkstra(int root);
+
     static Graph generateRandom(int num);
 
-    int color();
+    string color();
+
 	set<int> vertices;         //The set of vertices of the graph.
 
 private:
 	set< directedEdge > edges; //A set of edges of the graph.
-	map< int, int > colors;    //A mapping between vertices in and their colors.
+	map< int, string > colors;    //A mapping between vertices in and their colors.
 };
 
 #endif
