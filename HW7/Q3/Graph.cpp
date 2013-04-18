@@ -4,6 +4,7 @@
 #include <time.h>
 #include <vector>
 #include <fstream>
+#include <map>
 
 using namespace std;
 #define CITY_NUM 1502
@@ -276,28 +277,39 @@ Graph Graph::generateRandom(int num) {
 
 int main() {
     Graph graph;
-    string city_names[CITY_NUM];
     fstream in;
     int i=0,j=0;
     in.open("map.txt", fstream::in);
     string cur_dest;
+    string cur_source;
     string entry;
-    cur_dest="ETCW"; //First city in map.
+    vector<stringEdge> tempEdges;
+    map<string,int> city_names;
+
+    cur_source="ETCW"; //First city in map.
     graph.addVertex("ETCW"); //Each vertex 'j' represents a particular city.
+    city_names["ETCW"]=0;
     //Fill up the data from the file.
     while (in >> entry) {
         if ((i+4)%4==0) { //Source
-            if (entry != cur_dest) {
+            if (entry != cur_source) {
                 j++;
                 graph.addVertex(entry);
-                cur_dest=entry;
+                cur_source=entry;
+                city_names[entry]=j;
             }
         } else if ((i+6)%4==0) { //Destination
-
+            cur_dest=entry;
         } else if ((i+5)%4==0) { //Price.
-
+            tempEdges.push_back(stringEdge(cur_source,cur_dest,atoi(entry.c_str())));
+//            graph.addEdge(directedEdge(cur_source,cur_dest,2));
         }
         i++;
+    }
+    for (int i=0; i<tempEdges.size(); i++) {
+        graph.addEdge(directedEdge(city_names[tempEdges[i].first],
+            city_names[tempEdges[i].second],
+            tempEdges[i].third));
     }
     printf("Finished filling in the data!\n");
     string gstring;
@@ -351,6 +363,6 @@ int main() {
    // gstring=graph2.print();
     //printf("Min span tree of graph:\n");
     //printf("%s",gstring.c_str());
-    graph.Dijkstra("ETCW");
+    graph.Dijkstra(0);
     return 0;
 }
