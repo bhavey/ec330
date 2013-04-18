@@ -145,20 +145,28 @@ Graph Graph::Dijkstra(int root) {
                     printf("here for %d: %d\n",*v,alt);
                     dist[*v].front() = alt;
 //                    dist[*v].push_back(u);
-                    vector<int> backwords_vec;
-                    backwords_vec.clear();
-                    backwords_vec.push_back(u);
-                    if (u!=root) {
-                        int p=u;
-                        printf("p: %d\n",p);
-                        printf("size: %d\n",(int)dist[p].size());
+                    printf("u: %d\n",u);
+                    if (u!=root) { //p is the previous iteration, *v is the current vertex.
+//                        int p=u;
+//                        printf("p: %d\n",p);
+                        printf("size: %d\n", (int)dist[u].size());
                         printf("start loop\n");
-                        while (dist[p].size()>1) {
-                            p=dist[p].back();
-                            printf("p: %d\n",p);
+                        for (int i=1; i<dist[u].size(); i++) {
+                           printf("%d ",dist[u].at(i));
+                           dist[*v].push_back(dist[u].at(i));
                         }
+                        dist[*v].push_back(u);
+                        printf("\n");
+//                        printf("Now while: ");
+//                        while (dist[p].size()>1) {
+//                            p=dist[p].back();
+//                            printf("p: %d\n",p);
+//                        }
                         printf("end loop\n");
-                    } //Make sure we're not at the bottom of the barrel!
+                    } else {
+                        dist[*v].push_back(u);
+                    }
+                    //Make sure we're not at the bottom of the barrel!
 //                    dist[*v] = alt;
                     previous[*v] = u;
                 }
@@ -170,8 +178,8 @@ Graph Graph::Dijkstra(int root) {
         printf("%d ",dist[i].front());
     printf("\n");
     printf("Path for 6: ");
-    for (int i=0; i<dist[3].size(); i++){
-        printf("%d ",dist[3].at(i));
+    for (int i=0; i<dist[5].size(); i++){
+        printf("%d ",dist[5].at(i));
     }
     printf("\n");
     delete [] dist;
