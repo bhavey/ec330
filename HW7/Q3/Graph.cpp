@@ -47,7 +47,7 @@ Graph Graph::Boruvka() {
 */
     Graph Out;
     int vert_size=vertices.size();
-    bool *Touched = new bool[vert_size];
+    int *Touched = new int[vert_size];
     printf("Vert size: %d\n",vert_size);
     for (int i=1; i<=vert_size; i++) {
         Out.addVertex(i);
@@ -57,10 +57,16 @@ Graph Graph::Boruvka() {
     outstring=Out.print();
     printf("%s",outstring.c_str());
     int doneCheck=vertices.size();
+    //int *LowestBidder = new
     int tmpCheck=0;
     int edge1, edge2;
     int lastminprice;
     int newminprice;
+    pair<int,int> *LowestBidder = new pair<int,int> [vert_size];
+    for (int i=0; i<vert_size; i++) {
+        LowestBidder[i].first=999999999; //first=price
+        LowestBidder[i].second=-1; //second=vertex pointing to this.
+    }
     Touched[0]=true;
     while (doneCheck!=tmpCheck) {
         tmpCheck=doneCheck;
@@ -71,6 +77,10 @@ Graph Graph::Boruvka() {
                     //Check the edge!
                     if (!Touched[*vert2]) { //It's untouched!
                         newminprice=getPrice(directedEdge(*vert1,*vert2,NULL));
+                        //if (newminprice<LowestBidder[*vert2].first) {
+                        //    LowestBidder[*vert2].first=newminprice;
+                        //    LowestBidder[*vert2].second=*vert1;
+                        //}
                         if (newminprice<lastminprice) {
                             lastminprice=newminprice;
                             edge1=*vert1;
@@ -81,10 +91,10 @@ Graph Graph::Boruvka() {
                 }
             }
             if (lastminprice!=999999999) {
-                            //Would you pay 1 billion dollars to go to a city?
-                            //Didn't think so.
-                            Touched[edge2]=1;
-                            Out.addEdge(directedEdge(edge1,edge2,lastminprice));
+                //Would you pay 1 billion dollars to go to a city?
+                //Didn't think so.
+                Touched[edge2]=lastminprice;
+                Out.addEdge(directedEdge(edge1,edge2,lastminprice));
             }
         }
         printf("Jesus dick. tmpCheck: %d, doneCheck %d\n",tmpCheck,doneCheck);
@@ -92,8 +102,11 @@ Graph Graph::Boruvka() {
         poop=Out.print();
         printf("Min span tree of graph:\n");
         printf("%s",poop.c_str());
+
 //        cin >> poop;
     }
+    //Now we run through the Lowest bidder array and see if there are any discrepancies.
+    //If there is a lower bidder 
     delete[] Touched;
     return Out;
 }
