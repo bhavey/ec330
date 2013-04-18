@@ -71,9 +71,9 @@ public:
     static Graph generateRandom(int num);
 
     int color();
+	set<int> vertices;         //The set of vertices of the graph.
 
 private:
-	set<int> vertices;         //The set of vertices of the graph.
 	set< directedEdge > edges; //A set of edges of the graph.
 	map< int, int > colors;    //A mapping between vertices in and their colors.
 };

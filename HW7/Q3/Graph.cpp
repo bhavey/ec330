@@ -52,18 +52,47 @@ Graph Graph::Boruvka() {
     for (int i=1; i<=vert_size; i++) {
         Out.addVertex(i);
     }
-
-//    while 
-    int price;
-    stringstream result;
-    for (vertexIterator vert1=vertices.begin(); vert1 != vertices.end(); vert1++) {
-        result << *vert1 << "[" << getColor(*vert1) << "]:  ";
-        for (vertexIterator vert2 = vertices.begin(); vert2 != vertices.end(); vert2++)
-            if (isEdge (directedEdge(*vert1, *vert2, NULL))) {
-                price=getPrice(directedEdge(*vert1, *vert2, NULL));
-                result << *vert2 << "(" << price << "), " ;
+    int vert2=Out.vertices.size();
+    string outstring;
+    outstring=Out.print();
+    printf("%s",outstring.c_str());
+    int doneCheck=vertices.size();
+    int tmpCheck=0;
+    int edge1, edge2;
+    int lastminprice;
+    int newminprice;
+    Touched[0]=true;
+    while (doneCheck!=tmpCheck) {
+        tmpCheck=doneCheck;
+        for (vertexIterator vert1=vertices.begin(); vert1 != vertices.end(); vert1++) {
+            lastminprice=999999999;
+            for (vertexIterator vert2 = vertices.begin(); vert2 != vertices.end(); vert2++) {
+                if (isEdge (directedEdge(*vert1, *vert2, NULL))) {
+                    //Check the edge!
+                    if (!Touched[*vert2]) { //It's untouched!
+                        newminprice=getPrice(directedEdge(*vert1,*vert2,NULL));
+                        if (newminprice<lastminprice) {
+                            lastminprice=newminprice;
+                            edge1=*vert1;
+                            edge2=*vert2;
+                            doneCheck--;
+                        }
+                    }
+                }
             }
-        result << std::endl;
+            if (lastminprice!=999999999) {
+                            //Would you pay 1 billion dollars to go to a city?
+                            //Didn't think so.
+                            Touched[edge2]=1;
+                            Out.addEdge(directedEdge(edge1,edge2,lastminprice));
+            }
+        }
+        printf("Jesus dick. tmpCheck: %d, doneCheck %d\n",tmpCheck,doneCheck);
+        string poop;
+        poop=Out.print();
+        printf("Min span tree of graph:\n");
+        printf("%s",poop.c_str());
+//        cin >> poop;
     }
     delete[] Touched;
     return Out;
@@ -177,12 +206,17 @@ int main() {
     graph.addEdge(directedEdge(1,2,6));
     graph.addEdge(directedEdge(1,3,20));
     graph.addEdge(directedEdge(3,0,10));
+    graph.addEdge(directedEdge(2,3,28));    
 
     gstring=graph.print();
     printf("%s",gstring.c_str());
     printf("0 to 1: %d,   2 to 1: %d,   1 to 0: %d\n",graph.getPrice(directedEdge(0,1,NULL)),
         graph.getPrice(directedEdge(2,1,NULL)),graph.getPrice(directedEdge(1,0,NULL)));
     printf("The output of MST:\n");
-    graph.Boruvka();
+    Graph graph2;
+    graph2=graph.Boruvka();
+    gstring=graph2.print();
+    printf("Min span tree of graph:\n");
+    printf("%s",gstring.c_str());
     return 0;
 }
