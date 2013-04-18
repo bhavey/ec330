@@ -11,7 +11,6 @@ Graph::Graph() {
     map<int,int> colors;
 };
 
-
 Graph Graph::Boruvka() {
 //Personal implementation of the Boruvka minimum span tree
 /* Boruvka-MST()
@@ -74,6 +73,89 @@ Graph Graph::Boruvka() {
     delete[] Touched;
     return Out;
 }
+
+Graph Graph::Dijkstra(int root) {
+/*
+ 1  function Dijkstra(Graph, source):
+ 2      for each vertex v in Graph:                                // Initializations
+ 3          dist[v] := infinity ;                                  // Unknown distance function from 
+ 4                                                                 // source to v
+ 5          previous[v] := undefined ;                             // Previous node in optimal path
+ 6      end for                                                    // from source
+ 7      
+ 8      dist[source] := 0 ;                                        // Distance from source to source
+ 9      Q := the set of all nodes in Graph ;                       // All nodes in the graph are
+10                                                                 // unoptimized - thus are in Q
+11      while Q is not empty:                                      // The main loop
+12          u := vertex in Q with smallest distance in dist[] ;    // Source node in first case
+13          remove u from Q ;
+14          if dist[u] = infinity:
+15              break ;                                            // all remaining vertices are
+16          end if                                                 // inaccessible from source
+17          
+18          for each neighbor v of u:                              // where v has not yet been 
+19                                                                 // removed from Q.
+20              alt := dist[u] + dist_between(u, v) ;
+21              if alt < dist[v]:                                  // Relax (u,v,a)
+22                  dist[v] := alt ;
+23                  previous[v] := u ;
+24                  decrease-key v in Q;                           // Reorder v in the Queue
+25              end if
+26          end for
+27      end while
+28  return dist;
+*/
+    Graph Out;
+    int vert_size=vertices.size();
+    int *dist = new int[vert_size];
+    int *previous = new int[vert_size];
+    for (int i=0; i<vert_size; i++) {
+        dist[i]=999999999;
+        previous[i]=NULL;
+    }
+    dist[root] = 0;
+    set<int> Q = this->vertices;
+    Out.vertices=Q;
+    string poop;
+    poop=Out.print();
+    printf("Out:\n");
+    printf("%s\n",poop.c_str());
+    int u;
+    int cur_u;
+    int smallest_dist;
+    int alt;
+    while (Q.size() != 0) { //While Q is not empty.
+        smallest_dist=1000000000;
+        for (vertexIterator q=Q.begin(); q!=Q.end(); q++) {
+            //Find the smallest distance u in Q.
+            if (dist[*q]<smallest_dist) {
+                smallest_dist=dist[*q];
+                u=*q;
+            }
+        }
+        Q.erase(u); //Remove u from Q.
+        if (dist[u]>=999999999) { //break if dist[u]>inf
+            break;
+        }
+        for (vertexIterator v=vertices.begin(); v!=vertices.end(); v++) {
+            if (isEdge(directedEdge(u,*v,NULL))) { //For each neighbor v of u.
+                alt = dist[u] + getPrice(directedEdge(u,*v,NULL));
+                if (alt < dist[*v]) {
+                    dist[*v] = alt;
+                    previous[*v] = u;
+                }
+            }
+        }
+    }
+    printf("Dist: ");
+    for (int i=0; i<vert_size; i++) 
+        printf("%d ",dist[i]);
+    printf("\n");
+    delete [] dist;
+    delete [] previous;
+    return Out;
+}
+
 
 int Graph::addVertex(int color) { //Create a vertex of color. Return ID of the vertex
     vertexIterator it = vertices.end(); //Go to the last item in the set;
@@ -183,17 +265,20 @@ int main() {
     graph.addEdge(directedEdge(1,2,6));
     graph.addEdge(directedEdge(1,3,20));
     graph.addEdge(directedEdge(3,0,10));
-    graph.addEdge(directedEdge(2,3,28));    
+    graph.addEdge(directedEdge(3,4,2)); 
+    graph.addEdge(directedEdge(4,2,1)); 
+
 
     gstring=graph.print();
     printf("%s",gstring.c_str());
     printf("0 to 1: %d,   2 to 1: %d,   1 to 0: %d\n",graph.getPrice(directedEdge(0,1,NULL)),
         graph.getPrice(directedEdge(2,1,NULL)),graph.getPrice(directedEdge(1,0,NULL)));
-    printf("The output of MST:\n");
-    Graph graph2;
-    graph2=graph.Boruvka();
-    gstring=graph2.print();
-    printf("Min span tree of graph:\n");
-    printf("%s",gstring.c_str());
+  //  printf("The output of MST:\n");
+    //Graph graph2;
+ //   graph2=graph.Boruvka();
+   // gstring=graph2.print();
+    //printf("Min span tree of graph:\n");
+    //printf("%s",gstring.c_str());
+    graph.Dijkstra(1);
     return 0;
 }
