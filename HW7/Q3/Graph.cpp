@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <vector>
 
 using namespace std;
 
@@ -107,13 +108,13 @@ Graph Graph::Dijkstra(int root) {
 */
     Graph Out;
     int vert_size=vertices.size();
-    int *dist = new int[vert_size];
+    vector<int> *dist = new vector<int>[vert_size];
     int *previous = new int[vert_size];
     for (int i=0; i<vert_size; i++) {
-        dist[i]=999999999;
+        dist[i].push_back(999999999);
         previous[i]=NULL;
     }
-    dist[root] = 0;
+    dist[root].front() = 0;
     set<int> Q = this->vertices;
     Out.vertices=Q;
     string poop;
@@ -128,20 +129,37 @@ Graph Graph::Dijkstra(int root) {
         smallest_dist=1000000000;
         for (vertexIterator q=Q.begin(); q!=Q.end(); q++) {
             //Find the smallest distance u in Q.
-            if (dist[*q]<smallest_dist) {
-                smallest_dist=dist[*q];
+            if (dist[*q].front()<smallest_dist) {
+                smallest_dist=dist[*q].front();
                 u=*q;
             }
         }
         Q.erase(u); //Remove u from Q.
-        if (dist[u]>=999999999) { //break if dist[u]>inf
+        if (dist[u].front()>=999999999) { //break if dist[u]>inf
             break;
         }
         for (vertexIterator v=vertices.begin(); v!=vertices.end(); v++) {
             if (isEdge(directedEdge(u,*v,NULL))) { //For each neighbor v of u.
-                alt = dist[u] + getPrice(directedEdge(u,*v,NULL));
-                if (alt < dist[*v]) {
-                    dist[*v] = alt;
+                alt = dist[u].front() + getPrice(directedEdge(u,*v,NULL));
+                if (alt < dist[*v].front()) {
+                    printf("here for %d: %d\n",*v,alt);
+                    dist[*v].front() = alt;
+//                    dist[*v].push_back(u);
+                    vector<int> backwords_vec;
+                    backwords_vec.clear();
+                    backwords_vec.push_back(u);
+                    if (u!=root) {
+                        int p=u;
+                        printf("p: %d\n",p);
+                        printf("size: %d\n",(int)dist[p].size());
+                        printf("start loop\n");
+                        while (dist[p].size()>1) {
+                            p=dist[p].back();
+                            printf("p: %d\n",p);
+                        }
+                        printf("end loop\n");
+                    } //Make sure we're not at the bottom of the barrel!
+//                    dist[*v] = alt;
                     previous[*v] = u;
                 }
             }
@@ -149,7 +167,12 @@ Graph Graph::Dijkstra(int root) {
     }
     printf("Dist: ");
     for (int i=0; i<vert_size; i++) 
-        printf("%d ",dist[i]);
+        printf("%d ",dist[i].front());
+    printf("\n");
+    printf("Path for 6: ");
+    for (int i=0; i<dist[3].size(); i++){
+        printf("%d ",dist[3].at(i));
+    }
     printf("\n");
     delete [] dist;
     delete [] previous;
@@ -259,6 +282,8 @@ int main() {
     graph.addVertex(3);
     graph.addVertex(4);
     graph.addVertex(5);
+    graph.addVertex(6);
+    graph.addVertex(7);
     graph.addEdge(directedEdge(0,1,3));
     graph.addEdge(directedEdge(0,2,40));
     graph.addEdge(directedEdge(2,1,5));
@@ -267,6 +292,11 @@ int main() {
     graph.addEdge(directedEdge(3,0,10));
     graph.addEdge(directedEdge(3,4,2)); 
     graph.addEdge(directedEdge(4,2,1)); 
+    graph.addEdge(directedEdge(4,5,4)); 
+    graph.addEdge(directedEdge(5,6,1)); 
+    graph.addEdge(directedEdge(6,2,3)); 
+
+
 
 
     gstring=graph.print();
