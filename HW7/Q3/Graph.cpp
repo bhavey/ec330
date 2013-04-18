@@ -145,7 +145,7 @@ Graph Graph::Dijkstra(int root) {
                     dist[*v].front() = alt;
                     //printf("u: %d\n",u);
                     if (u!=root) { //p is the previous iteration, *v is the current vertex.
-                        printf("\nsize: %d\n", (int)dist[u].size());
+                        //printf("\nsize: %d\n", (int)dist[u].size());
                         for (int i=1; i<dist[u].size(); i++) {
                             //printf("u: %d\n",u);
                             //printf("pushing back %d\n",dist[u].at(i));
@@ -314,13 +314,6 @@ int main() {
         graph.addEdge(directedEdge(city_names[tempEdges[i].first],
             city_names[tempEdges[i].second],
             tempEdges[i].third));
-        printf("first: %s, second: %s, third: %d\n",tempEdges[i].first.c_str(),
-            tempEdges[i].second.c_str(), tempEdges[i].third);
-        int b=city_names[tempEdges[i].first.c_str()];
-        printf("b: %d\n",b);
-        printf("n1: %d, n2: %d, price: %d\n",city_names[tempEdges[i].first],
-            city_names[tempEdges[i].second],
-            tempEdges[i].third);
     }
     printf("i: %d\n",i);
     printf("Finished filling in the data!\n");
@@ -373,9 +366,9 @@ int main() {
     //Graph graph2;
  //   graph2=graph.Boruvka();
 //    string gstring;
-    gstring=graph.print();
+//    gstring=graph.print();
     //printf("Min span tree of graph:\n");
-    printf("%s",gstring.c_str());
+//    printf("%s",gstring.c_str());
     graph.Dijkstra(0);
     return 0;
 }

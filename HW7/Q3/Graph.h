@@ -33,6 +33,17 @@ struct directedEdge {
 	int third;
 };
 
+struct stringEdge {
+	stringEdge(string a, string b, int c) {
+		first=a;
+		second=b;
+		third=c;
+	}
+	string first;
+	string second;
+	int third;
+};
+
 typedef set<int>::iterator vertexIterator;
 
 class Graph { //Implements a directed, unweighted graph, where vertices can have color.
