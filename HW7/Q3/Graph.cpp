@@ -144,30 +144,22 @@ Graph Graph::Dijkstra(int root) {
                 if (alt < dist[*v].front()) {
                     printf("here for %d: %d\n",*v,alt);
                     dist[*v].front() = alt;
-//                    dist[*v].push_back(u);
                     printf("u: %d\n",u);
                     if (u!=root) { //p is the previous iteration, *v is the current vertex.
-//                        int p=u;
-//                        printf("p: %d\n",p);
-                        printf("size: %d\n", (int)dist[u].size());
-                        printf("start loop\n");
+                        printf("\nsize: %d\n", (int)dist[u].size());
                         for (int i=1; i<dist[u].size(); i++) {
-                           printf("%d ",dist[u].at(i));
-                           dist[*v].push_back(dist[u].at(i));
+                            printf("u: %d\n",u);
+                            printf("pushing back %d\n",dist[u].at(i));
+                            if (dist[u].at(i)==root)
+                                break;
+                            printf("%d ",dist[u].at(i));
+                            dist[*v].push_back(dist[u].at(i));
                         }
                         dist[*v].push_back(u);
                         printf("\n");
-//                        printf("Now while: ");
-//                        while (dist[p].size()>1) {
-//                            p=dist[p].back();
-//                            printf("p: %d\n",p);
-//                        }
-                        printf("end loop\n");
                     } else {
-                        dist[*v].push_back(u);
+                        printf("u: %d\n",u);
                     }
-                    //Make sure we're not at the bottom of the barrel!
-//                    dist[*v] = alt;
                     previous[*v] = u;
                 }
             }
@@ -177,9 +169,13 @@ Graph Graph::Dijkstra(int root) {
     for (int i=0; i<vert_size; i++) 
         printf("%d ",dist[i].front());
     printf("\n");
-    printf("Path for 6: ");
-    for (int i=0; i<dist[5].size(); i++){
-        printf("%d ",dist[5].at(i));
+    for (int i=0; i<vert_size; i++) {
+        printf("\nPath for %d: ",i);
+        for (int j=0; j<dist[i].size(); j++){
+            if (j>0?dist[i].at(j)==dist[i].at(j-1):0) //May break for repeats at the end!
+                dist[i].erase(dist[i].begin()+j);
+            printf("%d ",dist[i].at(j));
+        }
     }
     printf("\n");
     delete [] dist;
@@ -285,7 +281,7 @@ int main() {
     string gstring;
 //    graph=graph.generateRandom(5);
     directedEdge Edge(0,1,3);
-    graph.addVertex(1);
+/*    graph.addVertex(1);
     graph.addVertex(2);
     graph.addVertex(3);
     graph.addVertex(4);
@@ -295,16 +291,31 @@ int main() {
     graph.addEdge(directedEdge(0,1,3));
     graph.addEdge(directedEdge(0,2,40));
     graph.addEdge(directedEdge(2,1,5));
+    graph.addEdge(directedEdge(2,0,2));
     graph.addEdge(directedEdge(1,2,6));
     graph.addEdge(directedEdge(1,3,20));
-    graph.addEdge(directedEdge(3,0,10));
+//    graph.addEdge(directedEdge(3,0,10));
     graph.addEdge(directedEdge(3,4,2)); 
     graph.addEdge(directedEdge(4,2,1)); 
     graph.addEdge(directedEdge(4,5,4)); 
     graph.addEdge(directedEdge(5,6,1)); 
     graph.addEdge(directedEdge(6,2,3)); 
-
-
+*/
+    graph.addVertex(0);
+    graph.addVertex(1);
+    graph.addVertex(2);
+    graph.addVertex(3);
+    graph.addVertex(4);
+    graph.addEdge(directedEdge(0,1,10));
+    graph.addEdge(directedEdge(0,3,5));
+    graph.addEdge(directedEdge(1,2,1));
+    graph.addEdge(directedEdge(1,3,2));
+    graph.addEdge(directedEdge(2,4,4));
+    graph.addEdge(directedEdge(3,1,3));
+    graph.addEdge(directedEdge(3,2,9));
+    graph.addEdge(directedEdge(3,4,6));
+    graph.addEdge(directedEdge(4,0,7));
+    graph.addEdge(directedEdge(4,2,6));
 
 
     gstring=graph.print();
@@ -317,6 +328,6 @@ int main() {
    // gstring=graph2.print();
     //printf("Min span tree of graph:\n");
     //printf("%s",gstring.c_str());
-    graph.Dijkstra(1);
+    graph.Dijkstra(0);
     return 0;
 }
