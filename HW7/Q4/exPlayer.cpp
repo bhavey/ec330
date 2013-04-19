@@ -109,33 +109,210 @@ boardSquare exPlayer::nextMove() {
 
 //Check if it's a valid direction to take!
  int exPlayer::CheckDir(char s[2], int x, int y, int length) {
-    int edge=boardSize-4+streak_length;
-    int bedge=3-streak_length;
+    int edge=boardSize-5+streak_length;
+    int bedge=4-streak_length;
+    int sameColor=0; //checks to see how many same color pieces you have in a row (if any)
     printf("x: %d, y: %d, s: %s\n",x,y,s);
     if (!strcmp(s,"N")) {
-        if (y>bedge)
-            return 1;
+        if (y>bedge) {
+            for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
+                if (table[x][y-i]==oh) { //enemy in path.
+                    return 0;
+                }
+                else if (table[x][y-i]==blank) {
+                    if (sameColor==0)
+                        sameColor=-1; //There was a blank before any same color pieces.
+                    continue;
+                }
+                else if (table[x][y-i]==ex) {
+                    if (sameColor!=-1)
+                        sameColor++;
+                    continue;
+                } else {//unusable space.
+                    return 0; 
+                }
+            }
+            if (sameColor==-1) { //blank is next adjacent piece in streak
+                return 1;
+            } else { //There is a same color piece in your way. Skip over it!
+                return (sameColor+1);
+            }
+        }
     } else if (!strcmp(s,"NE")) {
-        if ((y>bedge) && (x<edge))
-            return 1;
+        if ((y>bedge) && (x<edge)) {
+            for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
+                if (table[x+i][y-i]==oh) { //enemy in path.
+                    return 0;
+                }
+                else if (table[x+i][y-i]==blank) {
+                    if (sameColor==0)
+                        sameColor=-1; //There was a blank before any same color pieces.
+                    continue;
+                }
+                else if (table[x+i][y-i]==ex) {
+                    if (sameColor!=-1)
+                        sameColor++;
+                    continue;
+                } else {//unusable space.
+                    return 0; 
+                }
+            }
+            if (sameColor==-1) { //blank is next adjacent piece in streak
+                return 1;
+            } else { //There is a same color piece in your way. Skip over it!
+                return (sameColor+1);
+            }
+        }
     } else if (!strcmp(s,"E")) {
-        if (x<edge)
-            return 1;
+        if (x<edge) {
+            for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
+                if (table[x+i][y]==oh) { //enemy in path.
+                    return 0;
+                }
+                else if (table[x+i][y]==blank) {
+                    if (sameColor==0)
+                        sameColor=-1; //There was a blank before any same color pieces.
+                    continue;
+                }
+                else if (table[x+i][y]==ex) {
+                    if (sameColor!=-1)
+                        sameColor++;
+                    continue;
+                } else {//unusable space.
+                    return 0; 
+                }
+            }
+            if (sameColor==-1) { //blank is next adjacent piece in streak
+                return 1;
+            } else { //There is a same color piece in your way. Skip over it!
+                return (sameColor+1);
+            }
+        }
     } else if (!strcmp(s,"SE")) {
-        if ((y<edge) && (x<edge))
-            return 1;
+        if ((y<edge) && (x<edge)) {
+            for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
+                if (table[x+i][y+i]==oh) { //enemy in path.
+                    return 0;
+                }
+                else if (table[x+i][y+i]==blank) {
+                    if (sameColor==0)
+                        sameColor=-1; //There was a blank before any same color pieces.
+                    continue;
+                }
+                else if (table[x+i][y+i]==ex) {
+                    if (sameColor!=-1)
+                        sameColor++;
+                    continue;
+                } else {//unusable space.
+                    return 0; 
+                }
+            }
+            if (sameColor==-1) { //blank is next adjacent piece in streak
+                return 1;
+            } else { //There is a same color piece in your way. Skip over it!
+                return (sameColor+1);
+            }
+        }
     } else if (!strcmp(s,"S")) {
-        if (y<edge)
-            return 1;
+        if (y<edge) {
+            for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
+                if (table[x][y+i]==oh) { //enemy in path.
+                    return 0;
+                }
+                else if (table[x][y+i]==blank) {
+                    if (sameColor==0)
+                        sameColor=-1; //There was a blank before any same color pieces.
+                    continue;
+                }
+                else if (table[x][y+i]==ex) {
+                    if (sameColor!=-1)
+                        sameColor++;
+                    continue;
+                } else {//unusable space.
+                    return 0; 
+                }
+            }
+            if (sameColor==-1) { //blank is next adjacent piece in streak
+                return 1;
+            } else { //There is a same color piece in your way. Skip over it!
+                return (sameColor+1);
+            }
+        }
     } else if (!strcmp(s,"SW")) {
-        if ((y<edge) && (x>bedge))
-            return 1;
+        if ((y<edge) && (x>bedge)) {
+            for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
+                if (table[x-i][y+i]==oh) { //enemy in path.
+                    return 0;
+                }
+                else if (table[x-i][y+i]==blank) {
+                    if (sameColor==0)
+                        sameColor=-1; //There was a blank before any same color pieces.
+                    continue;
+                }
+                else if (table[x-i][y+i]==ex) {
+                    if (sameColor!=-1)
+                        sameColor++;
+                    continue;
+                } else {//unusable space.
+                    return 0; 
+                }
+            }
+            if (sameColor==-1) { //blank is next adjacent piece in streak
+                return 1;
+            } else { //There is a same color piece in your way. Skip over it!
+                return (sameColor+1);
+            }
+        }
     } else if (!strcmp(s,"W")) {
-        if (x>bedge)
-            return 1;
+        if (x>bedge) {
+            for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
+                if (table[x-i][y]==oh) { //enemy in path.
+                    return 0;
+                }
+                else if (table[x-i][y]==blank) {
+                    if (sameColor==0)
+                        sameColor=-1; //There was a blank before any same color pieces.
+                    continue;
+                }
+                else if (table[x-i][y]==ex) {
+                    if (sameColor!=-1)
+                        sameColor++;
+                    continue;
+                } else {//unusable space.
+                    return 0; 
+                }
+            }
+            if (sameColor==-1) { //blank is next adjacent piece in streak
+                return 1;
+            } else { //There is a same color piece in your way. Skip over it!
+                return (sameColor+1);
+            }
+        }
     } else if (!strcmp(s,"NW")) {
-        if ((y>bedge) && (x>bedge))
-            return 1;
+        if ((y>bedge) && (x>bedge)) {
+            for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
+                if (table[x-i][y-i]==oh) { //enemy in path.
+                    return 0;
+                }
+                else if (table[x-i][y-i]==blank) {
+                    if (sameColor==0)
+                        sameColor=-1; //There was a blank before any same color pieces.
+                    continue;
+                }
+                else if (table[x-i][y-i]==ex) {
+                    if (sameColor!=-1)
+                        sameColor++;
+                    continue;
+                } else {//unusable space.
+                    return 0; 
+                }
+            }
+            if (sameColor==-1) { //blank is next adjacent piece in streak
+                return 1;
+            } else { //There is a same color piece in your way. Skip over it!
+                return (sameColor+1);
+            }
+        }
     }
     return 0; //Nope!
 }
