@@ -2,30 +2,33 @@
 #include <cstdlib>
 #include <string.h>
 #include "player.h"
-#include "ohPlayer.h"
+#include "exPlayer.h"
 #define size 10
 #define boardSize 10
 
 static char directs[8][3] = { {'N'}, {'N', 'E'}, {'E'}, {'S', 'E'}, {'S'}, {'S', 'W'},
     {'W'}, {'N', 'W'} };
 
-ohPlayer::ohPlayer(square **initTable) {
-  xstreak=-1;
-  ystreak=-1;
-  streak_length=0;
-  myColor=oh;
-  direction[0]='d';
-  strcpy(direction,"NO");
-  table = new int*[size];
-  for (int ii=0; ii<size; ii++)
-    table[ii]=new int[size];
-  for (int ii=0; ii<size; ii++)
-    for (int jj=0; jj<size; jj++)
-      table[ii][jj]=initTable[ii][jj];
+exPlayer::exPlayer(square **initTable) {
+    xstreak=-1;
+    ystreak=-1;
+    streak_length=0;
+    myColor=ex;
+    direction[0]='d';
+    strcpy(direction,"NO");
+    table = new int*[size];
+    for (int ii=0; ii<size; ii++) {
+        table[ii]=new int[size];
+    }
+    for (int ii=0; ii<size; ii++) {
+        for (int jj=0; jj<size; jj++) {
+			table[ii][jj]=initTable[ii][jj];
+        }
+    }
 }
 
-void ohPlayer::otherMove(boardSquare bs) {
-  table[bs.xx][bs.yy]=(myColor==ex?oh:ex);
+void exPlayer::otherMove(boardSquare bs) {
+	table[bs.xx][bs.yy]=(myColor==ex?oh:ex);
 }
 
 //Calculate the new coordinates
@@ -34,11 +37,8 @@ int* newCord(char s[2], int x, int y, int ret);
 //Figure out the new streak coordinates.
 int* streakCord(char s[2], int x, int y, int length);
 
-boardSquare ohPlayer::nextMove() {
+boardSquare exPlayer::nextMove() {
     int checkStreak=0;
-    if (streak_length>boardSize) { //well *something* is wrong here...
-      streak_length=0;
-    }
     //char direct[2]="NW";
     boardSquare bs;
     bool checkError=0;
@@ -55,8 +55,6 @@ boardSquare ohPlayer::nextMove() {
     printf("direction: %s\n",direction);
     //Simple idea is find a possible streak, go there.
     while (flagvar) {
-      checkError=0;
-      printf("starting while loop.\n");
         timing_var++;
         if (timing_var%20==0) { //jump out! Abort! Abort! Run out of time!
             while (table[bs.xx][bs.yy]!=blank) {
@@ -83,18 +81,8 @@ boardSquare ohPlayer::nextMove() {
                     ystreak=bs.yy;
                     bs.xx=ptr[0];
                     bs.yy=ptr[1];
-                    checkError=this->ErrorCheck(bs.xx,bs.yy);
-                    if (checkError) { //well SOMETHING went wrong;
-                      streak_length=0;
-                      xstreak=-1;
-                      ystreak=-2;
-                      strcpy(direction,"NO");
-                      flagvar=1;
-                      break;
-                    }  else {
                     flagvar=0;
                     break;
-                    }
                 }
             }
         } else { //We're on a streak. Go!
@@ -133,12 +121,12 @@ boardSquare ohPlayer::nextMove() {
         }
     }
 
-    table[bs.xx][bs.yy]=oh;
+    table[bs.xx][bs.yy]=ex;
     return bs;
 }
 
 //Check if it's a valid direction to take!
-int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
+int exPlayer::CheckDir(char s[2], int x, int y, int length) {
     int edge=boardSize-5+streak_length;
     int bedge=4-streak_length;
     int sameColor=0; //checks to see how many same color pieces you have in a row (if any)
@@ -146,7 +134,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
     if (!strcmp(s,"N")) {
         if (y>bedge) {
             for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
-                if (table[x][y-i]==ex) { //enemy in path.
+                if (table[x][y-i]==oh) { //enemy in path.
                     return 0;
                 }
                 else if (table[x][y-i]==blank) {
@@ -154,7 +142,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
                         sameColor=-1; //There was a blank before any same color pieces.
                     continue;
                 }
-                else if (table[x][y-i]==oh) {
+                else if (table[x][y-i]==ex) {
                     if (sameColor!=-1)
                         sameColor++;
                     continue;
@@ -171,7 +159,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
     } else if (!strcmp(s,"NE")) {
         if ((y>bedge) && (x<edge)) {
             for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
-                if (table[x+i][y-i]==ex) { //enemy in path.
+                if (table[x+i][y-i]==oh) { //enemy in path.
                     return 0;
                 }
                 else if (table[x+i][y-i]==blank) {
@@ -179,7 +167,8 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
                         sameColor=-1; //There was a blank before any same color pieces.
                     continue;
                 }
-                else if (table[x+i][y-i]==oh) {
+                else if (table[x+i][y-i]==ex) {
+                    if (sameColor!=-1)
                         sameColor++;
                     continue;
                 } else {//unusable space.
@@ -195,7 +184,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
     } else if (!strcmp(s,"E")) {
         if (x<edge) {
             for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
-                if (table[x+i][y]==ex) { //enemy in path.
+                if (table[x+i][y]==oh) { //enemy in path.
                     return 0;
                 }
                 else if (table[x+i][y]==blank) {
@@ -203,7 +192,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
                         sameColor=-1; //There was a blank before any same color pieces.
                     continue;
                 }
-                else if (table[x+i][y]==oh) {
+                else if (table[x+i][y]==ex) {
                     if (sameColor!=-1)
                         sameColor++;
                     continue;
@@ -220,7 +209,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
     } else if (!strcmp(s,"SE")) {
         if ((y<edge) && (x<edge)) {
             for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
-                if (table[x+i][y+i]==ex) { //enemy in path.
+                if (table[x+i][y+i]==oh) { //enemy in path.
                     return 0;
                 }
                 else if (table[x+i][y+i]==blank) {
@@ -228,7 +217,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
                         sameColor=-1; //There was a blank before any same color pieces.
                     continue;
                 }
-                else if (table[x+i][y+i]==oh) {
+                else if (table[x+i][y+i]==ex) {
                     if (sameColor!=-1)
                         sameColor++;
                     continue;
@@ -245,7 +234,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
     } else if (!strcmp(s,"S")) {
         if (y<edge) {
             for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
-                if (table[x][y+i]==ex) { //enemy in path.
+                if (table[x][y+i]==oh) { //enemy in path.
                     return 0;
                 }
                 else if (table[x][y+i]==blank) {
@@ -253,7 +242,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
                         sameColor=-1; //There was a blank before any same color pieces.
                     continue;
                 }
-                else if (table[x][y+i]==oh) {
+                else if (table[x][y+i]==ex) {
                     if (sameColor!=-1)
                         sameColor++;
                     continue;
@@ -270,7 +259,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
     } else if (!strcmp(s,"SW")) {
         if ((y<edge) && (x>bedge)) {
             for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
-                if (table[x-i][y+i]==ex) { //enemy in path.
+                if (table[x-i][y+i]==oh) { //enemy in path.
                     return 0;
                 }
                 else if (table[x-i][y+i]==blank) {
@@ -278,7 +267,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
                         sameColor=-1; //There was a blank before any same color pieces.
                     continue;
                 }
-                else if (table[x-i][y+i]==oh) {
+                else if (table[x-i][y+i]==ex) {
                     if (sameColor!=-1)
                         sameColor++;
                     continue;
@@ -295,7 +284,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
     } else if (!strcmp(s,"W")) {
         if (x>bedge) {
             for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
-                if (table[x-i][y]==ex) { //enemy in path.
+                if (table[x-i][y]==oh) { //enemy in path.
                     return 0;
                 }
                 else if (table[x-i][y]==blank) {
@@ -303,7 +292,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
                         sameColor=-1; //There was a blank before any same color pieces.
                     continue;
                 }
-                else if (table[x-i][y]==oh) {
+                else if (table[x-i][y]==ex) {
                     if (sameColor!=-1)
                         sameColor++;
                     continue;
@@ -320,7 +309,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
     } else if (!strcmp(s,"NW")) {
         if ((y>bedge) && (x>bedge)) {
             for (int i=0; i<4-streak_length; i++) { //Check for an enemy piece in your path.
-                if (table[x-i][y-i]==ex) { //enemy in path.
+                if (table[x-i][y-i]==oh) { //enemy in path.
                     return 0;
                 }
                 else if (table[x-i][y-i]==blank) {
@@ -328,7 +317,7 @@ int ohPlayer::CheckDir(char s[2], int x, int y, int length) {
                         sameColor=-1; //There was a blank before any same color pieces.
                     continue;
                 }
-                else if (table[x-i][y-i]==oh) {
+                else if (table[x-i][y-i]==ex) {
                     if (sameColor!=-1)
                         sameColor++;
                     continue;
@@ -484,7 +473,7 @@ int* streakCord(char s[2], int x, int y, int length) {
     return ptr;
 }
 
-bool ohPlayer::ErrorCheck(int x, int y) {//Error check coordinates before moving there!
+bool exPlayer::ErrorCheck(int x, int y) {//Error check coordinates before moving there!
     if (table[x][y]!=blank) { //Will be an invalid move!
         return 1;
     }

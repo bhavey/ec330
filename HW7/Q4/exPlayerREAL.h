@@ -1,11 +1,12 @@
-#ifndef ohh
-#define ohh
+
+#ifndef exh
+#define exh
 #include "player.h"
 #include <string.h>
 
-class ohPlayer:public player{
+class exPlayer:public player{
 public:
-  ohPlayer(square **initTable);     // initialize player
+  exPlayer(square **initTable);     // initialize player
   boardSquare nextMove();        // computes a next move for the player and stores coordinates in (xx,yy)
   void otherMove(boardSquare bs);// records the move of the opponent
   int CheckDir(char s[3], int x, int y, int length); //Checks the directionality on the board,
