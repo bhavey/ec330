@@ -39,8 +39,8 @@ boardSquare exPlayer::nextMove() {
     boardSquare bs;
     int x,y;
     int *ptr;
-    int newxy[2];
-    ptr=newxy;
+    //int newxy[2];
+    //ptr=newxy;
     bool flagvar=1;
     char newdirect[2];
     int timing_var=0; //This var will keep going up as we look for a new spot.
@@ -68,13 +68,13 @@ boardSquare exPlayer::nextMove() {
                 printf("checkStreak returned: %d\n",checkStreak);
                 if (checkStreak) { //Found something. Throw it into direction.
                     strcpy(direction, directs[i]);
-                    ptr=newxy;
+                    //ptr=newxy;
                     ptr=newCord(direction,bs.xx,bs.yy,checkStreak);
                     streak_length+=checkStreak;
                     xstreak=bs.xx;
                     ystreak=bs.yy;
-                    bs.xx=newxy[0];
-                    bs.yy=newxy[1];
+                    bs.xx=ptr[0];
+                    bs.yy=ptr[1];
                     flagvar=0;
                     break;
                 }
@@ -86,12 +86,12 @@ boardSquare exPlayer::nextMove() {
             checkStreak = this->CheckDir(direction,x,y,streak_length);
             printf("On streak, CheckDir returned %d\n",checkStreak);
             if (checkStreak) { //keep going on your streak!
-                printf("(1) streak newx: %d, newy: %d\n",newxy[0],newxy[1]);
+                //printf("(1) streak newx: %d, newy: %d\n",newxy[0],newxy[1]);
                 ptr=newCord(direction,x,y,checkStreak);
-                printf("(2) streak newx: %d, newy: %d\n",newxy[0],newxy[1]);
+                //printf("(2) streak newx: %d, newy: %d\n",newxy[0],newxy[1]);
                 streak_length+=checkStreak;
-                bs.xx=newxy[0];
-                bs.yy=newxy[1];
+                bs.xx=ptr[0];
+                bs.yy=ptr[1];
                 flagvar=0;
                 break;
             } else { //Try another random location, try to find a new streak.
