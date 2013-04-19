@@ -31,14 +31,21 @@ void exPlayer::otherMove(boardSquare bs) {
 	table[bs.xx][bs.yy]=(myColor==ex?oh:ex);
 }
 
+//Calculate the new coordinates
 int* newCord(char s[2], int x, int y, int ret);
+
+//Figure out the new streak coordinates.
+int* streakCord(char s[2], int x, int y, int length);
+
 
 boardSquare exPlayer::nextMove() {
     int checkStreak=0;
     //char direct[2]="NW";
     boardSquare bs;
+    bool checkError=0;
     int x,y;
     int *ptr;
+    int *ptr2;
     //int newxy[2];
     //ptr=newxy;
     bool flagvar=1;
@@ -80,9 +87,12 @@ boardSquare exPlayer::nextMove() {
                 }
             }
         } else { //We're on a streak. Go!
-            x=xstreak+streak_length;
-            y=ystreak+streak_length;
-            printf("on streak, x: %d, y: %d\n",x,y);
+            ptr2=streakCord(direction,xstreak,ystreak,streak_length);
+//            x=xstreak+streak_length;
+//            y=ystreak+streak_length;
+            x=ptr2[0];
+            y=ptr2[1];
+            printf("on streak, x: %d, y: %d, length: %d\n",x,y,streak_length);
             checkStreak = this->CheckDir(direction,x,y,streak_length);
             printf("On streak, CheckDir returned %d\n",checkStreak);
             if (checkStreak) { //keep going on your streak!
@@ -92,8 +102,17 @@ boardSquare exPlayer::nextMove() {
                 streak_length+=checkStreak;
                 bs.xx=ptr[0];
                 bs.yy=ptr[1];
-                flagvar=0;
-                break;
+                checkError=this->ErrorCheck(bs.xx,bs.yy);
+                if (checkError) { //well SOMETHING went wrong;
+                    streak_length=0;
+                    xstreak=-1;
+                    ystreak=-2;
+                    strcpy(direction,"NO");
+                    flagvar=1;
+                } else {
+                    flagvar=0;
+                    break;
+                }
             } else { //Try another random location, try to find a new streak.
                 streak_length=0;
                 xstreak=-1;
@@ -317,7 +336,6 @@ boardSquare exPlayer::nextMove() {
     return 0; //Nope!
 }
 
-
 int* newCord(char s[2], int x, int y, int ret) {
     printf("In newCord: %s; x: %d, y: %d, ret: %d\n",s,x,y,ret);
     int *ptr;
@@ -413,4 +431,52 @@ int* newCord(char s[2], int x, int y, int ret) {
     ptr=returnVal;
     printf("ptr[0]: %d, ptr[1]: %d\n",ptr[0],ptr[1]);
     return ptr;
+}
+
+int* streakCord(char s[2], int x, int y, int length) {
+    printf("In streakCord. s: %s, x: %d, y: %d, length: %d\n",s,x,y,length);
+    int xx, yy;
+    int *ptr;
+    int returnVal[2];
+    ptr=returnVal;
+    if (!strcmp(s,"N")) {
+        xx=x;
+        yy=y-length;
+    } else if (!strcmp(s,"NE")) {
+        xx=x+length;
+        yy=y-length;
+    } else if (!strcmp(s,"E")) {
+        xx=x+length;
+        yy=y;
+    } else if (!strcmp(s,"SE")) {
+        xx=x+length;
+        yy=y+length;
+    } else if (!strcmp(s,"S")) {
+        xx=x;
+        yy=y+length;
+    } else if (!strcmp(s,"SW")) {
+        xx=x-length;
+        yy=y+length;
+    } else if (!strcmp(s,"W")) {
+        xx=x-length;
+        yy=y;
+    } else if (!strcmp(s,"NW")) {
+        xx=x-length;
+        yy=y-length;
+    }
+    printf("Done with ifs. xx: %d, yy: %d\n",xx,yy);
+    returnVal[0]=xx;
+    returnVal[1]=yy;
+    printf("rV0: %d, rV1: %d\n",returnVal[0],returnVal[1]);
+    ptr=returnVal;
+    printf("ptr0: %d, ptr1: %d\n",ptr[0],ptr[1]);
+    printf("Done in streakCord. s: %s, x: %d, y: %d, length: %d\n",s,x,y,length);
+    return ptr;
+}
+
+bool exPlayer::ErrorCheck(int x, int y) {//Error check coordinates before moving there!
+    if (table[x][y]!=blank) { //Will be an invalid move!
+        return 1;
+    }
+    return 0;
 }
