@@ -68,10 +68,13 @@ boardSquare exPlayer::nextMove() {
                 printf("checkStreak returned: %d\n",checkStreak);
                 if (checkStreak) { //Found something. Throw it into direction.
                     strcpy(direction, directs[i]);
+                    ptr=newxy;
                     ptr=newCord(direction,bs.xx,bs.yy,checkStreak);
-                    xstreak=newxy[0];
-                    ystreak=newxy[1];
-                    streak_length=1;
+                    streak_length+=checkStreak;
+                    xstreak=bs.xx;
+                    ystreak=bs.yy;
+                    bs.xx=newxy[0];
+                    bs.yy=newxy[1];
                     flagvar=0;
                     break;
                 }
@@ -79,10 +82,18 @@ boardSquare exPlayer::nextMove() {
         } else { //We're on a streak. Go!
             x=xstreak+streak_length;
             y=ystreak+streak_length;
-            checkStreak = this->CheckDir(direction,x,y,streak_length); 
+            printf("on streak, x: %d, y: %d\n",x,y);
+            checkStreak = this->CheckDir(direction,x,y,streak_length);
+            printf("On streak, CheckDir returned %d\n",checkStreak);
             if (checkStreak) { //keep going on your streak!
-                streak_length++;
+                printf("(1) streak newx: %d, newy: %d\n",newxy[0],newxy[1]);
+                ptr=newCord(direction,x,y,checkStreak);
+                printf("(2) streak newx: %d, newy: %d\n",newxy[0],newxy[1]);
+                streak_length+=checkStreak;
+                bs.xx=newxy[0];
+                bs.yy=newxy[1];
                 flagvar=0;
+                break;
             } else { //Try another random location, try to find a new streak.
                 streak_length=0;
                 xstreak=-1;
@@ -131,6 +142,7 @@ boardSquare exPlayer::nextMove() {
 
 
 int* newCord(char s[2], int x, int y, int ret) {
+    printf("In newCord: %s; x: %d, y: %d, ret: %d\n",s,x,y,ret);
     int *ptr;
     int xx, yy;
     int returnVal[2];
@@ -219,5 +231,9 @@ int* newCord(char s[2], int x, int y, int ret) {
     }
     returnVal[0]=xx;
     returnVal[1]=yy;
+    printf("Done in newCord, rV[0]: %d, rV[1]: %d, xx: %d, yy: %d\n",returnVal[0],
+        returnVal[1],xx,yy);
+    ptr=returnVal;
+    printf("ptr[0]: %d, ptr[1]: %d\n",ptr[0],ptr[1]);
     return ptr;
 }
