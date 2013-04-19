@@ -6,8 +6,7 @@
 #define size 10
 #define boardSize 10
 
-static char directs[8][3] = { {'N'}, {'N', 'E'}, {'E'}, {'S', 'E'}, {'S'}, {'S', 'W'},
-    {'W'}, {'N', 'W'} };
+
 
 ohPlayer::ohPlayer(square **initTable) {
   xstreak=-1;
@@ -35,6 +34,8 @@ int* newCord(char s[2], int x, int y, int ret);
 int* streakCord(char s[2], int x, int y, int length);
 
 boardSquare ohPlayer::nextMove() {
+    static char directs[8][3] = { {'N'}, {'N', 'E'}, {'E'}, {'S', 'E'}, {'S'}, {'S', 'W'},
+    {'W'}, {'N', 'W'} };
     int checkStreak=0;
     if (streak_length>boardSize) { //well *something* is wrong here...
       streak_length=0;

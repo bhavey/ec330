@@ -6,9 +6,6 @@
 #define size 10
 #define boardSize 10
 
-static char directs[8][3] = { {'N'}, {'N', 'E'}, {'E'}, {'S', 'E'}, {'S'}, {'S', 'W'},
-    {'W'}, {'N', 'W'} };
-
 exPlayer::exPlayer(square **initTable) {
     xstreak=-1;
     ystreak=-1;
@@ -38,6 +35,8 @@ int* newCord(char s[2], int x, int y, int ret);
 int* streakCord(char s[2], int x, int y, int length);
 
 boardSquare exPlayer::nextMove() {
+    static char directs[8][3] = { {'N'}, {'N', 'E'}, {'E'}, {'S', 'E'}, {'S'}, {'S', 'W'},
+        {'W'}, {'N', 'W'} };
     int checkStreak=0;
     //char direct[2]="NW";
     boardSquare bs;
@@ -126,7 +125,7 @@ boardSquare exPlayer::nextMove() {
 }
 
 //Check if it's a valid direction to take!
- int exPlayer::CheckDir(char s[2], int x, int y, int length) {
+int exPlayer::CheckDir(char s[2], int x, int y, int length) {
     int edge=boardSize-5+streak_length;
     int bedge=4-streak_length;
     int sameColor=0; //checks to see how many same color pieces you have in a row (if any)
