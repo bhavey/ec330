@@ -37,7 +37,6 @@ int* newCord(char s[2], int x, int y, int ret);
 //Figure out the new streak coordinates.
 int* streakCord(char s[2], int x, int y, int length);
 
-
 boardSquare exPlayer::nextMove() {
     int checkStreak=0;
     //char direct[2]="NW";
