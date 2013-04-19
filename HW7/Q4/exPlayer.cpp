@@ -31,30 +31,22 @@ void exPlayer::otherMove(boardSquare bs) {
 	table[bs.xx][bs.yy]=(myColor==ex?oh:ex);
 }
 
-int* newCord(char s[2], int x, int y, int ret) {
-    int *ptr;
-    int returnVal[2];
-    ptr=returnVal;
-    if (ret==1) {
-        returnVal[0]=x;
-        returnVal[1]=y;
-        return ptr;
-    } else if (ret==2) { //+1 space.
-        return ptr;
-    }
-    return ptr;
-}
+int* newCord(char s[2], int x, int y, int ret);
 
 boardSquare exPlayer::nextMove() {
     int checkStreak=0;
     //char direct[2]="NW";
     boardSquare bs;
     int x,y;
+    int *ptr;
+    int newxy[2];
+    ptr=newxy;
     bool flagvar=1;
     char newdirect[2];
     int timing_var=0; //This var will keep going up as we look for a new spot.
     //if it exceeds 20, assume we'll go over the time limit, and jump out.
 
+    printf("direction: %s\n",direction);
     //Simple idea is find a possible streak, go there.
     while (flagvar) {
         timing_var++;
@@ -76,10 +68,12 @@ boardSquare exPlayer::nextMove() {
                 printf("checkStreak returned: %d\n",checkStreak);
                 if (checkStreak) { //Found something. Throw it into direction.
                     strcpy(direction, directs[i]);
-                    xstreak=bs.xx;
-                    ystreak=bs.yy;
+                    ptr=newCord(direction,bs.xx,bs.yy,checkStreak);
+                    xstreak=newxy[0];
+                    ystreak=newxy[1];
                     streak_length=1;
                     flagvar=0;
+                    break;
                 }
             }
         } else { //We're on a streak. Go!
@@ -107,7 +101,6 @@ boardSquare exPlayer::nextMove() {
     int edge=boardSize-4+streak_length;
     int bedge=3-streak_length;
     printf("x: %d, y: %d, s: %s\n",x,y,s);
-
     if (!strcmp(s,"N")) {
         if (y>bedge)
             return 1;
@@ -134,4 +127,97 @@ boardSquare exPlayer::nextMove() {
             return 1;
     }
     return 0; //Nope!
+}
+
+
+int* newCord(char s[2], int x, int y, int ret) {
+    int *ptr;
+    int xx, yy;
+    int returnVal[2];
+    ptr=returnVal;
+    if (ret==1) { //on current space.
+        xx=x;
+        yy=y;
+    } else if (ret==2) { //+1 space.
+        if (!strcmp(s,"N")) {
+            xx=x;
+            yy=y-1;
+        } else if (!strcmp(s,"NE")) {
+            xx=x+1;
+            yy=y-1;
+        } else if (!strcmp(s,"E")) {
+            xx=x+1;
+            yy=y;
+        } else if (!strcmp(s,"SE")) {
+            xx=x+1;
+            yy=y+1;
+        } else if (!strcmp(s,"S")) {
+            xx=x;
+            yy=y+1;
+        } else if (!strcmp(s,"SW")) {
+            xx=x-1;
+            yy=y+1;
+        } else if (!strcmp(s,"W")) {
+            xx=x-1;
+            yy=y;
+        } else if (!strcmp(s,"NW")) {
+            xx=x-1;
+            yy=y-1;
+        }
+    } else if (ret==3) { //+2 spaces
+        if (!strcmp(s,"N")) {
+            xx=x;
+            yy=y-2;
+        } else if (!strcmp(s,"NE")) {
+            xx=x+2;
+            yy=y-2;
+        } else if (!strcmp(s,"E")) {
+            xx=x+2;
+            yy=y;
+        } else if (!strcmp(s,"SE")) {
+            xx=x+2;
+            yy=y+2;
+        } else if (!strcmp(s,"S")) {
+            xx=x;
+            yy=y+2;
+        } else if (!strcmp(s,"SW")) {
+            xx=x-2;
+            yy=y+2;
+        } else if (!strcmp(s,"W")) {
+            xx=x-2;
+            yy=y;
+        } else if (!strcmp(s,"NW")) {
+            xx=x-2;
+            yy=y-2;
+        }
+    } else if (ret==4) { //+3 spaces over!
+        if (!strcmp(s,"N")) {
+            xx=x;
+            yy=y-3;
+        } else if (!strcmp(s,"NE")) {
+            xx=x+3;
+            yy=y-3;
+        } else if (!strcmp(s,"E")) {
+            xx=x+3;
+            yy=y;
+        } else if (!strcmp(s,"SE")) {
+            xx=x+3;
+            yy=y+3;
+        } else if (!strcmp(s,"S")) {
+            xx=x;
+            yy=y+3;
+        } else if (!strcmp(s,"SW")) {
+            xx=x-3;
+            yy=y+3;
+        } else if (!strcmp(s,"W")) {
+            xx=x-3;
+            yy=y;
+        } else if (!strcmp(s,"NW")) {
+            xx=x-3;
+            yy=y-3;
+        }
+    }
+    returnVal[0]=xx;
+    returnVal[1]=yy;
+    return ptr;
 }
