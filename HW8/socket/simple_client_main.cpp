@@ -29,17 +29,21 @@ int main (int argc, char* argv[]) {
 			send=tmp;
 			int allChars=-12;
 			client_socket << send;
+			recv=(int)reply.find("ERR");
+			usleep(1000);
+			client_socket >> reply;
 
-			while (strcmp(reply.c_str(),old_reply.c_str())) {
-				cout << "Here!\n";
-				old_reply=reply;
+			while(recv==string::npos) {
+				client_socket << argv[1] << " " << argv[2] << " \n";
 				usleep(10000);
 				client_socket >> tmpreply;
-				reply+=tmpreply;
+				recv=(int)tmpreply.find("ERR");
+				cout << "tmpreply: " << tmpreply << endl;
+				reply += tmpreply;
+				if (recv!=string::npos) {
+					break;
+				}
 			}
-			cout << "This: " << reply << endl;
-			cout << "allChars: " << allChars << endl;
-			cout << "reply size: " << (int)reply.size() << endl;
 			cout << "SERVER:  " << reply << endl;
 		}
 	}
