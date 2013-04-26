@@ -30,17 +30,19 @@ int main (int argc, char* argv[]) {
 			int allChars=-12;
 			client_socket << send;
 			recv=(int)reply.find("ERR");
-			usleep(1000);
+			usleep(10000);
 			client_socket >> reply;
+			int old_length;
 
 			while(recv==string::npos) {
+				old_length=reply.size();
 				client_socket << argv[1] << " " << argv[2] << " \n";
 				usleep(10000);
 				client_socket >> tmpreply;
-				recv=(int)tmpreply.find("ERR");
-				cout << "tmpreply: " << tmpreply << endl;
 				reply += tmpreply;
+				recv=(int)reply.find("ERR");
 				if (recv!=string::npos) {
+					reply=reply.substr(0,recv);
 					break;
 				}
 			}
