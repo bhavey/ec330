@@ -4,6 +4,8 @@
 #include <string>
 #include <unistd.h>
 #include <time.h>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 int main (int argc, char* argv[]) {
@@ -21,6 +23,12 @@ int main (int argc, char* argv[]) {
 		string send;
 		string old_reply="jjs";
 		char tmp[1000];
+		//sstream in ("dictionary");
+		//string entry;
+
+		//while (in >> entry) { //Find relevant entries and put them in the vetors
+		//	if (entry.length() == 1)
+		//}
 
 		while (send!="done") {
 			cout << "CLIENT: ";
@@ -46,7 +54,14 @@ int main (int argc, char* argv[]) {
 					break;
 				}
 			}
+			float poop;
+			while(istringstream(reply) >> poop) {
+				cout << "poop!: " << poop << endl;
+			}
+			cout << "HERE.\n";
+
 			cout << "SERVER:  " << reply << endl;
+			float exchange[100][100];
 		}
 	}
 	catch(SocketException& e) {
@@ -55,4 +70,3 @@ int main (int argc, char* argv[]) {
 	}
 	return 0;
 }
-	
