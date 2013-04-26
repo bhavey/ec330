@@ -8,7 +8,7 @@ using namespace std;
 
 int main (int argc, char* argv[]) {
  	if (argc!=3) {
- 		printf("Incorrect format! Use ./PROG USER PASS\n")
+ 		printf("Incorrect format! Use ./PROG USER PASS\n");
  		return -1;
  	}
  	try {
@@ -25,7 +25,7 @@ int main (int argc, char* argv[]) {
 			send=tmp;
 
 			client_socket << send;
-			usleep(500000);   // give a little time between send and receive.
+			usleep(1000000);   // give a little time between send and receive.
 			client_socket >> reply;
 			cout << "SERVER:  " << reply << endl;
 		}
