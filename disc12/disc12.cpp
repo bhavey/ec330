@@ -6,13 +6,42 @@
 #include <time.h>
 #include <sys/time.h>
 
+//These are the voyages of starship USS Enterprise:
+//Commander Riker is taken hostage by a Borg cube in deep space.
+//He ends up wooing Seven of Nine, Tertiary Adjunct of Unimatrix Zero-One.
+//At the same time Georgi and Data accidentally turn Diana into a man
+//in a failed experiment to make the warp cores faster. Captain Picard
+//is a little too comfortable with this.
+
 int Graph::color() {
+//*****************************************************************
+//Greedy Choice: Instead of looking for the absolute best coloring,
+//pick a vertex and iterate through the graph only coloring when
+//necessary.
+
+//Optimal substructure: Choose the vertex with the least edges,
+//Then create subgraphs for every vertex that branches off in a graph
+//that is unconnected to the other graphs. If there are other graphs
+//with the same # of edges as your root vertex, repeat the process for them.
+//When done apply the greedy algorithm for each of them.
+
+//Worst possible graph would be a complete bipartite graph, because the
+//optimal substructure would then pick every graph as a relative "root",
+//At this point since they are all the same it would simply iterate through
+//picking a new color for every vertex.
+
+//The greedy coloring algorithm first sets every vertex color to -1, then sorts the
+//vertices by their degree and then place them into a sorted array. Iterate through
+//this array and apply a color for each node that isn't taken by its neighbors. This
+//is best done as an adjacency matrix.
+
     string liststring;
     int n = 0;
     liststring=modprint();
 
     char *gstring=(char*)liststring.c_str();
     int gsize=liststring.length();
+    int colorsize;
 
     vector<vector<int> > tempvec;
     vector<int> rowvec;
@@ -20,7 +49,7 @@ int Graph::color() {
     pch=strtok(gstring," ");
     int i=0;
     //Put adjacency list in adjacency matrix
-    //strtok spaces, new lines
+    //strtok spaces + new lines
     while (pch != NULL) {
         if (pch[1]=='!') { //moded graph gives a "! " at every new vertex
             tempvec.push_back(rowvec);
@@ -32,7 +61,10 @@ int Graph::color() {
         }
         pch=strtok(NULL," ");
     }
+
     printf("size: %d\n",n);
+    int *Total;
+    int *neighbor_number = new int[n];
 
     //initialize the adjacency matrix
     bool adjmat[n][n];
@@ -47,6 +79,12 @@ int Graph::color() {
             adjmat[tempvec.at(i).at(j)][i]=1;
         }
     }
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<n; j++) {
+            if (adjmat[i][j]==1)
+                neighbor_number[i]++;
+        }
+    }
 
     printf("Unordered Incidence Matrix: \n");
     for (int i=0; i<n; i++) {
@@ -54,107 +92,12 @@ int Graph::color() {
             printf("%d ",adjmat[i][j]);
         printf("\n");
     }
-
-    if (n<=0) {
-        printf("Chromatic number is 0.\n");
-        return 0;
-    } else if (n==1) {
-        printf("Chromatic number is 1.\n");
-        return 1;
-    } else if (n==2) {
-        if ((adjmat[0][0]==1)||(adjmat[0][1]==1)||(adjmat[1][0]==1)||(adjmat[1][1]==1)) {
-            printf("Chromatic number is 2.\n");
-            return 2;
-        } else {
-            printf("Chromatic number is 1.\n");
-            return 1;
-        }
-    }
-
-
-    printf("\n");
-    //Now we have our unordered adjacency matrix! Test all possible color schemes!
-    int inbase[n];
-    long unsigned int loop_index;
-    Base b (inbase,2,n);
-    int cur_b3;
-    cur_b3=0;
-    float cur_perc;
-    float this_perc;
-    double time1,time2,time3,avgtime;
-    int flagvar=1;
-    int flagvar2=1;
-    int c=0;
-    timeval start;
-    timeval end;
-    timeval first;
-    gettimeofday(&first, NULL);
-    for (int c=2; c<n; c++) {
-        cur_perc=0;
-        this_perc=pow((long)3,c*-1)*100;
-        flagvar2=1;
-        b.setBase(c);
-        b.clear();
-        b++;
-        gettimeofday(&start, NULL);
-        int cur_col;
-        unsigned long int j=0,k=0;
-            time3=0;
-        for (unsigned long int i=0; (!b.checkEmpty()); i++) { //This loop increments through b++.
-            flagvar=1;
-            for (j=0; (j<n)&&flagvar; j++) {
-                cur_col=b.at(j);
-                for (k=0; (k<n)&&flagvar; k++) {
-                    if ((adjmat[j][k])&&(j!=k)) { //Edge detected!
-                        if (cur_col==b.at(k)) {//Matching colors... :/ don't work!
-                            flagvar=0;
-                            flagvar2=0;
-                            if (cur_b3!=b.at(2)) {
-                                gettimeofday(&end, NULL);
-                                printf("Percentage: %f\n", cur_perc);
-                                time1=(float)(end.tv_sec-start.tv_sec);
-                                printf("time: %.1f\n",time1);
-                                gettimeofday(&start, NULL);
-                                cur_perc+=this_perc;
-                                cur_b3=b.at(2);
-
-                            }
-                            b++;
-                            continue;
-                        }
-                    }
-                }
-                if (cur_b3!=b.at(2)) {
-                            gettimeofday(&end, NULL);
-                            time1=(float)(end.tv_sec-start.tv_sec);
-
-                            cur_perc+=this_perc;
-                            float perc_remaining=100/cur_perc;
-                            printf("%%%.2f complete. Estimated remaining time: %.1f\n",//avgtime,
-                            cur_perc,
-                            100/cur_perc*time1 - time1);
-                            printf("Percentage: %.2f\n", cur_perc);
-                            cur_b3=b.at(2);
-                        }
-            }
-            if (flagvar) {
-                b.print();
-                printf("Chromatic number: %d\n",b.getBase());
-                gettimeofday(&end, NULL);
-                time1=(float)(end.tv_sec-first.tv_sec);
-                printf("Took %.0f seconds to calculate.\n",time1);
-                return b.getBase();
-            }
-
-        }
-        printf("Chromatic number failed for %d\n",b.getBase());
-    }
-    printf("Chromatic number is %d\n",n);
-    return n;
+    delete[] neighbor_number;
 
 }
 
 int main() {
+
     srand(time(NULL));
     Graph graph;
     for (int i = 0; i < 16; i++)
