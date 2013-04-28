@@ -7,13 +7,20 @@
 #include <sys/time.h>
 #include "valuesort.cpp"
 
+int n = 0;
 //These are the voyages of starship USS Enterprise:
 //Commander Riker is taken hostage by a Borg cube in deep space.
 //He ends up wooing Seven of Nine, Tertiary Adjunct of Unimatrix Zero-One.
 //At the same time Georgi and Data accidentally turn Diana into a man
 //in a failed experiment to make the warp cores faster. Captain Picard
 //is a little too comfortable with this.
-vector<int> indepSet(vector<pair<int,int> >) {
+vector<int> indepSet(int vert, bool **adjmat) {
+    printf("Unordered Incidence Matrix: \n");
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<n; j++)
+            printf("%d ",adjmat[i][j]);
+        printf("\n");
+    }
     vector<int> outVec;
     return outVec;
 }
@@ -41,7 +48,6 @@ int Graph::color() {
 //is best done as an adjacency matrix.
 
     string liststring;
-    int n = 0;
     liststring=modprint();
 
     char *gstring=(char*)liststring.c_str();
@@ -69,11 +75,14 @@ int Graph::color() {
 
     printf("size: %d\n",n);
     map<int,int> neighbor_number;
- //   int *neighbor_number = new int[n];
     int *vert_ord = new int[n];
 
     //initialize the adjacency matrix
-    bool adjmat[n][n];
+//    bool adjmat[n][n];
+    bool **adjmat = new bool*[n];
+    for (int i=0; i<n; i++)
+        adjmat[i] = new bool[n];
+
     for (int i=0; i<n; i++)
         for (int j=0; j<n; j++)
             adjmat[i][j]=0;
@@ -106,12 +115,16 @@ int Graph::color() {
     for (it = vertvec.begin(); it != vertvec.end(); it++)
         cout << "test[" << (*it).first << "]=" << (*it).second << "\n";
 
-    printf("Unordered Incidence Matrix: \n");
-    for (int i=0; i<n; i++) {
-        for (int j=0; j<n; j++)
-            printf("%d ",adjmat[i][j]);
-        printf("\n");
-    }
+//    printf("Unordered Incidence Matrix: \n");
+//    for (int i=0; i<n; i++) {
+//        for (int j=0; j<n; j++)
+//            printf("%d ",adjmat[i][j]);
+//        printf("\n");
+//    }
+    vector<int> independentSet;
+
+    it=vertvec.begin();
+    independentSet=indepSet((*it).first, adjmat);
 
     return colorsize;
 }
