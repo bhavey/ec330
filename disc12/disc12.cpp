@@ -5,6 +5,7 @@
 #include <math.h>
 #include <time.h>
 #include <sys/time.h>
+#include "valuesort.cpp"
 
 //These are the voyages of starship USS Enterprise:
 //Commander Riker is taken hostage by a Borg cube in deep space.
@@ -12,6 +13,10 @@
 //At the same time Georgi and Data accidentally turn Diana into a man
 //in a failed experiment to make the warp cores faster. Captain Picard
 //is a little too comfortable with this.
+vector<int> indepSet(vector<pair<int,int> >) {
+    vector<int> outVec;
+    return outVec;
+}
 
 int Graph::color() {
 //*****************************************************************
@@ -63,8 +68,9 @@ int Graph::color() {
     }
 
     printf("size: %d\n",n);
-    int *Total;
-    int *neighbor_number = new int[n];
+    map<int,int> neighbor_number;
+ //   int *neighbor_number = new int[n];
+    int *vert_ord = new int[n];
 
     //initialize the adjacency matrix
     bool adjmat[n][n];
@@ -81,10 +87,24 @@ int Graph::color() {
     }
     for (int i=0; i<n; i++) {
         for (int j=0; j<n; j++) {
-            if (adjmat[i][j]==1)
+            if (adjmat[i][j]==1) 
                 neighbor_number[i]++;
         }
     }
+    int less_then=0;
+    for (int i=0; i<(n-1); i++) {
+        less_then=0;
+        for (int j=(i+1); j<n; j++) {
+            if (neighbor_number[i]>=n)
+                cout << "poo";
+        }
+    }
+
+    vector<pair<int,int> > vertvec;
+    vertvec = mapsort(neighbor_number);
+    vector<pair<int,int> >::iterator it;
+    for (it = vertvec.begin(); it != vertvec.end(); it++)
+        cout << "test[" << (*it).first << "]=" << (*it).second << "\n";
 
     printf("Unordered Incidence Matrix: \n");
     for (int i=0; i<n; i++) {
@@ -92,8 +112,8 @@ int Graph::color() {
             printf("%d ",adjmat[i][j]);
         printf("\n");
     }
-    delete[] neighbor_number;
 
+    return colorsize;
 }
 
 int main() {
