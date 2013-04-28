@@ -25,13 +25,18 @@ vector<int> indepSet(int vert, bool **adjmat) {
 }
 
 //Returns the lowest ordered vertice in a graph.
+//Only considers a vertex if there is a "1" number at the beginning of the row.
+//This is a flag to consider if its still in the graph.
 int findLowestOrder(bool **adjmat) {
     int vert, tmpvert, lowestVert;
     lowestVert=999999; //Set lowest vertex to infinity.
     for (int i=0; i<n; i++) {
         tmpvert=0;
+        if (adjmat[i][0]==0) {
+            continue; //No longer a valid vertex, as it has been removed. Continue on.
+        }
         for (int j=0; j<n; j++) {
-            if (adjmat[i][j]==1)
+            if (adjmat[i][j+1]==1)
                 tmpvert++;
         }
         if (tmpvert<lowestVert) {
@@ -42,8 +47,12 @@ int findLowestOrder(bool **adjmat) {
     return vert;
 }
 
-//Remove a 
-void removeVertFromAdjacency(bool **adjmat) {
+//Remove a particular vertex from an adjacency matrix.
+void removeVertFromAdjacency(int vert, bool **&adjmat) {
+    adjmat[vert][0]=0; //Set the flag to zero, showing the vertex has been removed.
+    for (int i=0; i<n; i++) {
+        adjmat[i][vert]=0;
+    }
     return;
 }
 
@@ -100,14 +109,19 @@ int Graph::color() {
     int *vert_ord = new int[n];
 
     //initialize the adjacency matrix
-//    bool adjmat[n][n];
     bool **adjmat = new bool*[n];
     for (int i=0; i<n; i++)
-        adjmat[i] = new bool[n];
-
+        adjmat[i] = new bool[n+1];
     for (int i=0; i<n; i++)
         for (int j=0; j<n; j++)
-            adjmat[i][j]=0;
+            adjmat[i][j+1]=0;
+    for (int i=0; i<n; i++)
+        adjmat[i][0]=1; //Still a valid vertex! The first index is a flag variable,
+    //which shows whether or not a node is in a vertex
+
+    bool **tmpmat = new bool*[n+1];
+    for (int i=0; i<n; i++)
+        tmpmat[i] = new bool[n];
 
     //Fill the unordered adjacency matrix.
     for (int i=0; i<tempvec.size(); i++) {
@@ -128,7 +142,18 @@ int Graph::color() {
             printf("%d ",adjmat[i][j]);
         printf("\n");
     }
-
+    tmpmat=adjmat;
+    removeVertFromAdjacency(1, tmpmat);
+    removeVertFromAdjacency(3, tmpmat);
+    int lowOrd;
+    lowOrd=findLowestOrder(tmpmat);
+    printf("LOWEST ORDER: %d\n",lowOrd);
+    printf("Unordered Incidence Matrix, w.o. vertices 1/3: \n");
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<n; j++)
+            printf("%d ",tmpmat[i][j]);
+        printf("\n");
+    }
     return colorsize;
 }
 
