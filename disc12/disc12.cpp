@@ -13,16 +13,7 @@ int n = 0;
 //At the same time Georgi and Data accidentally turn Diana into a man
 //in a failed experiment to make the warp cores faster. Captain Picard
 //is a little too comfortable with this.
-vector<int> indepSet(int vert, bool **adjmat) {
-    printf("Unordered Incidence Matrix: \n");
-    for (int i=0; i<n; i++) {
-        for (int j=0; j<n; j++)
-            printf("%d ",adjmat[i][j]);
-        printf("\n");
-    }
-    vector<int> outVec;
-    return outVec;
-}
+
 
 //Returns the lowest ordered vertice in a graph.
 //Only considers a vertex if there is a "1" number at the beginning of the row.
@@ -58,6 +49,30 @@ void removeVertFromAdjacency(int vert, bool **&adjmat) {
     return;
 }
 
+vector<int> indepSet(int vert, bool **adjmat) {
+    vector<int> returnVec;
+    bool **tmpmat = new bool*[n+1];
+    for (int i=0; i<n; i++)
+        tmpmat[i] = new bool[n];    bool flagvar=1;
+    tmpmat = adjmat;
+    while (flagvar) {
+        flagvar=0;
+        //Find the lowest ordered vertex
+        int lowestVert=findLowestOrder(tmpmat);
+        returnVec.push_back(lowestVert);
+        //Remove the vertex and its neighbors.
+        for (int i=0; i<n; i++) {
+            if (tmpmat[lowestVert][i+1]==1)
+                removeVertFromAdjacency(i+1,tmpmat); //Remove the neighbors!
+        }
+        removeVertFromAdjacency(lowestVert,tmpmat); //Remove the lowest ordered vertex.
+        for (int i=0; i<n; i++) {
+            if (tmpmat[i][0]==1)
+                flagvar=1; //Repeat if there is at least one remaining vertex.
+        }
+    }
+}
+
 int Graph::color() {
 //********************************************************************************
 //Greedy Graph Coloring: Basic idea is that you go through the graph, finding
@@ -68,17 +83,14 @@ int Graph::color() {
 //Optimal substructure: The optimal substructure is the largest possible set of
 //indepented vertices. This can be found by locating the lowest ordered vertex and
 //then placing this in the set and removing the vertex and its neighbors from the graph.
-//Continue until the entire graph is empty.
+//Continue until the entire graph is empty. Number of independent sets required to empty
+//the graph is the color # of the graph.
 
-//Worst possible graph would be a complete bipartite graph, because the
-//optimal substructure would then pick every graph as a relative "root",
-//At this point since they are all the same it would simply iterate through
-//picking a new color for every vertex.
-
-//The greedy coloring algorithm first sets every vertex color to -1, then sorts the
-//vertices by their degree and then place them into a sorted array. Iterate through
-//this array and apply a color for each node that isn't taken by its neighbors. This
-//is best done as an adjacency matrix.
+//Worst possible graph would be an incomplete bipartite graph with at least one vertex
+//having fewer edges (not less then or equal) then the others. Since the algorithm only
+//considers the lowest ordered vertex when first picking in a set, it will pick one
+//of the lower ordered vertices first. This ends up with at least one vertex not getting
+//colored the first time around. It'll require way more iterations this way then necessary.
 
     string liststring;
     liststring=modprint();
