@@ -39,9 +39,11 @@ int findLowestOrder(bool **adjmat) {
             if (adjmat[i][j+1]==1)
                 tmpvert++;
         }
+        printf("Order for %d: %d\n",i,tmpvert);
         if (tmpvert<lowestVert) {
             lowestVert=tmpvert;
             vert=i;
+            printf("in there at %d\n",i);
         } 
     }
     return vert;
@@ -51,7 +53,7 @@ int findLowestOrder(bool **adjmat) {
 void removeVertFromAdjacency(int vert, bool **&adjmat) {
     adjmat[vert][0]=0; //Set the flag to zero, showing the vertex has been removed.
     for (int i=0; i<n; i++) {
-        adjmat[i][vert]=0;
+        adjmat[i][vert+1]=0;
     }
     return;
 }
@@ -145,6 +147,7 @@ int Graph::color() {
     tmpmat=adjmat;
     removeVertFromAdjacency(1, tmpmat);
     removeVertFromAdjacency(3, tmpmat);
+    removeVertFromAdjacency(4, tmpmat);
     int lowOrd;
     lowOrd=findLowestOrder(tmpmat);
     printf("LOWEST ORDER: %d\n",lowOrd);
