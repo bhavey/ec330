@@ -5,7 +5,6 @@
 #include <math.h>
 #include <time.h>
 #include <sys/time.h>
-#include "valuesort.cpp"
 
 int n = 0;
 //These are the voyages of starship USS Enterprise:
@@ -25,17 +24,40 @@ vector<int> indepSet(int vert, bool **adjmat) {
     return outVec;
 }
 
-int Graph::color() {
-//*****************************************************************
-//Greedy Choice: Instead of looking for the absolute best coloring,
-//pick a vertex and iterate through the graph only coloring when
-//necessary.
+//Returns the lowest ordered vertice in a graph.
+int findLowestOrder(bool **adjmat) {
+    int vert, tmpvert, lowestVert;
+    lowestVert=999999; //Set lowest vertex to infinity.
+    for (int i=0; i<n; i++) {
+        tmpvert=0;
+        for (int j=0; j<n; j++) {
+            if (adjmat[i][j]==1)
+                tmpvert++;
+        }
+        if (tmpvert<lowestVert) {
+            lowestVert=tmpvert;
+            vert=i;
+        } 
+    }
+    return vert;
+}
 
-//Optimal substructure: Choose the vertex with the least edges,
-//Then create subgraphs for every vertex that branches off in a graph
-//that is unconnected to the other graphs. If there are other graphs
-//with the same # of edges as your root vertex, repeat the process for them.
-//When done apply the greedy algorithm for each of them.
+//Remove a 
+void removeVertFromAdjacency(bool **adjmat) {
+    return;
+}
+
+int Graph::color() {
+//********************************************************************************
+//Greedy Graph Coloring: Basic idea is that you go through the graph, finding
+//the largest independent set of vertices possible at any given iteration. Each of
+//these vertices is colored a new color. At this point remove the independent set
+//from the graph and then repeat the process until you have all vertices colored.
+
+//Optimal substructure: The optimal substructure is the largest possible set of
+//indepented vertices. This can be found by locating the lowest ordered vertex and
+//then placing this in the set and removing the vertex and its neighbors from the graph.
+//Continue until the entire graph is empty.
 
 //Worst possible graph would be a complete bipartite graph, because the
 //optimal substructure would then pick every graph as a relative "root",
@@ -100,31 +122,12 @@ int Graph::color() {
                 neighbor_number[i]++;
         }
     }
-    int less_then=0;
-    for (int i=0; i<(n-1); i++) {
-        less_then=0;
-        for (int j=(i+1); j<n; j++) {
-            if (neighbor_number[i]>=n)
-                cout << "poo";
-        }
+    printf("Unordered Incidence Matrix: \n");
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<n; j++)
+            printf("%d ",adjmat[i][j]);
+        printf("\n");
     }
-
-    vector<pair<int,int> > vertvec;
-    vertvec = mapsort(neighbor_number);
-    vector<pair<int,int> >::iterator it;
-    for (it = vertvec.begin(); it != vertvec.end(); it++)
-        cout << "test[" << (*it).first << "]=" << (*it).second << "\n";
-
-//    printf("Unordered Incidence Matrix: \n");
-//    for (int i=0; i<n; i++) {
-//        for (int j=0; j<n; j++)
-//            printf("%d ",adjmat[i][j]);
-//        printf("\n");
-//    }
-    vector<int> independentSet;
-
-    it=vertvec.begin();
-    independentSet=indepSet((*it).first, adjmat);
 
     return colorsize;
 }
