@@ -14,7 +14,6 @@ int n = 0;
 //in a failed experiment to make the warp cores faster. Captain Picard
 //is a little too comfortable with this.
 
-
 //Returns the lowest ordered vertice in a graph.
 //Only considers a vertex if there is a "1" number at the beginning of the row.
 //This is a flag to consider if its still in the graph.
@@ -30,11 +29,9 @@ int findLowestOrder(bool **adjmat) {
             if (adjmat[i][j+1]==1)
                 tmpvert++;
         }
-        printf("Order for %d: %d\n",i,tmpvert);
         if (tmpvert<lowestVert) {
             lowestVert=tmpvert;
             vert=i;
-            printf("in there at %d\n",i);
         } 
     }
     return vert;
@@ -43,18 +40,21 @@ int findLowestOrder(bool **adjmat) {
 //Remove a particular vertex from an adjacency matrix.
 void removeVertFromAdjacency(int vert, bool **&adjmat) {
     adjmat[vert][0]=0; //Set the flag to zero, showing the vertex has been removed.
-    for (int i=0; i<n; i++) {
+    for (int i=0; i<n; i++)
         adjmat[i][vert+1]=0;
-    }
     return;
 }
 
-vector<int> indepSet(int vert, bool **adjmat) {
+vector<int> indepSet(bool **adjmat) {
     vector<int> returnVec;
     bool **tmpmat = new bool*[n+1];
     for (int i=0; i<n; i++)
         tmpmat[i] = new bool[n];    bool flagvar=1;
-    tmpmat = adjmat;
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<(n+1); j++) {
+            tmpmat[i][j] = adjmat[i][j];
+        }
+    }
     while (flagvar) {
         flagvar=0;
         //Find the lowest ordered vertex
@@ -62,8 +62,9 @@ vector<int> indepSet(int vert, bool **adjmat) {
         returnVec.push_back(lowestVert);
         //Remove the vertex and its neighbors.
         for (int i=0; i<n; i++) {
-            if (tmpmat[lowestVert][i+1]==1)
-                removeVertFromAdjacency(i+1,tmpmat); //Remove the neighbors!
+            if (tmpmat[lowestVert][i+1]==1) {
+                removeVertFromAdjacency(i,tmpmat); //Remove the neighbors!
+            }
         }
         removeVertFromAdjacency(lowestVert,tmpmat); //Remove the lowest ordered vertex.
         for (int i=0; i<n; i++) {
@@ -157,18 +158,24 @@ int Graph::color() {
             printf("%d ",adjmat[i][j]);
         printf("\n");
     }
-    tmpmat=adjmat;
-    removeVertFromAdjacency(1, tmpmat);
-    removeVertFromAdjacency(3, tmpmat);
-    removeVertFromAdjacency(4, tmpmat);
-    int lowOrd;
-    lowOrd=findLowestOrder(tmpmat);
-    printf("LOWEST ORDER: %d\n",lowOrd);
-    printf("Unordered Incidence Matrix, w.o. vertices 1/3: \n");
-    for (int i=0; i<n; i++) {
+    for (int i=0; i<n; i++)
         for (int j=0; j<n+1; j++)
-            printf("%d ",tmpmat[i][j]);
+            tmpmat[i][j]=adjmat[i][j];
+    tmpmat=adjmat;
+
+    int total=n;
+    int colorNum=0;
+    while (total) {
+        vector<int> inSet=indepSet(tmpmat);
+        vector<int>::iterator it = inSet.begin();
+        printf("Independent set: ");
+        for (it = inSet.begin(); it != inSet.end(); it++)
+            printf("%d, ",*it);
         printf("\n");
+        total-=(int)inSet.size();
+        for (it = inSet.begin(); it != inSet.end(); it++)
+            removeVertFromAdjacency(*it, tmpmat);
+        colorsize++;
     }
     return colorsize;
 }
