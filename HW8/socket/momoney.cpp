@@ -11,10 +11,10 @@
 using namespace std;
 
 #define N 2
-int sumArray(float in[N+1]) { //Sum the negative log contents of the array.
-	float sum=log(in[0])*-1;
-	for (int i=1; i<N+1; i++) {
-		sum-=in[i];
+float sumVector(vector<float> inVec) { //Sum the negative log contents of the array.
+	float sum=0;
+	for(vector<float>::iterator it = inVec.begin(); it != inVec.end(); it++) {
+		sum-=log(*it);
 	}
 	return sum;
 }
@@ -74,18 +74,30 @@ int main (int argc, char* argv[]) {
 						break;
 					}
 				}
+				vector<pair<vector<float>,float> > weights;
+				int inBase[N];
+				Base b(inBase,99,N); //I got 99 bases but a bitch aint one.
 				for (int i=0; i<9800; i++) { //99*99=9800. Don't you forget it.
-					int inBase[N];
-					float weight_length;
+					float weight;
+
 					vector<float> paths;
-					vector<vector<float> > weights;
-					Base b(inBase,99,N); //I got 99 bases but a bitch aint one.
 					paths.push_back(exchange[0][b.at(0)]);
 					paths.push_back(exchange[b.at(0)][b.at(1)]);
 					paths.push_back(exchange[b.at(1)][0]);
-					weights.push_back(paths);
-					b++;
+					weight=sumVector(paths);
+					if (weight<0) {
+						weights.push_back(make_pair(paths,weight));
+					}
+
 				}
+				for(vector<pair<vector<float>,float> >::iterator it = weights.begin(); it != weights.end(); it++) {
+					printf("Negative path: ");
+					for (vector<float>::iterator it2 = (*it).first.begin(); it2 != (*it).first.end(); it2++) {
+						printf("%.3f ",*it2);
+					}
+					printf("\nof weight: %.3f\n",(*it).second);
+				}
+				b++;
 			} else {
 				cout << "Not asking for all rates!\n";
 				cout << "SERVER: " << reply << endl;
