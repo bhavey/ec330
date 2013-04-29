@@ -7,34 +7,24 @@
 #include <time.h>
 #include <fstream>
 #include <sstream>
+#include <math.h>
 using namespace std;
+
+#define N 2
+int sumArray(float in[N+1]) { //Sum the negative log contents of the array.
+	float sum=log(in[0])*-1;
+	for (int i=1; i<N+1; i++) {
+		sum-=in[i];
+	}
+	return sum;
+}
 
 int main (int argc, char* argv[]) {
 	string reply;
-	int N = 2;
+	int start = 0; //Starting currency!
 	string tmpreply;
 	int recv;
-	int inBase[N];
-	Base b(inBase,99,N); //I got 99 bases but a bitch aint one.
-	for (int i=0; i<9800; i++) { //99*99=9800. Don't you forget it.
-		b++;
-		if (i%100==0)
-			printf("b: %d%d\n",b.at(0),b.at(1));
-	}
 
-//	printf("b: %d%d\n",b.at(0),b.at(1));
-//	b++;
-//	printf("b: %d%d\n",b.at(0),b.at(1));
-//	b++;
-//	printf("b: %d%d\n",b.at(0),b.at(1));
-//	b++;
-//	printf("b: %d%d\n",b.at(0),b.at(1));
-//	b++;
-//	for (int i=0; i<99; i++)
-//		b++;
-//	printf("b: %d%d\n",b.at(0),b.at(1));
-
-/*
  	if (argc!=3) {
  		printf("Incorrect format! Use ./PROG USER PASS\n");
  		return -1;
@@ -44,18 +34,11 @@ int main (int argc, char* argv[]) {
 		ClientSocket client_socket("128.197.185.27", 8001);
 		string send;
 		char tmp[1000];
-		//sstream in ("dictionary");
-		//string entry;
-
-		//while (in >> entry) { //Find relevant entries and put them in the vetors
-		//	if (entry.length() == 1)
-		//}
 
 		while (send!="done") {
 			cout << "CLIENT: ";
 			getline(cin,send); // i.e. get the whole line (this is important, cin >> send stops at a whitespace
 			sprintf(tmp,"%s %s %s\n",argv[1],argv[2],send.c_str()); //Write the formatted string to tmp
-//			send=tmp;
 			int allChars=-12;
 			client_socket << tmp;
 			recv=(int)reply.find("ERR");
@@ -91,6 +74,18 @@ int main (int argc, char* argv[]) {
 						break;
 					}
 				}
+				for (int i=0; i<9800; i++) { //99*99=9800. Don't you forget it.
+					int inBase[N];
+					float weight_length;
+					vector<float> paths;
+					vector<vector<float> > weights;
+					Base b(inBase,99,N); //I got 99 bases but a bitch aint one.
+					paths.push_back(exchange[0][b.at(0)]);
+					paths.push_back(exchange[b.at(0)][b.at(1)]);
+					paths.push_back(exchange[b.at(1)][0]);
+					weights.push_back(paths);
+					b++;
+				}
 			} else {
 				cout << "Not asking for all rates!\n";
 				cout << "SERVER: " << reply << endl;
@@ -110,7 +105,5 @@ int main (int argc, char* argv[]) {
 		cout << "Exception was caught:" << e.description() << "\n";
 		cout << "Reply: " << reply << endl;
 	}
-*/
-
 	return 0;
 }
