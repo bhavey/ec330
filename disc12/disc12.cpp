@@ -71,6 +71,7 @@ vector<int> indepSet(int vert, bool **adjmat) {
                 flagvar=1; //Repeat if there is at least one remaining vertex.
         }
     }
+    return returnVec;
 }
 
 int Graph::color() {
@@ -140,8 +141,8 @@ int Graph::color() {
     //Fill the unordered adjacency matrix.
     for (int i=0; i<tempvec.size(); i++) {
         for (int j=0; j<tempvec.at(i).size(); j++) {
-            adjmat[i][tempvec.at(i).at(j)]=1;
-            adjmat[tempvec.at(i).at(j)][i]=1;
+            adjmat[i][tempvec.at(i).at(j)+1]=1;
+            adjmat[tempvec.at(i).at(j)][i+1]=1;
         }
     }
     for (int i=0; i<n; i++) {
@@ -152,7 +153,7 @@ int Graph::color() {
     }
     printf("Unordered Incidence Matrix: \n");
     for (int i=0; i<n; i++) {
-        for (int j=0; j<n; j++)
+        for (int j=0; j<n+1; j++)
             printf("%d ",adjmat[i][j]);
         printf("\n");
     }
@@ -165,7 +166,7 @@ int Graph::color() {
     printf("LOWEST ORDER: %d\n",lowOrd);
     printf("Unordered Incidence Matrix, w.o. vertices 1/3: \n");
     for (int i=0; i<n; i++) {
-        for (int j=0; j<n; j++)
+        for (int j=0; j<n+1; j++)
             printf("%d ",tmpmat[i][j]);
         printf("\n");
     }
@@ -176,6 +177,7 @@ int main() {
 
     srand(time(NULL));
     Graph graph;
+/*
     for (int i = 0; i < 16; i++)
         graph.addVertex(0);
     for (int i = 0; i < 2; i++) {
@@ -194,6 +196,18 @@ int main() {
     }
     for (int i=0; i<8; i++)
         graph.addEdge(make_pair(i,i+8));
+*/
+    for (int i=0; i<6; i++)
+        graph.addVertex(0);
+
+
+    //Create a complete Bipartite graph.
+    for (int i=0; i<3; i++) {
+        for (int j=3; j<6; j++) {
+            graph.addEdge(make_pair(i,j));
+            graph.addEdge(make_pair(j,i));
+        }
+    }
 
     string teststr;
     //printf("Give random vertices #: ");
