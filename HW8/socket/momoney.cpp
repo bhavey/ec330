@@ -1,5 +1,6 @@
 #include "ClientSocket.h"
 #include "SocketException.h"
+#include "baseclass.cpp"
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -10,9 +11,30 @@ using namespace std;
 
 int main (int argc, char* argv[]) {
 	string reply;
+	int N = 2;
 	string tmpreply;
 	int recv;
+	int inBase[N];
+	Base b(inBase,99,N); //I got 99 bases but a bitch aint one.
+	for (int i=0; i<9800; i++) { //99*99=9800. Don't you forget it.
+		b++;
+		if (i%100==0)
+			printf("b: %d%d\n",b.at(0),b.at(1));
+	}
 
+//	printf("b: %d%d\n",b.at(0),b.at(1));
+//	b++;
+//	printf("b: %d%d\n",b.at(0),b.at(1));
+//	b++;
+//	printf("b: %d%d\n",b.at(0),b.at(1));
+//	b++;
+//	printf("b: %d%d\n",b.at(0),b.at(1));
+//	b++;
+//	for (int i=0; i<99; i++)
+//		b++;
+//	printf("b: %d%d\n",b.at(0),b.at(1));
+
+/*
  	if (argc!=3) {
  		printf("Incorrect format! Use ./PROG USER PASS\n");
  		return -1;
@@ -88,5 +110,7 @@ int main (int argc, char* argv[]) {
 		cout << "Exception was caught:" << e.description() << "\n";
 		cout << "Reply: " << reply << endl;
 	}
+*/
+
 	return 0;
 }
