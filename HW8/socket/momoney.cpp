@@ -21,7 +21,6 @@ int main (int argc, char* argv[]) {
 		//Algorithmics.bu.edu is 128.197.185.27
 		ClientSocket client_socket("128.197.185.27", 8001);
 		string send;
-		string old_reply="jjs";
 		char tmp[1000];
 		//sstream in ("dictionary");
 		//string entry;
@@ -34,9 +33,9 @@ int main (int argc, char* argv[]) {
 			cout << "CLIENT: ";
 			getline(cin,send); // i.e. get the whole line (this is important, cin >> send stops at a whitespace
 			sprintf(tmp,"%s %s %s\n",argv[1],argv[2],send.c_str()); //Write the formatted string to tmp
-			send=tmp;
+//			send=tmp;
 			int allChars=-12;
-			client_socket << send;
+			client_socket << tmp;
 			recv=(int)reply.find("ERR");
 			usleep(10000);
 			client_socket >> reply;
@@ -44,7 +43,7 @@ int main (int argc, char* argv[]) {
 
 			while(recv==string::npos) {
 				old_length=reply.size();
-				client_socket << argv[1] << " " << argv[2] << " \n";
+				client_socket << 1[argv] << " " << 2[argv] << " \n";
 				usleep(10000);
 				client_socket >> tmpreply;
 				reply += tmpreply;
@@ -54,14 +53,35 @@ int main (int argc, char* argv[]) {
 					break;
 				}
 			}
-			float poop;
-			while(istringstream(reply) >> poop) {
-				cout << "poop!: " << poop << endl;
-			}
-			cout << "HERE.\n";
+			string entry;
+			stringstream ss(reply);
 
-			cout << "SERVER:  " << reply << endl;
 			float exchange[100][100];
+			if (!strcmp(send.c_str(),"getAllRates")) {
+				while(ss >> entry) {
+					if (atof(entry.c_str()) != 0) { //Got a number!
+						for (int i = 0; i < 100; i++) {
+							for (int j=0; j<100; j++) {
+								exchange[i][j]=atof(entry.c_str());
+								ss >> entry;
+							}
+						}
+						break;
+					}
+				}
+			} else {
+				cout << "Not asking for all rates!\n";
+				cout << "SERVER: " << reply << endl;
+			}
+
+			if (!strcmp(send.c_str(),"getAllRates")) {
+				for (int i = 0; i < 100; i++) {
+					for (int j = 0; j < 100; j++) {
+						cout << exchange[i][j] << " ";
+					}
+					cout << endl;
+				}
+			}
 		}
 	}
 	catch(SocketException& e) {
