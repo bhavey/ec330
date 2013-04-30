@@ -58,20 +58,23 @@ int main (int argc, char* argv[]) {
 			iter=0;
 			recv=(int)send.find("getOneRate");
 			if (recv!=string::npos) {
-				printf("ASKED FOR ONE RATE...\n");
+				//printf("HERE DAMNIT.\n");
+				//printf("ASKED FOR ONE RATE...\n");
 				float MaxRate, under1, CurRate, MinRate, over1, avg;
 				MaxRate=0;
 				under1=-10;
 				CurRate=-1;
 				while (CurRate > under1) { //Find the max peak in a currency exchange.
-					if (iter==10) //break on average!
+					if (iter==500) //break on average!
 						break;
 					//Request the rate!
 					sprintf(tmp,"%s %s getOneRate %d %d\n",argv[1],argv[2],startCur,destCur);
+
 					client_socket << tmp;
 					usleep(10000);
 					client_socket >> reply;
 					recv=(int)reply.find("ERR");
+
 					while(recv==string::npos) {
 						client_socket << 1[argv] << " " << 2[argv] << " \n";
 						usleep(10000);
@@ -83,12 +86,13 @@ int main (int argc, char* argv[]) {
 							break;
 						}
 					}
-					cout << "Found this oneRate: " << reply << endl;
-					usleep(500000);
+					//cout << "Found this oneRate: " << reply << endl;
+					usleep(1000000);
 					recv=(int)reply.find(":");
 					reply=reply.substr(recv+3);
 					avgArrag[iter]=atof(reply.c_str());
-					cout << "Specificially:" << avgArrag[iter] << endl;
+//					cout << /*"Specificially:" << */ avgArrag[iter] << endl;
+					cout << atof(reply.c_str()) << endl;
 					iter++;
 				}
 				avg=0;
