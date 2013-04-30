@@ -10,14 +10,14 @@ using namespace std;
 class QuadReg {
 public:
     //constructor
-    void QuadReg() {
+    QuadReg() {
         numOfEntries = 0;
-        pair<int,int> pointpair;
+        pair<float,float> pointpair;
     }
 
     //add point pairs
     void AddPoints(float x, float y)  {
-        pair<int,int> pointpair (x,y); 
+        pair<float,float> pointpair (x,y); 
         numOfEntries +=1; 
         pointArray.push_back(pointpair);
     }
@@ -119,13 +119,13 @@ public:
 private:
     int numOfEntries; 
     float *pointpair; 
-    vector<pair<int,int> > pointArray; 
+    vector<pair<float,float> > pointArray; 
 
     //helper methods
     float getSx() { //get sum of x
         float Sx = 0;
         //FIX THAT!!!!
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             Sx += (*it).first;
         }
         return Sx;
@@ -133,7 +133,7 @@ private:
 
     double getSy() { //get sum of y
         float Sy = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             Sy += (*it).second;
         }
         return Sy;
@@ -141,7 +141,7 @@ private:
 
     float getSx2() { //get sum of x^2
         float Sx2 = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             Sx2 += pow((*it).first, 2); //sum of x^2
         }
         return Sx2;
@@ -149,7 +149,7 @@ private:
 
     float getSx3() { //get sum of x^3
         float Sx3 = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             Sx3 += pow((*it).first, 3); //sum of x^3
         }
         return Sx3;
@@ -157,7 +157,7 @@ private:
 
     float getSx4() { //get sum of x^4
         float Sx4 = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             Sx4 += pow((*it).first, 4); //sum of x^4
         }
         return Sx4;
@@ -165,7 +165,7 @@ private:
 
     float getSxy() { //get sum of x*y
         float Sxy = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             Sxy += (*it).first * (*it).second; //sum of x*y
         }
         return Sxy;
@@ -173,7 +173,7 @@ private:
 
     float getSx2y() { //get sum of x^2*y
         float Sx2y = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             Sx2y += pow((*it).first, 2) * (*it).second; //sum of x^2*y
         }
         return Sx2y;
@@ -182,18 +182,17 @@ private:
     float getYMean() //mean value of y
     {
         float y_tot = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             y_tot += (*it).second; 
         }
         return y_tot/numOfEntries;
     }
 
     float getSStot() { //total sum of squares
-    {
         //the sum of the squares of the differences between 
         //the measured y values and the mean y value
         float ss_tot = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
             ss_tot += pow((*it).second - getYMean(), 2);
         }
         return ss_tot;
@@ -203,14 +202,16 @@ private:
         //the sum of the squares of te difference between 
         //the measured y values and the values of y predicted by the equation
         float ss_err = 0;
-        for (vector<pair<int, int>::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
-            ss_err += pow((*it).second - getPredictedY((*it).first, 2);
+        for (vector<pair<float, float> >::iterator it = pointArray.begin(); it != pointArray.end(); it++) {
+            ss_err += pow((*it).second - getPredictedY((*it).first), 2);
         }
         return ss_err;
     }
 
-    float getPredictedY(double x) {
+    float getPredictedY(float x) {
         //returns value of y predicted by the equation for a given value of x
         return aTerm() * pow(x, 2) + bTerm() * x + cTerm();
     }
-}
+};
+
+//int main()
