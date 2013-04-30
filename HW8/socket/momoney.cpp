@@ -1,6 +1,5 @@
 #include "ClientSocket.h"
 #include "SocketException.h"
-#include "baseclass.cpp"
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -11,22 +10,14 @@
 using namespace std;
 
 #define N 2
-float sumVector(vector<float> inVec) { //Sum the negative log contents of the array.
-	float sum=0;
-	//printf("Numbers to sum: ");
-	for(vector<float>::iterator it = inVec.begin(); it != inVec.end(); it++) {
-	//	printf("%.3f ",*it);
-		sum-=log(*it);
-	}
-	//printf("\nsum: %f\n",sum);
-	return sum;
-}
 
 int main (int argc, char* argv[]) {
 	string reply;
 	int start = 0; //Starting currency!
 	string tmpreply;
 	int recv;
+	int startCur=0;
+	int destCur=50;
 
  	if (argc!=3) {
  		printf("Incorrect format! Use ./PROG USER PASS\n");
@@ -47,10 +38,8 @@ int main (int argc, char* argv[]) {
 			recv=(int)reply.find("ERR");
 			usleep(10000);
 			client_socket >> reply;
-			int old_length;
 
 			while(recv==string::npos) {
-				old_length=reply.size();
 				client_socket << 1[argv] << " " << 2[argv] << " \n";
 				usleep(10000);
 				client_socket >> tmpreply;
@@ -63,45 +52,37 @@ int main (int argc, char* argv[]) {
 			}
 			string entry;
 			stringstream ss(reply);
-
 			float exchange[100][100];
-			if (!strcmp(send.c_str(),"getAllRates")) {
-				printf("exchange[0][50]: %f\n",exchange[0][98]);
-				vector<pair<vector<float>,float> > weights;
-				int inBase[N];
-				Base b(inBase,99,N); //I got 99 bases but a bitch aint one.
-				for (int i=0; i<101; i++)
-					b++;
-				for (int i=0; i<9800; i++) { //99*99=9800. Don't you forget it.
-					float weight;
-					if ((b.at(0)==start) || (b.at(1)==start) || (b.at(0)==b.at(1))) {
-						b++;
-						continue; //We don't want any overlaps.
-					}
-					vector<float> paths;
-					paths.push_back(exchange[0][b.at(0)]);
-					paths.push_back(exchange[b.at(0)][b.at(1)]);
-					paths.push_back(exchange[b.at(1)][0]);
-					//printf("Path for 0->%d->%d->0: ",b.at(0),b.at(1));
-					for (vector<float>::iterator it = paths.begin(); it != paths.end(); it++) {
-					//	printf("%.3f ", *it);
-					}
-					weight=sumVector(paths);
-					//	exchange[b.at(0)][b.at(1)], exchange[b.at(1)][0]);
-					if (weight<0) {
-						printf("Negative path for 0->%d->%d->0: ",b.at(0),b.at(1));
-						for (vector<float>::iterator it = paths.begin(); it != paths.end(); it++) {
-							printf("%.5f ", *it);
+			recv=(int)send.find("getOneRate");
+			if (recv!=string::npos) {
+				printf("ASKED FOR ONE RATE...\n");
+				float MaxRate, under1, CurRate, MinRate, over1;
+				MaxRate=0;
+				under1=-10;
+				CurRate=-1;
+				while (CurRate > under1) { //Find the max peak in a currency exchange.
+					//Request the rate!
+					sprintf(tmp,"%s %s %d %d\n",argv[1],argv[2],startCur,destCur);
+					client_socket << tmp;
+					usleep(10000);
+					client_socket >> reply;
+					recv=(int)reply.find("ERR");
+					while(recv==string::npos) {
+						client_socket << 1[argv] << " " << 2[argv] << " \n";
+						usleep(10000);
+						client_socket >> tmpreply;
+						reply += tmpreply;
+						recv=(int)reply.find("ERR");
+						if (recv!=string::npos) {
+							reply=reply.substr(0,recv);
+							break;
 						}
-						printf("\nOf weight: %.5f\n\n",weight);
-						weights.push_back(make_pair(paths,weight));
 					}
-					paths.clear();
-					b++;
+					cout << "Found this oneRate: " << reply << endl;
+					break;
 				}
-				b++;
+
 			} else {
-				cout << "Not asking for all rates!\n";
 				cout << "SERVER: " << reply << endl;
 			}
 
