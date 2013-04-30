@@ -13,9 +13,12 @@ using namespace std;
 #define N 2
 float sumVector(vector<float> inVec) { //Sum the negative log contents of the array.
 	float sum=0;
+	printf("Numbers to sum: ");
 	for(vector<float>::iterator it = inVec.begin(); it != inVec.end(); it++) {
+		printf("%.3f ",*it);
 		sum-=log(*it);
 	}
+	printf("\nsum: %f\n",sum);
 	return sum;
 }
 
@@ -74,43 +77,61 @@ int main (int argc, char* argv[]) {
 						break;
 					}
 				}
+				printf("exchange[0][98]: %f\n",exchange[0][98]);
 				vector<pair<vector<float>,float> > weights;
 				int inBase[N];
 				Base b(inBase,99,N); //I got 99 bases but a bitch aint one.
+				for (int i=0; i<101; i++)
+					b++;
 				for (int i=0; i<9800; i++) { //99*99=9800. Don't you forget it.
 					float weight;
-
+					if ((b.at(0)==start) || (b.at(1)==start) || (b.at(0)==b.at(1))) {
+						b++;
+						continue; //We don't want any overlaps.
+					}
 					vector<float> paths;
 					paths.push_back(exchange[0][b.at(0)]);
-					paths.push_back(exchange[b.at(0)][b.at(1)]);
+					paths.push_back(exchange[b.at(0)-2][b.at(1)-2]);
 					paths.push_back(exchange[b.at(1)][0]);
+					printf("Path for 0->%d->%d->0: ",b.at(0),b.at(1));
+					for (vector<float>::iterator it = paths.begin(); it != paths.end(); it++) {
+						printf("%.3f ", *it);
+					}
 					weight=sumVector(paths);
+					printf("THIS NUMBERS BITCH: %.3f, %.3f, %.3f\n",exchange[0][b.at(0)],
+						exchange[b.at(0)][b.at(1)], exchange[b.at(1)][0]);
 					if (weight<0) {
+						printf("Negative path for 0->%d->%d->0: ",b.at(0),b.at(1));
+						for (vector<float>::iterator it = paths.begin(); it != paths.end(); it++) {
+							printf("%.3f ", *it);
+						}
+						printf("\nOf weight: %.3f\n\n",weight);
 						weights.push_back(make_pair(paths,weight));
 					}
-
+					paths.clear();
+					b++;
 				}
-				for(vector<pair<vector<float>,float> >::iterator it = weights.begin(); it != weights.end(); it++) {
-					printf("Negative path: ");
-					for (vector<float>::iterator it2 = (*it).first.begin(); it2 != (*it).first.end(); it2++) {
-						printf("%.3f ",*it2);
-					}
-					printf("\nof weight: %.3f\n",(*it).second);
-				}
+//				for(vector<pair<vector<float>,float> >::iterator it = weights.begin(); it != weights.end(); it++) {
+//					printf("Negative path: ");
+//					for (vector<float>::iterator it2 = (*it).first.begin(); it2 != (*it).first.end(); it2++) {
+//						printf("%.3f ",*it2);
+//					}
+//					printf("\nof weight: %.3f\n",(*it).second);
+//				}
 				b++;
 			} else {
 				cout << "Not asking for all rates!\n";
 				cout << "SERVER: " << reply << endl;
 			}
 
-			if (!strcmp(send.c_str(),"getAllRates")) {
-				for (int i = 0; i < 100; i++) {
-					for (int j = 0; j < 100; j++) {
-						cout << exchange[i][j] << " ";
-					}
-					cout << endl;
-				}
-			}
+//			if (!strcmp(send.c_str(),"getAllRates")) {
+//				for (int i = 0; i < 100; i++) {
+//					for (int j = 0; j < 100; j++) {
+//						cout << exchange[i][j] << " ";
+//					}
+//					cout << endl;
+//				}
+//			}
 		}
 	}
 	catch(SocketException& e) {
