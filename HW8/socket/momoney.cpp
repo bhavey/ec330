@@ -66,18 +66,7 @@ int main (int argc, char* argv[]) {
 
 			float exchange[100][100];
 			if (!strcmp(send.c_str(),"getAllRates")) {
-				while(ss >> entry) {
-					if (atof(entry.c_str()) != 0) { //Got a number!
-						for (int i = 0; i < 100; i++) {
-							for (int j=0; j<100; j++) {
-								exchange[i][j]=atof(entry.c_str());
-								ss >> entry;
-							}
-						}
-						break;
-					}
-				}
-				printf("exchange[0][98]: %f\n",exchange[0][98]);
+				printf("exchange[0][50]: %f\n",exchange[0][98]);
 				vector<pair<vector<float>,float> > weights;
 				int inBase[N];
 				Base b(inBase,99,N); //I got 99 bases but a bitch aint one.
