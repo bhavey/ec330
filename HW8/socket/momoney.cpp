@@ -110,13 +110,6 @@ int main (int argc, char* argv[]) {
 					paths.clear();
 					b++;
 				}
-//				for(vector<pair<vector<float>,float> >::iterator it = weights.begin(); it != weights.end(); it++) {
-//					printf("Negative path: ");
-//					for (vector<float>::iterator it2 = (*it).first.begin(); it2 != (*it).first.end(); it2++) {
-//						printf("%.3f ",*it2);
-//					}
-//					printf("\nof weight: %.3f\n",(*it).second);
-//				}
 				b++;
 			} else {
 				cout << "Not asking for all rates!\n";
