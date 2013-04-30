@@ -1,40 +1,30 @@
 #include <iostream>
+#include <vector>
 #include <math.h>
 using namespace std;
 //Reimplemented from http://www.codeproject.com/Articles/63170/Least-Squares-Regression-for-Quadratic-Curve-Fitti
-//Code was in C#. Changed to C++.
+//Code was a C# class, implemented by Alex Etchells. Changed to C++.
+//Uses s{jk} notation.
 
 class QuarReg {
-
 public:
-    //instance variables
-         
-
     //constructor
     void QuadReg() {
         numOfEntries = 0;
-        pointpair = new float[2];
+        float pointpair[2];
     }
 
-    //instance methods   
-    /// <summary>
-    /// add point pairs
-    /// </summary>
-    /// <param name="x">x value</param>
-    /// <param name="y">y value</param>
+    //add point pairs
     void AddPoints(float x, float y)  {
         pointpair = new float[2]; 
         numOfEntries +=1; 
         pointpair[0] = x; 
         pointpair[1] = y;
-        pointArray.Add(pointpair);
+        pointArray.push_back(pointpair);
     }
 
-    /// <summary>
-    /// returns the a term of the equation ax^2 + bx + c
-    /// </summary>
-    /// <returns>a term</returns>
-    double aTerm() {
+    //returns the a term of the equation ax^2 + bx + c
+    float aTerm() {
         if (numOfEntries < 3) {
             printf("Insufficient pairs of co-ordinates\n");
             return 0;
@@ -154,7 +144,7 @@ private:
     }
 
     float getSx2() { //get sum of x^2
-        double Sx2 = 0;
+        float Sx2 = 0;
         foreach (double[] ppair in pointArray)
         {
             Sx2 += pow(ppair[0], 2); // sum of x^2
@@ -163,7 +153,7 @@ private:
     }
 
     float getSx3() { // get sum of x^3
-        double Sx3 = 0;
+        float Sx3 = 0;
         foreach (double[] ppair in pointArray)
         {
             Sx3 += pow(ppair[0], 3); // sum of x^3
@@ -172,7 +162,7 @@ private:
     }
 
     float getSx4() { // get sum of x^4
-        double Sx4 = 0;
+        float Sx4 = 0;
         foreach (double[] ppair in pointArray)
         {
             Sx4 += pow(ppair[0], 4); // sum of x^4
@@ -181,7 +171,7 @@ private:
     }
 
     float getSxy() { // get sum of x*y
-        double Sxy = 0;
+        float Sxy = 0;
         foreach (double[] ppair in pointArray)
         {
             Sxy += ppair[0] * ppair[1]; // sum of x*y
@@ -190,7 +180,7 @@ private:
     }
 
     float getSx2y() { // get sum of x^2*y
-        double Sx2y = 0;
+        float Sx2y = 0;
         foreach (double[] ppair in pointArray)
         {
             Sx2y += pow(ppair[0], 2) * ppair[1]; // sum of x^2*y
@@ -200,7 +190,7 @@ private:
 
     float getYMean() // mean value of y
     {
-        double y_tot = 0;
+        float y_tot = 0;
         foreach (double[] ppair in pointArray)
         {
             y_tot += ppair[1]; 
@@ -212,7 +202,7 @@ private:
     {
         //the sum of the squares of the differences between 
         //the measured y values and the mean y value
-        double ss_tot = 0;
+        float ss_tot = 0;
         foreach (double[] ppair in pointArray)
         {
             ss_tot += pow(ppair[1] - getYMean(), 2);
@@ -223,7 +213,7 @@ private:
     float getSSerr() { // residual sum of squares
         //the sum of the squares of te difference between 
         //the measured y values and the values of y predicted by the equation
-        double ss_err = 0;
+        float ss_err = 0;
         foreach (double[] ppair in pointArray)
         {
             ss_err += pow(ppair[1] - getPredictedY(ppair[0]), 2);
