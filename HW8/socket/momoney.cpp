@@ -13,12 +13,12 @@ using namespace std;
 #define N 2
 float sumVector(vector<float> inVec) { //Sum the negative log contents of the array.
 	float sum=0;
-	printf("Numbers to sum: ");
+	//printf("Numbers to sum: ");
 	for(vector<float>::iterator it = inVec.begin(); it != inVec.end(); it++) {
-		printf("%.3f ",*it);
+	//	printf("%.3f ",*it);
 		sum-=log(*it);
 	}
-	printf("\nsum: %f\n",sum);
+	//printf("\nsum: %f\n",sum);
 	return sum;
 }
 
@@ -91,21 +91,20 @@ int main (int argc, char* argv[]) {
 					}
 					vector<float> paths;
 					paths.push_back(exchange[0][b.at(0)]);
-					paths.push_back(exchange[b.at(0)-2][b.at(1)-2]);
+					paths.push_back(exchange[b.at(0)][b.at(1)]);
 					paths.push_back(exchange[b.at(1)][0]);
-					printf("Path for 0->%d->%d->0: ",b.at(0),b.at(1));
+					//printf("Path for 0->%d->%d->0: ",b.at(0),b.at(1));
 					for (vector<float>::iterator it = paths.begin(); it != paths.end(); it++) {
-						printf("%.3f ", *it);
+					//	printf("%.3f ", *it);
 					}
 					weight=sumVector(paths);
-					printf("THIS NUMBERS BITCH: %.3f, %.3f, %.3f\n",exchange[0][b.at(0)],
-						exchange[b.at(0)][b.at(1)], exchange[b.at(1)][0]);
+					//	exchange[b.at(0)][b.at(1)], exchange[b.at(1)][0]);
 					if (weight<0) {
 						printf("Negative path for 0->%d->%d->0: ",b.at(0),b.at(1));
 						for (vector<float>::iterator it = paths.begin(); it != paths.end(); it++) {
-							printf("%.3f ", *it);
+							printf("%.5f ", *it);
 						}
-						printf("\nOf weight: %.3f\n\n",weight);
+						printf("\nOf weight: %.5f\n\n",weight);
 						weights.push_back(make_pair(paths,weight));
 					}
 					paths.clear();
