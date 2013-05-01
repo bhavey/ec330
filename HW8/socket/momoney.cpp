@@ -7,21 +7,28 @@
 #include <fstream>
 #include <sstream>
 #include <math.h>
+#include <sys/time.h>
 using namespace std;
 
 #define N 2
 
 int main (int argc, char* argv[]) {
 	string reply;
-	int start = 0; //Starting currency!
 	string tmpreply;
 	int recv;
 	int startCur=0;
-	int destCur=50;
-
- 	if (argc!=3) {
+	int destCur=12;
+	float tradeAmount=5; //US $ to trade per transaction.
+	float run_time;
+	timeval start, end;
+	gettimeofday(&start, NULL);
+ 	if (argc<3) {
  		printf("Incorrect format! Use ./PROG USER PASS\n");
  		return -1;
+ 	}
+ 	if (argc==5) {
+ 		startCur=atoi(argv[3]);
+ 		destCur=atoi(argv[4]);
  	}
  	try {
 		//Algorithmics.bu.edu is 128.197.185.27
@@ -53,7 +60,12 @@ int main (int argc, char* argv[]) {
 			string entry;
 			stringstream ss(reply);
 			float exchange[100][100];
-			float avgArrag[10];
+			long double avgArrag[10];
+			float prevRate = -1;
+			float curRate= 0;
+			float minRate=0;
+			bool buy=0;
+
 			int iter;
 			iter=0;
 			recv=(int)send.find("getOneRate");
@@ -65,7 +77,7 @@ int main (int argc, char* argv[]) {
 				under1=-10;
 				CurRate=-1;
 				while (CurRate > under1) { //Find the max peak in a currency exchange.
-					if (iter==500) //break on average!
+					if (iter==100) //break on average!
 						break;
 					//Request the rate!
 					sprintf(tmp,"%s %s getOneRate %d %d\n",argv[1],argv[2],startCur,destCur);
@@ -90,16 +102,81 @@ int main (int argc, char* argv[]) {
 					usleep(1000000);
 					recv=(int)reply.find(":");
 					reply=reply.substr(recv+3);
-					avgArrag[iter]=atof(reply.c_str());
+					//avgArrag[iter]=atol(reply.c_str());
 //					cout << /*"Specificially:" << */ avgArrag[iter] << endl;
+					curRate=atof(reply.c_str());
+
+					if (prevRate==-1) {
+						prevRate=atof(reply.c_str()); //Initialize prevRate
+					} else {
+						if (!buy) { //We're looking to buy!
+							if (prevRate<(curRate*.99)) { //Made the threshold! BUY.
+								sprintf(tmp,"%s %s exchange %d %d %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
+								client_socket << tmp;
+								usleep(10000);
+								client_socket >> reply;
+								recv=(int)reply.find("ERR");
+
+								while(recv==string::npos) {
+									client_socket << 1[argv] << " " << 2[argv] << " \n";
+									usleep(10000);
+									client_socket >> tmpreply;
+									reply += tmpreply;
+									recv=(int)reply.find("ERR");
+									if (recv!=string::npos) {
+										reply=reply.substr(0,recv);
+										break;
+									}
+								}
+								minRate=prevRate;
+								buy=1;	//Set the bool flag
+							} else {
+								prevRate=CurRate; //Not jumping yet! Reset the buy flag
+							}
+						} else {
+							if (curRate>(minRate*1.005)) { //Made the threshold. SELL!
+								sprintf(tmp,"%s %s exchange %d %d %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
+								client_socket << tmp;
+								usleep(10000);
+								client_socket >> reply;
+								recv=(int)reply.find("ERR");
+
+								while(recv==string::npos) {
+									client_socket << 1[argv] << " " << 2[argv] << " \n";
+									usleep(10000);
+									client_socket >> tmpreply;
+									reply += tmpreply;
+									recv=(int)reply.find("ERR");
+									if (recv!=string::npos) {
+										reply=reply.substr(0,recv);
+										break;
+									}
+								}
+							}
+						}
+					}
 					cout << atof(reply.c_str()) << endl;
 					iter++;
+					gettimeofday(&end, NULL);
+					run_time=0;
+					//run_time=(float)(end.tv_sec-start.tv_sec);
+					if (run_time>50) {
+						printf("been running for over %f seconds.\n",run_time);
+						ClientSocket client_socket("128.197.185.27", 8001);
+						gettimeofday(&start,NULL);
+						while(recv==string::npos) {
+							client_socket << 1[argv] << " " << 2[argv] << " \n";
+							usleep(10000);
+							client_socket >> tmpreply;
+							reply += tmpreply;
+							recv=(int)reply.find("ERR");
+							if (recv!=string::npos) {
+								reply=reply.substr(0,recv);
+								break;
+							}
+						}
+					}
 				}
-				avg=0;
-				for (int i=0; i<10; i++)
-					avg+=avgArrag[10];
-				avg/=10;
-				cout << "average is: " << avg << endl; 
 			} else {
 				cout << "SERVER: " << reply << endl;
 			}
