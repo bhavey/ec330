@@ -77,7 +77,7 @@ int main (int argc, char* argv[]) {
 				under1=-10;
 				CurRate=-1;
 				while (CurRate > under1) { //Find the max peak in a currency exchange.
-					if (iter==100) //break on average!
+					if (iter==10) //break on average!
 						break;
 					//Request the rate!
 					sprintf(tmp,"%s %s getOneRate %d %d\n",argv[1],argv[2],startCur,destCur);
@@ -109,9 +109,10 @@ int main (int argc, char* argv[]) {
 					if (prevRate==-1) {
 						prevRate=atof(reply.c_str()); //Initialize prevRate
 					} else {
+						cout << "HERE!\n";
 						if (!buy) { //We're looking to buy!
 							if (prevRate<(curRate*.99)) { //Made the threshold! BUY.
-								sprintf(tmp,"%s %s exchange %d %d %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
+								sprintf(tmp,"%s %s exchange %d %f %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
 								client_socket << tmp;
 								usleep(10000);
 								client_socket >> reply;
@@ -128,6 +129,8 @@ int main (int argc, char* argv[]) {
 										break;
 									}
 								}
+								cout << reply << endl;
+								break; //Get out of here!!!
 								minRate=prevRate;
 								buy=1;	//Set the bool flag
 							} else {
@@ -135,7 +138,7 @@ int main (int argc, char* argv[]) {
 							}
 						} else {
 							if (curRate>(minRate*1.005)) { //Made the threshold. SELL!
-								sprintf(tmp,"%s %s exchange %d %d %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
+								sprintf(tmp,"%s %s exchange %d %f %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
 								client_socket << tmp;
 								usleep(10000);
 								client_socket >> reply;
@@ -152,6 +155,8 @@ int main (int argc, char* argv[]) {
 										break;
 									}
 								}
+								recv=reply.find_last_of(":");
+								reply=reply.substr(reply.begin()+recv+3,reply.end());
 							}
 						}
 					}
