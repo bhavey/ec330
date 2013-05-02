@@ -65,12 +65,12 @@ int main (int argc, char* argv[]) {
 			float prevRate = -1;
 			float curRate= 0;
 			float minRate=0;
-			bool buy=0;
-
+			bool buy;
 			int iter;
 			iter=0;
 			recv=(int)send.find("getOneRate");
 			if (recv!=string::npos) {
+				buy=0;
 				//printf("HERE DAMNIT.\n");
 				//printf("ASKED FOR ONE RATE...\n");
 				float MaxRate, under1, CurRate, MinRate, over1, avg;
@@ -138,6 +138,8 @@ int main (int argc, char* argv[]) {
 								tradeRate=atof(reply.c_str());
 								if (tradeRate>1000)
 									tradeRate=999.99;
+								else
+									tradeRate-=.000001 //This is because of FP precision.
 								minRate=prevRate;
 								buy=1;	//Set the bool flag
 							} else {
@@ -162,8 +164,7 @@ int main (int argc, char* argv[]) {
 										break;
 									}
 								}
-								recv=reply.find_last_of(":");
-								reply=reply.substr(recv+3);
+								cout << reply << endl;
 							}
 						}
 					}
