@@ -21,6 +21,7 @@ int main (int argc, char* argv[]) {
 	float tradeAmount=5; //US $ to trade per transaction.
 	float run_time;
 	timeval start, end;
+	long double moolah[100];
 	gettimeofday(&start, NULL);
  	if (argc<3) {
  		printf("Incorrect format! Use ./PROG USER PASS\n");
@@ -36,7 +37,6 @@ int main (int argc, char* argv[]) {
 		string send;
 		char tmp[1000];
 		float prevRate = -1;
-
 		while (send!="done") {
 			cout << "CLIENT: ";
 			getline(cin,send); // i.e. get the whole line (this is important, cin >> send stops at a whitespace
@@ -83,7 +83,9 @@ int main (int argc, char* argv[]) {
 					if (iter==100) //break on average!
 						break;
 					//Request the rate!
-					sprintf(tmp,"%s %s getOneRate %d %d\n",argv[1],argv[2],startCur,destCur);
+					sprintf(tmp,"%s %s getStatus\n",argv[1],argv[2]);
+					//sprintf(tmp,"%s %s exchange %d %f %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
+
 
 					client_socket << tmp;
 					usleep(10000);
@@ -101,7 +103,27 @@ int main (int argc, char* argv[]) {
 							break;
 						}
 					}
-					//cout << "Found this oneRate: " << reply << endl;
+					string poopstr;
+					//TEST CODE HERE.....
+					cout << reply << endl;
+					recv=(int)reply.find_last_of(":");
+					reply=reply.substr(0,recv-2);
+					recv=(int)reply.find_last_of(":");
+					reply=reply.substr(recv+2);
+					stringstream ss(reply);
+					//cout << "This is the response: " << reply << endl;
+					for (int i = 0; i<100; i++) {
+						ss >> moolah[i];
+						moolah[i]-=moolah[i]*.00001; //We want a little left behind, because of FP precision.
+//						moolah[i]
+					}
+					printf("This is the output of moolah: \n");
+					for (int i = 0; i<100; i++)
+						cout << moolah[i] << " ";
+					cout << endl;
+					break;
+					//molla[0];
+
 					usleep(1000000);
 					recv=(int)reply.find(":");
 					reply=reply.substr(recv+3);
@@ -113,6 +135,7 @@ int main (int argc, char* argv[]) {
 					} else {
 						if (!buy) { //We're looking to buy!
 							if (prevRate<(curRate*.995)) { //Made the threshold! BUY.
+//								sprintf(tmp,"%s %s exchange %d %f %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
 								sprintf(tmp,"%s %s exchange %d %f %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
 								client_socket << tmp;
 								usleep(10000);
@@ -146,7 +169,11 @@ int main (int argc, char* argv[]) {
 								prevRate=curRate; //Not jumping yet! Reset the buy flag
 							}
 						} else {
-							if (curRate<(minRate*1.005)) { //Made the threshold. SELL!
+							if (curRate<(minRate*1.009)) { //Made the threshold. SELL!
+								bool loopsell;
+								loopsell=0;
+								//See if it will take >1 time to sell.
+								//Find the Amount we have!
 								sprintf(tmp,"%s %s exchange %d %f %d\n",argv[1],argv[2],destCur,tradeRate,startCur);
 								client_socket << tmp;
 								usleep(10000);
