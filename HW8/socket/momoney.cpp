@@ -108,14 +108,11 @@ int main (int argc, char* argv[]) {
 					//avgArrag[iter]=atol(reply.c_str());
 //					cout << /*"Specificially:" << */ avgArrag[iter] << endl;
 					curRate=atof(reply.c_str());
-					cout << "BITCH THIS IS CURRATE: " << curRate << endl;
-					printf("curRate: %f, prevRate: %f\n",curRate,prevRate);
 					if (prevRate==-1) {
 						prevRate=atof(reply.c_str()); //Initialize prevRate
 					} else {
 						if (!buy) { //We're looking to buy!
 							if (prevRate<(curRate*.995)) { //Made the threshold! BUY.
-								cout << "Found a max!\n";
 								sprintf(tmp,"%s %s exchange %d %f %d\n",argv[1],argv[2],startCur,tradeAmount,destCur);
 								client_socket << tmp;
 								usleep(10000);
@@ -134,7 +131,6 @@ int main (int argc, char* argv[]) {
 									}
 								}
 								cout << reply << endl;
-								//break; //Get out of here!!!
 								recv=reply.find_last_of(":");
 								reply=reply.substr(recv+3);
 								cout << reply << endl;
@@ -147,9 +143,7 @@ int main (int argc, char* argv[]) {
 								cout << "MIN RATE: " << minRate << endl;
 								buy=1;	//Set the bool flag
 							} else {
-								cout << "HERE IS WHERE THEY CHANGE. " << prevRate << " is the old\n";
 								prevRate=curRate; //Not jumping yet! Reset the buy flag
-								cout << prevRate << " is the new!\n";
 							}
 						} else {
 							if (curRate<(minRate*1.005)) { //Made the threshold. SELL!
