@@ -35,6 +35,7 @@ int main (int argc, char* argv[]) {
 		ClientSocket client_socket("128.197.185.27", 8001);
 		string send;
 		char tmp[1000];
+		float prevRate = -1;
 
 		while (send!="done") {
 			cout << "CLIENT: ";
@@ -62,7 +63,6 @@ int main (int argc, char* argv[]) {
 			float exchange[100][100];
 			float tradeRate;
 			long double avgArrag[10];
-			float prevRate = -1;
 			float curRate= 0;
 			float minRate=0;
 			bool buy;
@@ -76,7 +76,9 @@ int main (int argc, char* argv[]) {
 				float MaxRate, under1, CurRate, MinRate, over1, avg;
 				MaxRate=0;
 				under1=-10;
-				CurRate=-1;
+				//CurRate=-1;
+				printf("\ncurRate: %f, prevRate: %f\n",curRate,prevRate);
+
 				while (CurRate > under1) { //Find the max peak in a currency exchange.
 					if (iter==100) //break on average!
 						break;
@@ -106,7 +108,8 @@ int main (int argc, char* argv[]) {
 					//avgArrag[iter]=atol(reply.c_str());
 //					cout << /*"Specificially:" << */ avgArrag[iter] << endl;
 					curRate=atof(reply.c_str());
-
+					cout << "BITCH THIS IS CURRATE: " << curRate << endl;
+					printf("curRate: %f, prevRate: %f\n",curRate,prevRate);
 					if (prevRate==-1) {
 						prevRate=atof(reply.c_str()); //Initialize prevRate
 					} else {
@@ -139,11 +142,14 @@ int main (int argc, char* argv[]) {
 								if (tradeRate>1000)
 									tradeRate=999.99;
 								else
-									tradeRate-=.000001 //This is because of FP precision.
+									tradeRate-=.00001; //This is because of FP precision.
 								minRate=prevRate;
+								cout << "MIN RATE: " << minRate << endl;
 								buy=1;	//Set the bool flag
 							} else {
-								prevRate=CurRate; //Not jumping yet! Reset the buy flag
+								cout << "HERE IS WHERE THEY CHANGE. " << prevRate << " is the old\n";
+								prevRate=curRate; //Not jumping yet! Reset the buy flag
+								cout << prevRate << " is the new!\n";
 							}
 						} else {
 							if (curRate<(minRate*1.005)) { //Made the threshold. SELL!
